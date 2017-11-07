@@ -6,9 +6,13 @@
 
 ### For Fedora
 
-`sudo dnf install -y cmake libv4l`
+`sudo dnf install -y git cmake libv4l`
 
 ## Set up environment
+
+Clone repository.
+
+`git clone https://github.com/CUA-BatDrone/Tracking-Algorithm`
 
 Enter the source directory.
 
