@@ -4,7 +4,7 @@
 
 int main(int argc, char* argv[]) {
   if (argc < 3) {
-    printf("Usage: %s <device> <number_of_frames> [filename]\nNote: Lepton records at 8.6 frames per second\n\nExample: %s /dev/video1 90\nCaptures about 10 seconds of video", argv[0], argv[0]);
+    printf("Usage: %s <device> <number_of_frames> [filename]\nNote: Lepton records at 8.6 frames per second\n\nExample: %s /dev/video1 86\nCaptures about 10 seconds of video", argv[0], argv[0]);
     return -1;
   }
   char* device_name = argv[1];
