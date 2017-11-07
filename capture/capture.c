@@ -14,14 +14,15 @@
 
 
 int main(int argc, char* argv[]) {
-  if (argc < 2) {
-    printf("Usage: %s <device> <number_of_frames>\nNote: Lepton records at 8.6 frames per second\n\nExample: %s /dev/video1 90\nCaptures about 10 seconds of video", argv[0], argv[0]);
+  if (argc < 3) {
+    printf("Usage: %s <device> <number_of_frames> [filename]\nNote: Lepton records at 8.6 frames per second\n\nExample: %s /dev/video1 90\nCaptures about 10 seconds of video", argv[0], argv[0]);
     return -1;
   }
   char* device_name = argv[1];
   int num_frames = atoi(argv[2]);
+  char* filename = argc < 4 ? "capture.bin" : argv[3];
   pt1_init(device_name);
-  FILE *fd = fopen("capture.bin", "w");
+  FILE *fd = fopen(filename, "w");
 
   pt1_start();
   struct frame frame;
