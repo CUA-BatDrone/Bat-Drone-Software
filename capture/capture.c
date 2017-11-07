@@ -1,5 +1,6 @@
 #include "pt1.h"
 #include <stdio.h>
+#include <stdlib.h>
 //   sprintf(out_name, "out%03d.ppm", i);
 //   fout = fopen(out_name, "w");
 //   if (!fout) {
@@ -14,15 +15,17 @@
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
-    printf("Usage: %s <device>\n", argv[0]);
+    printf("Usage: %s <device> <number_of_frames>\nNote: Lepton records at 8.6 frames per second\n\nExample: %s /dev/video1 90\nCaptures about 10 seconds of video", argv[0], argv[0]);
     return -1;
   }
-  pt1_init(argv[1]);
+  char* device_name = argv[1];
+  int num_frames = atoi(argv[2]);
+  pt1_init(device_name);
   FILE *fd = fopen("capture.bin", "w");
 
   pt1_start();
   struct frame frame;
-  for (int i = 0; i < 9 * 10; i++) {
+  for (int i = 0; i < num_frames; i++) {
     pt1_get_frame(&frame);
     fwrite(frame.start, 1, frame.length, fd);
   }
