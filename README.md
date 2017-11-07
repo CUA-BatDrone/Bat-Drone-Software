@@ -36,4 +36,6 @@ Generate a makefile
 
 From the build directory
 
-`capture/capture /dev/video1 86 $(date +%s).bin`
+`capture/capture /dev/video1 86 capture$(date +%s).bin`
+
+Captures about 10 seconds to a file named capture and whatever the current unix timestamp is e.g. capture1510084031.bin
