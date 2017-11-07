@@ -1,17 +1,6 @@
 #include "pt1.h"
 #include <stdio.h>
 #include <stdlib.h>
-//   sprintf(out_name, "out%03d.ppm", i);
-//   fout = fopen(out_name, "w");
-//   if (!fout) {
-//     perror("Cannot open image");
-//     exit(EXIT_FAILURE);
-//   }
-//   fprintf(fout, "P6\n%d %d 255\n",
-//   fmt.fmt.pix.width, fmt.fmt.pix.height);
-//   fwrite(buffers[buf.index].start, buf.bytesused, 1, fout);
-//   fclose(fout);
-
 
 int main(int argc, char* argv[]) {
   if (argc < 3) {
