@@ -1,14 +1,24 @@
 # Bat-Drone-Software
 
-Contains all software needed for the Bat Drone project. Each directory has a README.md describing its function.
+Contains all software needed for the Bat Drone project.
 
-# Compiling each project
+Each component has its own directory containing a README.md documenting its function.
+
+# Compiling Each project
 
 ## Install Build Dependencies
 
-### For Fedora
+Currently the dependencies for all projects are:
+* cmake
+* libv4l
 
-`sudo dnf install -y git cmake libv4l`
+### Installing Dependencies For Fedora
+
+`sudo dnf install -y git cmake libv4l-devel`
+
+### Installing Dependencies For Ubuntu
+
+`sudo dnf install -y git cmake libv4l-dev`
 
 ## Set up environment
 
