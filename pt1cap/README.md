@@ -10,13 +10,16 @@ Writes a number of frames captured from the Lepton camera using the Pure Thermal
 The default filename is capture.bin
 
 # Example 
+
 Saves about 10 seconds of video to capture.bin . The Lepton camera records at 8.6 frames per second.
 
 `pt1cap /dev/video1 86 capture.bin`
 
-pt1cap /dev/video1 86 cap$(date +%s).bin
 
 Captures about 10 seconds to a file named "capture" + unix timestamp + ".bin". e.g. cap1510084031.bin
+
+`pt1cap /dev/video1 86 cap$(date +%s).bin`
+
 
 # File Format
 
