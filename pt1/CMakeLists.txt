@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.0)
 project(libpt1)
 add_library(pt1 pt1)
 target_include_directories(pt1 PUBLIC .)
