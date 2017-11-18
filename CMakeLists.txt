@@ -5,6 +5,6 @@ project(thermal-tracker)
 add_subdirectory(libs)
 
 # Programs
-add_subdirectory(capture)
+add_subdirectory(pt1cap)
 add_subdirectory(fsw)
 add_subdirectory(gse)
