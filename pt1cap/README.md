@@ -3,7 +3,10 @@
 Writes a number of frames captured from the Lepton camera using the Pure Thermal 1 board to a file in binary format.
 
 # Usage
-pt1cap <device> <number_of_frames> [filename]
+
+`pt1cap <device> <number_of_frames> [filename]`
+
+The default filename is capture.bin
 
 # Example 
 Saves about 10 seconds of video to capture.bin . The Lepton camera records at 8.6 frames per second.
