@@ -7,7 +7,7 @@ Writes a number of frames captured from the Lepton camera using the Pure Thermal
 
 `pt1cap <device> <number_of_frames> [filename]`
 
-The default filename is capture.bin
+The default filename is `capture.bin`
 
 # Example 
 
