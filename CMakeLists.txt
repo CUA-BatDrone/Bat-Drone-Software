@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(thermal-tracker)
+project(Bat-Drone-Software)
 
 # Libraries
 add_subdirectory(libs)
