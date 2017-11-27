@@ -14,7 +14,7 @@ Currently the dependencies for all projects are:
 
 ### Installing Dependencies For Fedora
 
-`sudo dnf groupinstall "Development Tools and Libraries"`
+`sudo dnf groupinstall "Development Tools"`
 
 `sudo dnf install -y git cmake libv4l-devel`
 
