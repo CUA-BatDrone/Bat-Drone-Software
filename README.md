@@ -40,7 +40,7 @@ Generate a makefile
 
 `cmake ..`
 
-Enter the directory for your project. e.g. pt1cap
+Enter the directory for your project if you wish to compile only one project. e.g. pt1cap
 
 `cd pt1cap`
 
