@@ -14,11 +14,11 @@ Currently the dependencies for all projects are:
 
 ### Installing Dependencies For Fedora
 
-`sudo dnf install -y git cmake libv4l-devel`
+`sudo dnf groupinstall -y "Development Tools" && sudo dnf install -y git cmake libv4l-devel`
 
 ### Installing Dependencies For Ubuntu
 
-`sudo dnf install -y git cmake libv4l-dev`
+`sudo apt install -y git cmake libv4l-dev`
 
 ## Set up environment
 
@@ -52,4 +52,4 @@ Enter the directory for your project if you wish to compile only one project. e.
 
 `./pt1cap /dev/video1 86 capture$(date +%s).bin`
 
-Captures about 10 seconds to a file named capture and the current unix timestamp and .bin e.g. capture1510084031.bin
+Captures about 10 seconds to a file named capture and the current unix time stamp and .bin e.g. capture1510084031.bin
