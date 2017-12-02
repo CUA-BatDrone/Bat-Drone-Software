@@ -10,7 +10,6 @@ extern "C" {
 #define PT1_WIDTH = 80;
 #define PT1_HEIGHT = 60;
 #define PT1_PMAX = 0x3FFF
-typedef uint16_t pt1p_t;
 
 /**
  * Initialize the camera.
