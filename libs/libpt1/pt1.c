@@ -17,7 +17,15 @@
 int fd;
 int n_buffers;
 struct v4l2_buffer buf;
-struct buffer *buffers;
+
+
+/**
+ * Holds the address and length of a video buffer.
+ */
+struct buffer {
+  void *start;
+  size_t length;
+} *buffers;
 
 static void xioctl(int fh, int request, void *arg) {
   int r;

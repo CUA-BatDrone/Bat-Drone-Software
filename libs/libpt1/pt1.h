@@ -27,14 +27,6 @@ void pt1_init();
   void pt1_stop();
 
 /**
- * Holds the address and length of a video buffer.
- */
-struct buffer {
-  void *start;
-  size_t length;
-};
-
-/**
  * Contains the buffer, sequence, and timing of a frame.
  */
 struct frame {
