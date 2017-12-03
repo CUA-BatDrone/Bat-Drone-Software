@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 
   pt1_start();
   struct frame frame;
-  for (int i = 0; i < num_frames; i++) {
+  for (int i = 0; i < num_frames || num_frames == 0; i++) {
     pt1_get_frame(&frame);
     fwrite(frame.start, 1, frame.length, fd);
   }
