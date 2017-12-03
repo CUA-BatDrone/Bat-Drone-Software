@@ -17,6 +17,17 @@ extern "C" {
 void pt1_init();
 
 /**
+ * Run FFC.
+ */
+void pt1_perform_ffc();
+
+/**
+ * Disable FFC.
+ */
+void pt1_disable_fcc();
+
+
+/**
  * Enable video capture.
  */
  void pt1_start();

@@ -11,6 +11,8 @@
 #include <sys/mman.h>
 #include <linux/videodev2.h>
 #include <libv4l2.h>
+#include <linux/uvcvideo.h>
+#include <linux/usb/video.h>
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
@@ -38,6 +40,21 @@ static void xioctl(int fh, int request, void *arg) {
     fprintf(stderr, "error %d, %s\n", errno, strerror(errno));
     exit(EXIT_FAILURE);
   }
+}
+
+void pt1_perform_ffc() {
+  __u8 a = 0;
+  struct uvc_xu_control_query q = { .unit = 5, .selector = 12, .query = UVC_SET_CUR, .size = 1, .data = &a};
+  ioctl(fd, UVCIOC_CTRL_QUERY, &q);
+}
+
+void pt1_disable_ffc() {
+  __u8 a[32];
+  struct uvc_xu_control_query q = { .unit = 6, .selector = 16, .query = UVC_GET_CUR, .size = 32, .data = a};
+  ioctl(fd, UVCIOC_CTRL_QUERY, &q);
+  a[0] = 0;
+  q.query = UVC_SET_CUR;
+  ioctl(fd, UVCIOC_CTRL_QUERY, &q);
 }
 
 void pt1_init(char* device) {
