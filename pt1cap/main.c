@@ -23,14 +23,15 @@ int main(int argc, char* argv[]) {
       "\tNote: Lepton records at 8.6 frames per second\n"\
       "\n"\
       "Example: %s /dev/video1\n"\
-      "\tCaptures frames to a file named whatever the current unix timestamp is with a \n"\
-      "\t.bin suffix until Ctrl+C is pressed.\n"\
+      "\tCaptures frames to a file named whatever the current unix timestamp is with\n"\
+      "\ta .bin suffix until Ctrl+C is pressed.\n"\
       "\n"\
       "Example: %s /dev/video1 capture.bin\n"\
       "\tCaptures frames to capture.bin until user presses Ctrl+C\n"\
       "\n"\
       "Example: %s /dev/video1 capture.bin 86\n"\
-      "\tCaptures frames to capture.bin for about 10 seconds or until user presses Ctrl+C\n"\
+      "\tCaptures frames to capture.bin for about 10 seconds or until user presses"\
+      "\tCtrl+C\n"\
       "\n"\
     , argv[0], argv[0], argv[0], argv[0]);
     return -1;
