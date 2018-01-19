@@ -55,6 +55,7 @@ int main(int argc, char* argv[]) {
   }
 
   pt1_init(device_name);
+  pt1_disable_ffc();
 
   FILE *fd = fopen(filename, "w");
   pt1_start();
