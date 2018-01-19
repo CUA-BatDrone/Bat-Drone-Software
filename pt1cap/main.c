@@ -54,16 +54,20 @@ int main(int argc, char* argv[]) {
     num_frames = 0;
   }
 
+  printf("Writing to %s\n", filename);
+
   pt1_init(device_name);
   pt1_disable_ffc();
 
   FILE *fd = fopen(filename, "w");
   pt1_start();
   struct frame frame;
-  for (int i = 0; i < num_frames || num_frames == 0 && run; i++) {
+  int count;
+  for (count = 0; count < num_frames || num_frames == 0 && run; count++) {
     pt1_get_frame(&frame);
     fwrite(frame.start, 1, frame.length, fd);
   }
+  printf("Wrote %d frames\n", count);
   pt1_stop();
 
   fclose(fd);
