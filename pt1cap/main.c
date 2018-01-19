@@ -12,27 +12,27 @@ void handle_sigint(int signum) {
 
 int main(int argc, char* argv[]) {
   if (argc > 4 || argc < 2) {
-    printf("\
-      Captures frames to filename until Ctrl+C is pressed.\n\
-      \n\
-      Usage: %s <device> [filename] [number_of_frames]\n\
-      \tdevice is the path of the pure thermal 1 video device. Usually /dev/video1 .\n\
-      \tfilename defaults to the current unix timestamp with a bin suffix. \n\
-      \te.g. 1510084031.bin\n\
-      \tnumber_of_frames defaults to 0.\n\
-      \tNote: Lepton records at 8.6 frames per second\n\
-      \n\
-      Example: %s /dev/video1\n\
-      \tCaptures frames to a file named whatever the current unix timestamp is with a \n\
-      \t.bin suffix until Ctrl+C is pressed.\n\
-      \n\
-      Example: %s /dev/video1 capture.bin\n\
-      \tCaptures frames to capture.bin until user presses Ctrl+C\n\
-      \n\
-      Example: %s /dev/video1 capture.bin 86\n\
-      \tCaptures frames to capture.bin for about 10 seconds or until user presses Ctrl+C\n\
-      \n\
-    ", argv[0], argv[0], argv[0], argv[0]);
+    printf(
+      "Captures frames to filename until Ctrl+C is pressed.\n"\
+      "\n"\
+      "Usage: %s <device> [filename] [number_of_frames]\n"\
+      "\tdevice is the path of the pure thermal 1 video device. Usually /dev/video1 .\n"\
+      "\tfilename defaults to the current unix timestamp with a bin suffix. \n"\
+      "\te.g. 1510084031.bin\n"\
+      "\tnumber_of_frames defaults to 0.\n"\
+      "\tNote: Lepton records at 8.6 frames per second\n"\
+      "\n"\
+      "Example: %s /dev/video1\n"\
+      "\tCaptures frames to a file named whatever the current unix timestamp is with a \n"\
+      "\t.bin suffix until Ctrl+C is pressed.\n"\
+      "\n"\
+      "Example: %s /dev/video1 capture.bin\n"\
+      "\tCaptures frames to capture.bin until user presses Ctrl+C\n"\
+      "\n"\
+      "Example: %s /dev/video1 capture.bin 86\n"\
+      "\tCaptures frames to capture.bin for about 10 seconds or until user presses Ctrl+C\n"\
+      "\n"\
+    , argv[0], argv[0], argv[0], argv[0]);
     return -1;
   }
 
