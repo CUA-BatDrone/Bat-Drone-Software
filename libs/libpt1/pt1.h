@@ -24,7 +24,7 @@ void pt1_perform_ffc();
 /**
  * Disable FFC.
  */
-void pt1_disable_fcc();
+void pt1_disable_ffc();
 
 
 /**
