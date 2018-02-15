@@ -2,6 +2,9 @@
 #include <sys/types.h>
 #include <stdint.h>
 
+#ifdef PT1
+#define PT1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -59,4 +62,6 @@ void pt1_deinit();
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

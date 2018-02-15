@@ -18,6 +18,7 @@
 
 int fd;
 int n_buffers;
+// Currently read buffer
 struct v4l2_buffer buf;
 
 
@@ -27,7 +28,7 @@ struct v4l2_buffer buf;
 struct buffer {
   void *start;
   size_t length;
-} *buffers;
+} buffers[3];
 
 static void xioctl(int fh, int request, void *arg) {
   int r;
@@ -88,13 +89,17 @@ void pt1_init(char* device) {
 
   /* Request buffers */
   CLEAR(req);
-  req.count = 2;
+  req.count = 3;
   req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   req.memory = V4L2_MEMORY_MMAP;
   xioctl(fd, VIDIOC_REQBUFS, &req);
+  if (req.count > 3) {
+    perror("Too many buffers");
+    exit(EXIT_FAILURE);
+  }
 
   /* Save buffer addresses */
-  buffers = calloc(req.count, sizeof(*buffers));
+  //buffers = calloc(req.count, sizeof(*buffers));
   for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
     CLEAR(buf);
     buf.type        = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -105,23 +110,25 @@ void pt1_init(char* device) {
       PROT_READ | PROT_WRITE, MAP_SHARED,
       fd, buf.m.offset);
 
-      if (MAP_FAILED == buffers[n_buffers].start) {
-        perror("mmap");
-        exit(EXIT_FAILURE);
-      }
+    if (MAP_FAILED == buffers[n_buffers].start) {
+      perror("mmap");
+      exit(EXIT_FAILURE);
     }
+  }
 
-    for (i = 0; i < n_buffers -1; ++i) {
-      CLEAR(buf);
-      buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-      buf.memory = V4L2_MEMORY_MMAP;
-      buf.index = i;
-      xioctl(fd, VIDIOC_QBUF, &buf);
-    }
+  /* Queue the buffers */
+  for (i = 0; i < n_buffers -1; ++i) {
     CLEAR(buf);
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf.memory = V4L2_MEMORY_MMAP;
     buf.index = i;
+    xioctl(fd, VIDIOC_QBUF, &buf);
+  }
+  /* Don't queue the last buffer. Will be queued in pt1_get_frame() */
+  CLEAR(buf);
+  buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+  buf.memory = V4L2_MEMORY_MMAP;
+  buf.index = i;
 
 }
 
