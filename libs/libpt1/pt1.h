@@ -9,7 +9,6 @@
 extern "C" {
 #endif
 
-
 #define PT1_WIDTH = 80;
 #define PT1_HEIGHT = 60;
 #define PT1_PMAX = 0x3FFF
@@ -29,16 +28,15 @@ void pt1_perform_ffc();
  */
 void pt1_disable_ffc();
 
-
 /**
  * Enable video capture.
  */
- void pt1_start();
+void pt1_start();
 
- /**
-  * Disable video capture.
-  */
-  void pt1_stop();
+/**
+ * Disable video capture.
+ */
+void pt1_stop();
 
 /**
  * Contains the buffer, sequence, and timing of a frame.
@@ -47,7 +45,7 @@ struct frame {
   void *start;
   size_t length;
   struct timeval timestamp;
-	long sequence;
+  long sequence;
 };
 
 /**

@@ -21,7 +21,6 @@ int n_buffers;
 // Currently read buffer
 struct v4l2_buffer buf;
 
-
 /**
  * Holds the address and length of a video buffer.
  */
@@ -45,23 +44,25 @@ static void xioctl(int fh, int request, void *arg) {
 
 void pt1_perform_ffc() {
   __u8 a = 0;
-  struct uvc_xu_control_query q = { .unit = 5, .selector = 12, .query = UVC_SET_CUR, .size = 1, .data = &a};
+  struct uvc_xu_control_query q = {
+      .unit = 5, .selector = 12, .query = UVC_SET_CUR, .size = 1, .data = &a};
   ioctl(fd, UVCIOC_CTRL_QUERY, &q);
 }
 
 void pt1_disable_ffc() {
   __u8 a[32];
-  struct uvc_xu_control_query q = { .unit = 6, .selector = 16, .query = UVC_GET_CUR, .size = 32, .data = a};
+  struct uvc_xu_control_query q = {
+      .unit = 6, .selector = 16, .query = UVC_GET_CUR, .size = 32, .data = a};
   ioctl(fd, UVCIOC_CTRL_QUERY, &q);
   a[0] = 0;
   q.query = UVC_SET_CUR;
   ioctl(fd, UVCIOC_CTRL_QUERY, &q);
 }
 
-void pt1_init(char* device) {
-  struct v4l2_format              fmt;
-  struct v4l2_requestbuffers      req;
-  unsigned int                    i;
+void pt1_init(char *device) {
+  struct v4l2_format fmt;
+  struct v4l2_requestbuffers req;
+  unsigned int i;
 
   /* Open camera */
   fd = v4l2_open(device, O_RDWR, 0);
@@ -72,10 +73,10 @@ void pt1_init(char* device) {
   /* Set format */
   CLEAR(fmt);
   fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  fmt.fmt.pix.width       = 80;
-  fmt.fmt.pix.height      = 60;
+  fmt.fmt.pix.width = 80;
+  fmt.fmt.pix.height = 60;
   fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_Y16;
-  fmt.fmt.pix.field       = V4L2_FIELD_NONE;
+  fmt.fmt.pix.field = V4L2_FIELD_NONE;
   xioctl(fd, VIDIOC_S_FMT, &fmt);
   if (fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_Y16) {
     puts("Pixel format error");
@@ -83,7 +84,7 @@ void pt1_init(char* device) {
   }
   if ((fmt.fmt.pix.width != 80) || (fmt.fmt.pix.height != 60)) {
     printf("Image size error. Expected 80x60 but received %dx%d\n",
-    fmt.fmt.pix.width, fmt.fmt.pix.height);
+           fmt.fmt.pix.width, fmt.fmt.pix.height);
     exit(EXIT_FAILURE);
   }
 
@@ -99,16 +100,15 @@ void pt1_init(char* device) {
   }
 
   /* Save buffer addresses */
-  //buffers = calloc(req.count, sizeof(*buffers));
+  // buffers = calloc(req.count, sizeof(*buffers));
   for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
     CLEAR(buf);
-    buf.type        = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    buf.memory      = V4L2_MEMORY_MMAP;
-    buf.index       = n_buffers;
+    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    buf.memory = V4L2_MEMORY_MMAP;
+    buf.index = n_buffers;
     xioctl(fd, VIDIOC_QUERYBUF, &buf);
-    buffers[n_buffers].start = v4l2_mmap(NULL, buf.length,
-      PROT_READ | PROT_WRITE, MAP_SHARED,
-      fd, buf.m.offset);
+    buffers[n_buffers].start = v4l2_mmap(
+        NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, buf.m.offset);
 
     if (MAP_FAILED == buffers[n_buffers].start) {
       perror("mmap");
@@ -117,7 +117,7 @@ void pt1_init(char* device) {
   }
 
   /* Queue the buffers */
-  for (i = 0; i < n_buffers -1; ++i) {
+  for (i = 0; i < n_buffers - 1; ++i) {
     CLEAR(buf);
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf.memory = V4L2_MEMORY_MMAP;
@@ -129,7 +129,6 @@ void pt1_init(char* device) {
   buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   buf.memory = V4L2_MEMORY_MMAP;
   buf.index = i;
-
 }
 
 void pt1_start() {
