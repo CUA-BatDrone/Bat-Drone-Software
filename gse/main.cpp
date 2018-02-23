@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <cstdlib>
+#include <stdint.h>
 
 #include "SDL.h"
 
@@ -10,7 +11,7 @@ int main(int argc, char* argv[]) {
 
   SDL_Window *window;
   SDL_Renderer *renderer;
-  // SDL_Texture *texture;
+  SDL_Texture *texture;
   // SDL_Event event;
 
 
@@ -18,7 +19,7 @@ int main(int argc, char* argv[]) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
     return 3;
   }
-  if (!(window = SDL_CreateWindow("Bat Drone Ground Station", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0))) {
+  if (!(window = SDL_CreateWindow("Bat Drone Ground Station", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_RESIZABLE))) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s", SDL_GetError());
     return 3;
   }
@@ -27,10 +28,23 @@ int main(int argc, char* argv[]) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create renderer: %s", SDL_GetError());
     return 3;
   }
+  if (!(texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 80, 60))) {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture: %s", SDL_GetError());
+    return 3;
+  }
 
   while(!SDL_QuitRequested()) {
+    unsigned char *pixels;
+    int pitch;
+    SDL_LockTexture(texture, NULL, (void **) &pixels, &pitch);
+    for (int i = 0; i < pitch * 60; i += 4) {
+      pixels[i] = 0xFF;
+      pixels[i+1] = pixels[i+2] = pixels[i+3] = rand();
+    }
+    SDL_UnlockTexture(texture);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
   }
 
