@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create renderer: %s", SDL_GetError());
     return 3;
   }
-  if (!(texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 80, 60))) {
+  if (!(texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24, SDL_TEXTUREACCESS_STREAMING, 80, 60))) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture: %s", SDL_GetError());
     return 3;
   }
@@ -37,15 +37,15 @@ int main(int argc, char* argv[]) {
     unsigned char *pixels;
     int pitch;
     SDL_LockTexture(texture, NULL, (void **) &pixels, &pitch);
-    for (int i = 0; i < pitch * 60; i += 4) {
-      pixels[i] = 0xFF;
-      pixels[i+1] = pixels[i+2] = pixels[i+3] = rand();
+    for (int i = 0; i < pitch * 60; i += 3) {
+      pixels[i] = pixels[i+1] = pixels[i+2] = rand();
     }
     SDL_UnlockTexture(texture);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
+    SDL_Delay(100);
   }
 
   // SDL_Delay(3000);
