@@ -1,13 +1,14 @@
-#include <sys/time.h>
-#include <sys/types.h>
-#include <stdint.h>
+#ifndef PT1_H
+#define PT1_H
 
-#ifdef PT1
-#define PT1
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <sys/time.h>
+#include <sys/types.h>
+#include <stdint.h>
 
 #define PT1_WIDTH = 80;
 #define PT1_HEIGHT = 60;
