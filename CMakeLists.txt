@@ -13,7 +13,7 @@ else()
   find_library(SDL2_LIBRARY SDL2)
   find_library(SDL2MAIN_LIBRARY SDL2main)
   set(SDL2_LIBRARIES ${SDL2_LIBRARY} ${SDL2MAIN_LIBRARY})
-  set(SDL2_INCLUDE_DIRS)
+  find_path(SDL2_INCLUDE_DIRS SDL.h PATH_SUFFIXES SDL2)
 endif(WIN32)
 
 # Libraries

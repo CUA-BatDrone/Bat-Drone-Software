@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(ground-station-equipment)
 
-include_directories(${SDL2_INCLUDE_DIRS})
 add_executable(gse main.cpp)
+target_include_directories(gse PRIVATE ${SDL2_INCLUDE_DIRS})
 target_link_libraries(gse ${SDL2_LIBRARIES})
 
 # Copy over SDL2.dll if on windows
