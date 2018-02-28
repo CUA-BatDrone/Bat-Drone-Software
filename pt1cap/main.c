@@ -64,9 +64,13 @@ int main(int argc, char* argv[]) {
   pt1_start();
   struct frame frame;
   int count;
-  for (count = 0; count < num_frames || num_frames == 0 && run; count++) {
+  for (count = 0; (count < num_frames || num_frames == 0) && run; count++) {
     pt1_get_frame(&frame);
-    fwrite(frame.start, 1, frame.length, fd);
+    if(run) {
+      fwrite(frame.start, 1, frame.length, fd);
+    } else {
+      break;
+    }
   }
   printf("Wrote %d frames\n", count);
   pt1_stop();

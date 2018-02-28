@@ -143,13 +143,13 @@ void pt1_stop() {
 
 void pt1_get_frame(struct frame *frame) {
   /* queue last buffer */
-  xioctl(fd, VIDIOC_QBUF, &buf);
+  ioctl(fd, VIDIOC_QBUF, &buf);
 
   /* dequeue next available buffer */
   CLEAR(buf);
   buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   buf.memory = V4L2_MEMORY_MMAP;
-  xioctl(fd, VIDIOC_DQBUF, &buf);
+  ioctl(fd, VIDIOC_DQBUF, &buf);
 
   /* return data */
   frame->start = buffers[buf.index].start;
