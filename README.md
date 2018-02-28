@@ -11,6 +11,7 @@ Each component has its own directory containing a README.md documenting its func
 Currently the dependencies for all projects are:
 * cmake
 * libv4l
+* libsdl2
 
 ### Installing Dependencies For Fedora
 
