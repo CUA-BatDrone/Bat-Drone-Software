@@ -28,7 +28,7 @@ public:
 
 class LWIRFrame : public PacketElement {
   long sequence;
-  uint16_t (*frame)[80][60];
+  uint16_t (*frame)[60][80];
   LWIRFrame(void *frame, long sequence);
   virtual void write(Writer *);
   virtual void read(Reader *);
@@ -36,7 +36,7 @@ class LWIRFrame : public PacketElement {
 
 class SWIRFrame : public PacketElement {
   long sequence;
-  uint8_t (*frame)[3][640][480];
+  uint8_t (*frame)[480][640][3];
   SWIRFrame(void *frame, long sequence);
   virtual void write(Writer *);
   virtual void read(Reader *);
