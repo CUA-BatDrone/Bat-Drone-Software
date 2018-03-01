@@ -13,6 +13,7 @@ class HeaderPacketElement : public PacketElement {
 public:
   uint16_t sender_id, sequence;
   uint8_t packet_id;
+  HeaderPacketElement();
   HeaderPacketElement(uint16_t sid, uint16_t seq, uint8_t pid);
   virtual void write(Writer *);
   virtual void read(Reader *);
@@ -21,6 +22,7 @@ public:
 class ControlPacketElement : public PacketElement {
 public:
   uint8_t pitch, roll, yaw, thrust;
+  ControlPacketElement();
   ControlPacketElement(uint8_t p, uint8_t r, uint8_t y, uint8_t t);
   virtual void write(Writer *);
   virtual void read(Reader *);

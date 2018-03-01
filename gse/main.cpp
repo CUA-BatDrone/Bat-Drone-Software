@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
-    SDL_Delay(100);
+    SDL_Delay(40);
   }
 
   // SDL_Delay(3000);

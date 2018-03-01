@@ -22,6 +22,8 @@ void HeaderPacketElement::read(Reader *r) {
 
 /******************************************************************************/
 
+ControlPacketElement::ControlPacketElement() {}
+
 ControlPacketElement::ControlPacketElement(uint8_t p, uint8_t r, uint8_t y, uint8_t t) {
   pitch = p;
   roll = r;
@@ -47,7 +49,7 @@ void ControlPacketElement::read(Reader *r) {
 
 LWIRFrame::LWIRFrame(void *frame, long sequence) {
   this->sequence = sequence;
-  this->frame = (uint16_t (*)[80][60]) frame;
+  this->frame = (uint16_t (*)[60][80]) frame;
 }
 
 void LWIRFrame::write(Writer *w) {
@@ -64,7 +66,7 @@ void LWIRFrame::read(Reader *r) {
 
 SWIRFrame::SWIRFrame(void *frame, long sequence) {
   this->sequence = sequence;
-  this->frame = (uint8_t (*)[3][640][480]) frame;
+  this->frame = (uint8_t (*)[480][640][3]) frame;
 }
 
 void SWIRFrame::write(Writer *w) {
