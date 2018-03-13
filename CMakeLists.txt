@@ -20,7 +20,7 @@ add_subdirectory(libs)
 
 # Programs
 if(UNIX)
-  add_subdirectory(pt1cap)
   add_subdirectory(fsw)
 endif(UNIX)
+add_subdirectory(pt1cap)
 add_subdirectory(gse)
