@@ -27,7 +27,7 @@ public:
 
 class Writer {
 public:
-  virtual void write(void *buffer, int length) = 0;
+  virtual void write(const void *buffer, int length) = 0;
   template <typename T> void write(T* data) {
     write((void *) data, sizeof(T));
   }
@@ -56,6 +56,20 @@ protected:
 public:
   UDPPacketAccessor(int udp_socket);
   UDPPacketAccessor(char *address, char *port);
+  virtual int read_packet();
+  virtual void read(void *buffer, int length);
+  virtual void write(const void *buffer, int length);
+  virtual void write_packet();
+};
+
+class LoopbackPacketAccessor : public PacketAccessor {
+protected:
+  char buffer[MAX_PACKET_SIZE];
+  char *read_index;
+  char *read_end;
+  char *write_index;
+public:
+  LoopbackPacketAccessor();
   virtual int read_packet();
   virtual void read(void *buffer, int length);
   virtual void write(const void *buffer, int length);
