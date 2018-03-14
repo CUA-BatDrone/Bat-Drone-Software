@@ -2,6 +2,8 @@
 #include "packet_accessor.hpp"
 
 
+HeaderPacketElement::HeaderPacketElement() {}
+
 HeaderPacketElement::HeaderPacketElement(uint16_t sid, uint16_t seq, uint8_t pid) {
   sender_id = sid;
   sequence = seq;
@@ -47,6 +49,8 @@ void ControlPacketElement::read(Reader *r) {
 
 /******************************************************************************/
 
+LWIRFrame::LWIRFrame() {}
+
 LWIRFrame::LWIRFrame(void *frame, long sequence) {
   this->sequence = sequence;
   this->frame = (uint16_t (*)[60][80]) frame;
@@ -63,6 +67,8 @@ void LWIRFrame::read(Reader *r) {
 }
 
 /******************************************************************************/
+
+SWIRFrame::SWIRFrame() {};
 
 SWIRFrame::SWIRFrame(void *frame, long sequence) {
   this->sequence = sequence;

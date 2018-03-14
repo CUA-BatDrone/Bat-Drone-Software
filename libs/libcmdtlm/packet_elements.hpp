@@ -29,16 +29,20 @@ public:
 };
 
 class LWIRFrame : public PacketElement {
+public:
   long sequence;
   uint16_t (*frame)[60][80];
+  LWIRFrame();
   LWIRFrame(void *frame, long sequence);
   virtual void write(Writer *);
   virtual void read(Reader *);
 };
 
 class SWIRFrame : public PacketElement {
+public:
   long sequence;
   uint8_t (*frame)[480][640][3];
+  SWIRFrame();
   SWIRFrame(void *frame, long sequence);
   virtual void write(Writer *);
   virtual void read(Reader *);
