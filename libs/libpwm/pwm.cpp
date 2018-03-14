@@ -1,12 +1,17 @@
-#include <linux/i2c-dev.h>
-#include <i2c/smbus.h>
+#include "pwm.hpp"
 #include <stdint.h>
-#include <sys/ioctl>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
 
 const uint8_t ADDRESS = 0x40;
 
 // 205 410
-PWMDevice::PWMDevice(char *path) {
+PWMDevice::PWMDevice(const char *path) {
 	if (fd = open(path, O_RDWR) == -1) {
 		fprintf(stderr, "errno %i\n", errno);
 	} else {
@@ -29,7 +34,7 @@ PWMDevice::PWMDevice(char *path) {
 		msgs[1].buf = buf1;
 
 		struct i2c_rdwr_ioctl_data data;
-		data.msgs = &msgs;
+		data.msgs = msgs;
 		data.nmsgs = 2;
 		ioctl(fd, I2C_RDWR, &data);
 	}
@@ -40,7 +45,7 @@ PWMDevice::~PWMDevice() {
 }
 
 // max 2048
-PWMDevice::setPeriod(unsigned char channel, unsigned short period) {
+void PWMDevice::setPeriod(unsigned char channel, unsigned short period) {
 	struct i2c_msg msgs[2];
 	msgs[0].addr = ADDRESS;
 	msgs[0].flags = 0;
@@ -59,11 +64,11 @@ PWMDevice::setPeriod(unsigned char channel, unsigned short period) {
 	msgs[1].buf = buf1;
 
 	struct i2c_rdwr_ioctl_data data;
-	data.msgs = &msgs;
+	data.msgs = msgs;
 	data.nmsgs = 2;
 	ioctl(fd, I2C_RDWR, &data);
 }
 
-setPosition(unsigned char channel, float position) {
+void PWMDevice::setPosition(unsigned char channel, float position) {
 	setPeriod(channel, (position + 1) / 2 * 205 + 205);
 }

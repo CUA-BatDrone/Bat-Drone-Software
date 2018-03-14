@@ -1,19 +1,20 @@
 #include <linux/i2c-dev.h>
-#include <i2c/smbus.h>
+#include <linux/i2c.h>
 #include <stdint.h>
 
 const uint8_t address = 0x40;
 
 class PWMDevice {
+private:
 	int fd;
-	setPeriod(unsigned char channel, unsigned short value);
+	void setPeriod(unsigned char channel, unsigned short value);
 public:
-	PWMDevice(char *path);
-	~PWMDevice(char *path);
+	PWMDevice(const char *path);
+	~PWMDevice();
 
   /**
    * Controls a channel's position
    * @param position between -1 and 1
    */
-	setPosition(unsigned char channel, float position);
-}
+	void setPosition(unsigned char channel, float position);
+};
