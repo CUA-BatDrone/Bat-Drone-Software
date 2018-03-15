@@ -45,16 +45,22 @@ void UDPPacketAccessor::connectSocket(const char *addr_str, int port) {
   has_src_addr = true;
 }
 
-UDPPacketAccessor::UDPPacketAccessor() {
+void UDPPacketAccessor::init() {
   read_index = read_buffer;
   read_end = read_buffer;
   write_index = write_buffer;
 }
-UDPPacketAccessor::UDPPacketAccessor(int bind_port) : UDPPacketAccessor() {
+
+UDPPacketAccessor::UDPPacketAccessor() {
+  init();
+}
+UDPPacketAccessor::UDPPacketAccessor(int bind_port) {
+  init();
   createSocket();
   bindSocket(bind_port);
 }
-UDPPacketAccessor::UDPPacketAccessor(int bind_port, const char *conn_addr, int conn_port) : UDPPacketAccessor() {
+UDPPacketAccessor::UDPPacketAccessor(int bind_port, const char *conn_addr, int conn_port) {
+  init();
   createSocket();
   bindSocket(bind_port);
   connectSocket(conn_addr, conn_port);

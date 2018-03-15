@@ -44,6 +44,7 @@ class PacketAccessor : public PacketReader, public PacketWriter {
 
 class UDPPacketAccessor : public PacketAccessor {
 private:
+  void init();
   void createSocket();
   void bindSocket(int port);
   void connectSocket(const char *addr_str, int port);
