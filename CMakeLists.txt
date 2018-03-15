@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(Bat-Drone-Software)
 
+set(CMAKE_CXX_STANDARD 11)
+
 # SDL config
 if(WIN32)
   # include_directories(${CMAKE_CURRENT_SOURCE_DIR}/windows/SDL2-2.0.7/include)

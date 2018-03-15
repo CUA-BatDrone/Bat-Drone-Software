@@ -5,9 +5,14 @@
 
 #include <SDL.h>
 
+#include "cmd_tlm.hpp"
+
 using namespace std;
 
 int main(int argc, char* argv[]) {
+  // UDPPacketAccessor a(1995, "192.168.0.1", 1995);
+	// CmdTlm cmdtlm(0, &a, &a);
+
 
   SDL_Window *window;
   SDL_Renderer *renderer;
@@ -32,12 +37,45 @@ int main(int argc, char* argv[]) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture: %s", SDL_GetError());
     return 3;
   }
+  bool run = true;
+  while(run) {
+    // check for events
+    SDL_Event e;
+    while(SDL_PollEvent(&e)) {
+      if(e.type == SDL_QUIT) {
+        run = false;
+        continue;
+      }
+    }
+    const Uint8 *keyboard = SDL_GetKeyboardState(NULL);
+    float pitch, roll, yaw, thrust;
+    float rate = 0.1;
+    if (keyboard[SDL_SCANCODE_W]) {
+      pitch = rate;
+    } else if (keyboard[SDL_SCANCODE_S]) {
+      pitch = -rate;
+    } else {
+      pitch = 0;
+    }
+    if (keyboard[SDL_SCANCODE_A]) {
+      roll = -rate;
+    } else if (keyboard[SDL_SCANCODE_D]) {
+      roll = rate;
+    } else {
+      roll = 0;
+    }
+    if (keyboard[SDL_SCANCODE_Q]) {
+      yaw = -rate;
+    } else if (keyboard[SDL_SCANCODE_E]) {
+      yaw = rate;
+    } else {
+      yaw = 0;
+    }
 
-  while(!SDL_QuitRequested()) {
     unsigned char *pixels;
-    int pitch;
-    SDL_LockTexture(texture, NULL, (void **) &pixels, &pitch);
-    for (int i = 0; i < pitch * 60; i += 3) {
+    int pixel_pitch;
+    SDL_LockTexture(texture, NULL, (void **) &pixels, &pixel_pitch);
+    for (int i = 0; i < pixel_pitch * 60; i += 3) {
       pixels[i] = pixels[i+1] = pixels[i+2] = rand();
     }
     SDL_UnlockTexture(texture);
