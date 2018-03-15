@@ -13,7 +13,7 @@ const uint8_t ADDRESS = 0x40;
 // 205 410
 PWMDevice::PWMDevice(const char *path) {
 	if ((fd = open(path, O_RDWR)) < 0) {
-		fprintf(stderr, "errno %i\n", errno);
+		perror("open failed")
 	} else {
 		struct i2c_msg msgs[2];
 
