@@ -5,6 +5,7 @@
 #include <winsock2.h>
 #else
 #include <sys/socket.h>
+#include <unistd.h>
 #endif
 
 #include <string.h>
@@ -42,6 +43,11 @@ class PacketAccessor : public PacketReader, public PacketWriter {
 };
 
 class UDPPacketAccessor : public PacketAccessor {
+private:
+  void createSocket();
+  void bindSocket(int port);
+  void connectSocket(const char *addr_str, int port);
+  bool has_src_addr;
 protected:
   int sockfd;
   char read_buffer[MAX_PACKET_SIZE];
@@ -51,11 +57,14 @@ protected:
   char write_buffer[MAX_PACKET_SIZE];
   char *write_index;
 
-  int socket;
   struct sockaddr_storage src_addr;
 public:
-  UDPPacketAccessor(int udp_socket);
-  UDPPacketAccessor(char *address, char *port);
+  // write_packet replies to last received packet sender address
+  UDPPacketAccessor();
+  UDPPacketAccessor(int bind_port);
+  // write_packet replies to connected address
+  UDPPacketAccessor(int bind_port, const char *conn_addr, int conn_port);
+  ~UDPPacketAccessor();
   virtual int read_packet();
   virtual void read(void *buffer, int length);
   virtual void write(const void *buffer, int length);
