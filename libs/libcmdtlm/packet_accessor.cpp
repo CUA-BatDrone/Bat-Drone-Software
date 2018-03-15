@@ -26,7 +26,7 @@ void UDPPacketAccessor::bindSocket(int port) {
   myaddr.sin_addr.s_addr = INADDR_ANY;
   myaddr.sin_port = htons(port);
 
-  if((sockfd = bind(sockfd, (sockaddr *) &myaddr, sizeof(myaddr))) < 0) {
+  if((bind(sockfd, (sockaddr *) &myaddr, sizeof(myaddr))) < 0) {
     perror("could not bind socket");
   }
   has_src_addr = false;
@@ -38,7 +38,7 @@ void UDPPacketAccessor::connectSocket(const char *addr_str, int port) {
   myaddr.sin_addr.s_addr = inet_aton(addr_str, &myaddr.sin_addr);
   myaddr.sin_port = htons(port);
 
-  if((sockfd = connect(sockfd, (const sockaddr*) &myaddr, sizeof(myaddr))) < 0) {
+  if((connect(sockfd, (const sockaddr*) &myaddr, sizeof(myaddr))) < 0) {
     perror("could not connect socket");
   }
   memcpy(&src_addr, &myaddr, sizeof(myaddr));
