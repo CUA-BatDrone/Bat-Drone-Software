@@ -21,9 +21,9 @@ public:
 
 class ControlPacketElement : public PacketElement {
 public:
-  uint8_t pitch, roll, yaw, thrust;
+  float pitch, roll, yaw, thrust;
   ControlPacketElement();
-  ControlPacketElement(uint8_t p, uint8_t r, uint8_t y, uint8_t t);
+  ControlPacketElement(float p, float r, float y, float t);
   virtual void write(Writer *);
   virtual void read(Reader *);
 };

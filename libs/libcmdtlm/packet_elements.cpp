@@ -26,7 +26,7 @@ void HeaderPacketElement::read(Reader *r) {
 
 ControlPacketElement::ControlPacketElement() {}
 
-ControlPacketElement::ControlPacketElement(uint8_t p, uint8_t r, uint8_t y, uint8_t t) {
+ControlPacketElement::ControlPacketElement(float p, float r, float y, float t) {
   pitch = p;
   roll = r;
   yaw = y;
