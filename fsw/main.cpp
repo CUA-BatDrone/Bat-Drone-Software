@@ -4,8 +4,6 @@
 
 using namespace std;
 
- // AETR
-
 int main(int argc, char* argv[]) {
   try {
     UDPSocket s;
@@ -21,6 +19,7 @@ int main(int argc, char* argv[]) {
         this->pwm = pwm;
       }
       void control(ControlPacketElement *e) {
+        // AETR
         pwm->setPosition(4, e->roll);
         pwm->setPosition(5, e->pitch);
         pwm->setPosition(6, e->thrust);
