@@ -10,7 +10,7 @@
 #include <errno.h>
 #include <unistd.h>
 
-const uint8_t ADDRESS = 0x40;
+#define ADDRESS 0x40
 
 // 205 410
 PWMDevice::PWMDevice(const char *path) {
