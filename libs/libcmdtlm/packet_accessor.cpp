@@ -35,7 +35,12 @@ void UDPPacketAccessor::bindSocket(int port) {
 void UDPPacketAccessor::connectSocket(const char *addr_str, int port) {
   struct sockaddr_in myaddr = {0};
   myaddr.sin_family = AF_INET;
-  myaddr.sin_addr.s_addr = inet_aton(addr_str, &myaddr.sin_addr);
+  #ifdef _WIN32
+  myaddr.sin_addr.s_addr = InetPton(AF_INET, addr_str, &myaddr.sin_addr);
+  #else
+  inet_aton(addr_str, &myaddr.sin_addr);
+  #endif // _WIN32
+
   myaddr.sin_port = htons(port);
 
   if((connect(sockfd, (const sockaddr*) &myaddr, sizeof(myaddr))) < 0) {
@@ -66,7 +71,12 @@ UDPPacketAccessor::UDPPacketAccessor(int bind_port, const char *conn_addr, int c
   connectSocket(conn_addr, conn_port);
 }
 UDPPacketAccessor::~UDPPacketAccessor() {
-  close(sockfd);
+#ifdef _WIN32
+	closesocket(sockfd);
+#else
+	close(sockfd);
+#endif // _WIN32
+
 }
 int UDPPacketAccessor::read_packet() {
   read_index = read_buffer;

@@ -10,8 +10,6 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  // UDPPacketAccessor a(1995, "192.168.0.1", 1995);
-	// CmdTlm cmdtlm(0, &a, &a);
 
 
   SDL_Window *window;
@@ -48,29 +46,30 @@ int main(int argc, char* argv[]) {
       }
     }
     const Uint8 *keyboard = SDL_GetKeyboardState(NULL);
-    float pitch, roll, yaw, thrust;
+    ControlPacketElement p;
     float rate = 0.1;
     if (keyboard[SDL_SCANCODE_W]) {
-      pitch = rate;
+      p.pitch = rate;
     } else if (keyboard[SDL_SCANCODE_S]) {
-      pitch = -rate;
+      p.pitch = -rate;
     } else {
-      pitch = 0;
+      p.pitch = 0;
     }
     if (keyboard[SDL_SCANCODE_A]) {
-      roll = -rate;
+      p.roll = -rate;
     } else if (keyboard[SDL_SCANCODE_D]) {
-      roll = rate;
+      p.roll = rate;
     } else {
-      roll = 0;
+      p.roll = 0;
     }
     if (keyboard[SDL_SCANCODE_Q]) {
-      yaw = -rate;
+      p.yaw = -rate;
     } else if (keyboard[SDL_SCANCODE_E]) {
-      yaw = rate;
+      p.yaw = rate;
     } else {
-      yaw = 0;
+      p.yaw = 0;
     }
+    // cmdtlm.control(&p);
 
     unsigned char *pixels;
     int pixel_pitch;
