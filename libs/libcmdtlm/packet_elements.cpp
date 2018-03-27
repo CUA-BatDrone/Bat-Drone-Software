@@ -47,6 +47,17 @@ void ControlPacketElement::read(Reader *r) {
   r->read(&thrust);
 }
 
+std::string ControlPacketElement::toString() {
+  std::string s;
+  s += std::string("{\n");
+  s += std::string("  pitch  : ") + std::to_string(pitch) + std::string("\n");
+  s += std::string("  roll   : ") + std::to_string(roll) + std::string("\n");
+  s += std::string("  yaw    : ") + std::to_string(yaw) + std::string("\n");
+  s += std::string("  thrust : ") + std::to_string(thrust) + std::string("\n");
+  s += std::string("}\n");
+  return s;
+}
+
 /******************************************************************************/
 
 LWIRFrame::LWIRFrame() {}

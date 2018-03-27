@@ -1,21 +1,41 @@
 #include "packet_accessor_2.hpp"
 #include <string.h>
-#include <errno.h>
-#include <unistd.h>
-#include <arpa/inet.h>
 #include <string>
+#include <errno.h>
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netdb.h>
+#endif
+#include <iostream>
 
 UDPSocket::UDPSocket() {
-  if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    throw (const char *) strerror(errno);
+#ifdef _WIN32
+  int err = WSAStartup(MAKEWORD(2, 2), &WSADATA());
+  if (err != 0) {
+    throw std::string("WSAStartup failed with error ") + std::to_string(err);
+  }
+#endif
+  if((sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+#ifdef _WIN32
+    throw std::string("UDPSocket::UDPSocket(): ") + std::to_string(WSAGetLastError());
+#else
+    throw std::string("UDPSocket::UDPSocket():") + std::string(strerror(errno));
+#endif
   }
 }
 
 UDPSocket::~UDPSocket() {
+#ifdef _WIN32
+  closesocket(sockfd);
+  WSACleanup();
+#else
   close(sockfd);
+#endif
 }
 
 sockaddr_storage Socket::stringToAddr(const char *addr_in, int port) {
@@ -33,13 +53,17 @@ void UDPSocket::bind(int port) {
   addr.sin_port = htons(port);
   addr.sin_addr.s_addr = INADDR_ANY;
   if (::bind(sockfd, (sockaddr *) &addr, sizeof(addr)) < 0) {
-    throw (const char *) strerror(errno);
+    throw std::string(strerror(errno));
   }
 }
 
 void UDPSocket::connect(sockaddr_storage addr) {
   if (::connect(sockfd, (sockaddr *) &addr, sizeof(addr)) < 0) {
-    throw (const char *) strerror(errno);
+#ifdef _WIN32
+    throw std::string("UDPSocket::UDPSocket()") + std::to_string(WSAGetLastError());
+#else
+    throw std::string(strerror(errno));
+#endif
   }
 }
 
@@ -77,7 +101,7 @@ BufferReader::BufferReader(int size) : Buffer(size) {
 void BufferReader::read(void *data, int length) {
   buf_t *buf_next = buf_current + length;
   if (buf_next > read_end) {
-    throw "Read out of range";
+    throw std::string("Read out of range");
   }
   memcpy(data, buf_current, length);
   buf_current = buf_next;
@@ -93,7 +117,7 @@ BufferWriter::BufferWriter(int size) : Buffer(size) {}
 void BufferWriter::write(const void *data, int length) {
   buf_t *buf_next = buf_current + length;
   if (buf_next > buf_end) {
-    throw "Write out of range";
+    throw std::string("Write out of range");
   }
   memcpy(buf_current, data, length);
   buf_current = buf_next;
@@ -102,20 +126,20 @@ void BufferWriter::write(const void *data, int length) {
 
 UDPPacketReader::UDPPacketReader(Socket &socket, int buf_size) : UDPPacketReader(socket.sockfd, buf_size) {}
 
-UDPPacketReader::UDPPacketReader(int socket, int buf_size) : BufferReader(buf_size) {
+UDPPacketReader::UDPPacketReader(Socket::sockfd_t socket, int buf_size) : BufferReader(buf_size) {
   this->socket = socket;
 }
 
 int UDPPacketReader::recv(void *data, int length) {
-  if ((length = ::recv(socket, data, length, 0)) < 0) {
+  if ((length = ::recv(socket, (char *) data, length, 0)) < 0) {
     buf_current = buf_start;
-    throw (const char *) strerror(errno);
+    throw std::string(strerror(errno));
   }
   return length;
 }
 
 void UDPPacketReader::read_packet() {
-  ssize_t length;
+  int length;
   length = recv(buf_start, buf_end - buf_start);
   read_end = buf_start + length;
   buf_current = buf_start;
@@ -124,15 +148,15 @@ void UDPPacketReader::read_packet() {
 
 UDPAddrPacketReader::UDPAddrPacketReader(Socket &socket, int buf_size) : UDPAddrPacketReader(socket.sockfd, buf_size) {}
 
-UDPAddrPacketReader::UDPAddrPacketReader(int socket, int buf_size) : UDPPacketReader(socket, buf_size) {
+UDPAddrPacketReader::UDPAddrPacketReader(Socket::sockfd_t socket, int buf_size) : UDPPacketReader(socket, buf_size) {
   this->socket = socket;
 }
 
 int UDPAddrPacketReader::recv(void *data, int length) {
   socklen_t addrlen = sizeof(reply_addr);
-  if ((length = ::recvfrom(socket, data, length, 0, (sockaddr *) &reply_addr, &addrlen)) < 0) {
+  if ((length = ::recvfrom(socket, (char *) data, length, 0, (sockaddr *) &reply_addr, &addrlen)) < 0) {
     buf_current = buf_start;
-    throw (const char *) strerror(errno);
+    throw std::string(strerror(errno));
   }
   return length;
 }
@@ -144,13 +168,13 @@ UDPAddrPacketWriter UDPAddrPacketReader::getReplyPacketWriter(int buf_size) {
 
 UDPPacketWriter::UDPPacketWriter(Socket &socket, int buf_size) : UDPPacketWriter(socket.sockfd, buf_size) {}
 
-UDPPacketWriter::UDPPacketWriter(int socket, int buf_size) : BufferWriter(buf_size) {
+UDPPacketWriter::UDPPacketWriter(Socket::sockfd_t socket, int buf_size) : BufferWriter(buf_size) {
   this->socket = socket;
 }
 
 void UDPPacketWriter::send(void *data, int length) {
-  if (::send(socket, data, length, 0) < 0) {
-    throw (const char *) strerror(errno);
+  if (::send(socket, (char *) data, length, 0) < 0) {
+    throw std::string(strerror(errno));
   }
 }
 
@@ -162,14 +186,14 @@ void UDPPacketWriter::write_packet() {
 
 UDPAddrPacketWriter::UDPAddrPacketWriter(struct sockaddr_storage &address, Socket &socket, int buf_size) : UDPAddrPacketWriter(address, socket.sockfd, buf_size) {}
 
-UDPAddrPacketWriter::UDPAddrPacketWriter(struct sockaddr_storage &address, int socket, int buf_size) : UDPPacketWriter(socket, buf_size) {
+UDPAddrPacketWriter::UDPAddrPacketWriter(struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size) : UDPPacketWriter(socket, buf_size) {
   this->socket = socket;
   this->address = address;
 }
 
 void UDPAddrPacketWriter::send(void *data, int length) {
-  if (::sendto(socket, data, length, 0, (sockaddr *) &address, sizeof(address)) < 0) {
-    throw (const char *) strerror(errno);
+  if (::sendto(socket, (char *) data, length, 0, (sockaddr *) &address, sizeof(address)) < 0) {
+    throw std::string(strerror(errno));
   }
 }
 
@@ -214,7 +238,7 @@ int UDPSplitPacketReader::SplitPacket::getID() {
 
 UDPSplitPacketReader::UDPSplitPacketReader(Socket &socket, int max, int mtu) : UDPSplitPacketReader(socket.sockfd, max, mtu) {}
 
-UDPSplitPacketReader::UDPSplitPacketReader(int socket, int max, int mtu) {
+UDPSplitPacketReader::UDPSplitPacketReader(Socket::sockfd_t socket, int max, int mtu) {
   this->socket = socket;
   this->max = max;
   this->mtu = mtu;
@@ -222,8 +246,8 @@ UDPSplitPacketReader::UDPSplitPacketReader(int socket, int max, int mtu) {
 }
 
 int UDPSplitPacketReader::recv(void *data, int length) {
-  if ((length = ::recv(socket, data, length, 0)) < 0) {
-    throw (const char *) strerror(errno);
+  if ((length = ::recv(socket, (char *) data, length, 0)) < 0) {
+    throw std::string(strerror(errno));
   }
   return length;
 }
@@ -238,7 +262,7 @@ void UDPSplitPacketReader::read(void *buffer, int length) {
       }
       if (currentLength < length) {
         if (!currentPacket->hasNext) {
-          throw "UDPSplitPacketReader::read: no more packets to read";
+          throw std::string("UDPSplitPacketReader::read: no more packets to read");
         }
         currentPacket->read(buffer, currentLength);
         buffer = (char *) buffer + currentLength;
@@ -249,7 +273,7 @@ void UDPSplitPacketReader::read(void *buffer, int length) {
       }
     }
   } else {
-    throw "UDPSplitPacketReader::read: no packets read";
+    throw std::string("UDPSplitPacketReader::read: no packets read");
   }
 }
 
@@ -437,12 +461,12 @@ void UDPSplitPacketReader::read_packet() {
 
 UDPSplitAddrPacketReader::UDPSplitAddrPacketReader(Socket &socket, int max, int mtu) : UDPSplitPacketReader(socket.sockfd, max, mtu) {}
 
-UDPSplitAddrPacketReader::UDPSplitAddrPacketReader(int socket, int max, int mtu) : UDPSplitPacketReader(socket, max, mtu) {}
+UDPSplitAddrPacketReader::UDPSplitAddrPacketReader(Socket::sockfd_t socket, int max, int mtu) : UDPSplitPacketReader(socket, max, mtu) {}
 
 int UDPSplitAddrPacketReader::recv(void *data, int length) {
   socklen_t addrlen = sizeof(reply_addr);
-  if ((length = ::recvfrom(socket, data, length, 0, (sockaddr *) &reply_addr, &addrlen)) < 0) {
-    throw (const char *) strerror(errno);
+  if ((length = ::recvfrom(socket, (char *) data, length, 0, (sockaddr *) &reply_addr, &addrlen)) < 0) {
+    throw std::string(strerror(errno));
   }
   return length;
 }
@@ -454,7 +478,7 @@ UDPSplitAddrPacketWriter UDPSplitAddrPacketReader::getReplyPacketWriter(int id, 
 
 UDPSplitPacketWriter::UDPSplitPacketWriter(uint16_t id, Socket &socket, int mtu, int buf_size) : UDPSplitPacketWriter(id, socket.sockfd, mtu, buf_size) {}
 
-UDPSplitPacketWriter::UDPSplitPacketWriter(uint16_t id, int socket, int mtu, int buf_size) : BufferWriter(buf_size) {
+UDPSplitPacketWriter::UDPSplitPacketWriter(uint16_t id, Socket::sockfd_t socket, int mtu, int buf_size) : BufferWriter(buf_size) {
   this->mtu = mtu;
   this->id = id;
   this->socket = socket;
@@ -463,8 +487,8 @@ UDPSplitPacketWriter::UDPSplitPacketWriter(uint16_t id, int socket, int mtu, int
 }
 
 void UDPSplitPacketWriter::send(void *data, int length) {
-  if (::send(socket, data, length, 0) < 0) {
-    throw (const char *) strerror(errno);
+  if (::send(socket, (char *) data, length, 0) < 0) {
+    throw std::string(strerror(errno));
   }
 }
 
@@ -519,12 +543,12 @@ UDPSplitAddrPacketWriter::UDPSplitAddrPacketWriter(int mtu, uint16_t id, struct 
   this->address = address;
 }
 
-UDPSplitAddrPacketWriter::UDPSplitAddrPacketWriter(int mtu, uint16_t id, struct sockaddr_storage &address, int socket, int buf_size) : UDPSplitPacketWriter(id, socket, mtu, buf_size) {
+UDPSplitAddrPacketWriter::UDPSplitAddrPacketWriter(int mtu, uint16_t id, struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size) : UDPSplitPacketWriter(id, socket, mtu, buf_size) {
   this->address = address;
 }
 
 void UDPSplitAddrPacketWriter::send(void *data, int length) {
-  if (::sendto(socket, data, length, 0, (sockaddr *) &address, sizeof(address)) < 0) {
-    throw (const char *) strerror(errno);
+  if (::sendto(socket, (char *) data, length, 0, (sockaddr *) &address, sizeof(address)) < 0) {
+    throw std::string(strerror(errno));
   }
 }

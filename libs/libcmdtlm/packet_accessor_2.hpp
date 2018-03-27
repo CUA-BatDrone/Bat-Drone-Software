@@ -1,19 +1,28 @@
 #ifndef PACKET_ACCESSOR_HPP
 #define PACKET_ACCESSOR_HPP
-
+#ifdef _WIN32
+#include <winsock2.h>
+#else
 #include <sys/socket.h>
+#include <unistd.h>
+#endif
 #include <string>
 #include "packet_element.hpp"
 #include <list>
 
-#define DEFAULT_BUFFER_SIZE 10000
+#define DEFAULT_BUFFER_SIZE 1000000
 // #define DEFAULT_BUFFER_SIZE 2047
 
 class Socket {
 protected:
   sockaddr_storage stringToAddr(const char *addr, int port);
 public:
-  int sockfd;
+#ifdef _WIN32
+  typedef SOCKET sockfd_t;
+#else
+  typedef int sockfd_t;
+#endif
+  sockfd_t sockfd;
 };
 
 class UDPSocket : public Socket {
@@ -89,11 +98,11 @@ public:
 
 class UDPPacketReader : public BufferReader, public virtual PacketReader {
 protected:
-  int socket;
+  Socket::sockfd_t socket;
   int recv(void *data, int length);
 public:
   UDPPacketReader(Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
-  UDPPacketReader(int socket, int buf_size = DEFAULT_BUFFER_SIZE);
+  UDPPacketReader(Socket::Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
   virtual void read_packet();
 };
 
@@ -105,17 +114,17 @@ protected:
 public:
   struct sockaddr_storage reply_addr;
   UDPAddrPacketReader(Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
-  UDPAddrPacketReader(int socket, int buf_size = DEFAULT_BUFFER_SIZE);
+  UDPAddrPacketReader(Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
   UDPAddrPacketWriter getReplyPacketWriter(int buf_size = DEFAULT_BUFFER_SIZE);
 };
 
 class UDPPacketWriter : public BufferWriter, public virtual PacketWriter {
 protected:
-  int socket;
+  Socket::sockfd_t socket;
   void send(void *data, int length);
 public:
   UDPPacketWriter(Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
-  UDPPacketWriter(int socket, int buf_size = DEFAULT_BUFFER_SIZE);
+  UDPPacketWriter(Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
   virtual void write_packet();
 };
 
@@ -125,12 +134,12 @@ protected:
 public:
   struct sockaddr_storage address;
   UDPAddrPacketWriter(struct sockaddr_storage &address, Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
-  UDPAddrPacketWriter(struct sockaddr_storage &address, int socket, int buf_size = DEFAULT_BUFFER_SIZE);
+  UDPAddrPacketWriter(struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
 };
 
 class UDPSplitPacketWriter : public BufferWriter, public virtual PacketWriter {
 protected:
-  int socket;
+  Socket::sockfd_t socket;
   int mtu;
   uint16_t id;
   uint16_t count;
@@ -138,7 +147,7 @@ protected:
 public:
   // MTU 2047
   UDPSplitPacketWriter(uint16_t id, Socket &socket, int mtu = 2047, int buf_size = DEFAULT_BUFFER_SIZE);
-  UDPSplitPacketWriter(uint16_t id, int socket, int mtu = 2047, int buf_size = DEFAULT_BUFFER_SIZE);
+  UDPSplitPacketWriter(uint16_t id, Socket::sockfd_t socket, int mtu = 2047, int buf_size = DEFAULT_BUFFER_SIZE);
   virtual void write_packet();
 };
 
@@ -168,11 +177,11 @@ protected:
   std::list<SplitPacket>::iterator currentPacket;
   int maxReceivedPackets;
 public:
-  int socket;
+  Socket::sockfd_t socket;
   int max;
   int mtu;
   UDPSplitPacketReader(Socket &socket, int max = 1000, int mtu = 2047);
-  UDPSplitPacketReader(int socket, int max = 1000, int mtu = 2047);
+  UDPSplitPacketReader(Socket::sockfd_t socket, int max = 1000, int mtu = 2047);
   void read(void *buffer, int length);
   virtual void read_packet();
 };
@@ -184,7 +193,7 @@ protected:
   int recv(void *data, int length);
 public:
   UDPSplitAddrPacketReader(Socket &socket, int max = 1000, int mtu = 2047);
-  UDPSplitAddrPacketReader(int socket, int max = 1000, int mtu = 2047);
+  UDPSplitAddrPacketReader(Socket::sockfd_t socket, int max = 1000, int mtu = 2047);
   struct sockaddr_storage reply_addr;
   UDPSplitAddrPacketWriter getReplyPacketWriter(int id, int buf_size = DEFAULT_BUFFER_SIZE);
 };
@@ -196,7 +205,7 @@ public:
   struct sockaddr_storage address;
   // MTU 2047
   UDPSplitAddrPacketWriter(int mtu, uint16_t id, struct sockaddr_storage &address, Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
-  UDPSplitAddrPacketWriter(int mtu, uint16_t id, struct sockaddr_storage &address, int socket, int buf_size = DEFAULT_BUFFER_SIZE);
+  UDPSplitAddrPacketWriter(int mtu, uint16_t id, struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
 };
 
 #endif

@@ -4,6 +4,7 @@
 #include "packet_accessor_2.hpp"
 #include <stdint.h>
 #include "packet_element.hpp"
+#include <string>
 
 class HeaderPacketElement : public virtual PacketElement {
 public:
@@ -22,6 +23,7 @@ public:
   ControlPacketElement(float p, float r, float y, float t);
   virtual void write(Writer *) const;
   virtual void read(Reader *);
+  std::string toString();
 };
 
 class LWIRFrame : public virtual PacketElement {
