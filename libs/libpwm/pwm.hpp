@@ -1,5 +1,3 @@
-#include <linux/i2c-dev.h>
-#include <linux/i2c.h>
 #include <stdint.h>
 
 const uint8_t address = 0x40;
@@ -14,7 +12,8 @@ public:
 
   /**
    * Controls a channel's position
-   * @param position between -1 and 1
+   * @param channel The channel on the PWM Hat starting at zero.
+   * @param position -1 stick left or down. 1 stick right or up.
    */
 	void setPosition(unsigned char channel, float position);
 };

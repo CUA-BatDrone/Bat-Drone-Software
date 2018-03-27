@@ -1,4 +1,6 @@
 #include "pwm.hpp"
+#include <linux/i2c-dev.h>
+#include <linux/i2c.h>
 #include <stdint.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
