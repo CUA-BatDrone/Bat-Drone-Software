@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(Bat-Drone-Software)
 
+# Option for compiling FSW specific files.
+set(FSW OFF CACHE BOOL "Configure for running on the flight computer")
+
 set(CMAKE_CXX_STANDARD 11)
 
 # SDL config
@@ -21,8 +24,6 @@ endif(WIN32)
 add_subdirectory(libs)
 
 # Programs
-if(UNIX)
-  add_subdirectory(fsw)
-endif(UNIX)
+add_subdirectory(fsw)
 add_subdirectory(pt1cap)
 add_subdirectory(gse)

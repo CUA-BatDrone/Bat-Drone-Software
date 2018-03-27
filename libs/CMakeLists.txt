@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 if(UNIX)
   add_subdirectory(libpt1)
-  add_subdirectory(libpwm)
 endif(UNIX)
+add_subdirectory(libpwm)
 add_subdirectory(libcmdtlm)

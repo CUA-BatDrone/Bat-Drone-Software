@@ -1,4 +1,4 @@
 cmake_minimum_required(VERSION 3.0)
 project(flight-software)
 add_executable(fsw main.cpp)
-target_link_libraries(fsw cmdtlm)
+target_link_libraries(fsw cmdtlm pwm)

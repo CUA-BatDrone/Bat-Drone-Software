@@ -1,7 +1,10 @@
 #include "cmd_tlm.hpp"
+#include "pwm.hpp"
 #include <iostream>
 
 using namespace std;
+
+ // AETR
 
 int main(int argc, char* argv[]) {
   try {
@@ -9,13 +12,22 @@ int main(int argc, char* argv[]) {
     s.bind(1995);
     UDPSplitPacketReader r(s);
     CmdTlm cmdtlm(&r, NULL);
+    PWMDevice pwm("/dev/i2c-1");
 
     class CommandListener : public Commands {
     public:
-      void control(ControlPacketElement *e) {
-        cout << e->toString();
+      PWMDevice *pwm;
+      CommandListener(PWMDevice *pwm) {
+        this->pwm = pwm;
       }
-    } cl;
+      void control(ControlPacketElement *e) {
+        pwm->setPosition(4, e->roll);
+        pwm->setPosition(5, e->pitch);
+        pwm->setPosition(6, e->thrust);
+        pwm->setPosition(7, e->yaw);
+      }
+    } cl(&pwm);
+
     while (true) {
       cmdtlm.telemetry(&cl);
     }
