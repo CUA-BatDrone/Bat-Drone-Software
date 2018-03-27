@@ -11,6 +11,19 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
+  char *address;
+  if (argc > 1) {
+    address = argv[1]
+  } else {
+     address = "127.0.0.1"
+  }
+
+  UDPSocket s;
+  s.connect(address, 1995);
+  UDPSplitPacketWriter w(s);
+  UDPSplitPacketReader r(s);
+  CmdTlm(&r, &w);
+
 
   SDL_Window *window;
   SDL_Renderer *renderer;
@@ -69,7 +82,7 @@ int main(int argc, char* argv[]) {
     } else {
       p.yaw = 0;
     }
-    // cmdtlm.control(&p);
+    cmdtlm.control(&p);
 
     unsigned char *pixels;
     int pixel_pitch;
