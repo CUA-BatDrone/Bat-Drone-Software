@@ -16,7 +16,8 @@ int main(int argc, char* argv[]) {
       address = argv[1];
     }
     else {
-      address = "127.0.0.1";
+      address = "192.168.0.1";
+      // address = "127.0.0.1";
     }
 
     UDPSocket s;
@@ -50,6 +51,7 @@ int main(int argc, char* argv[]) {
       return 3;
     }
     bool run = true;
+    float last_thrust = -1;
     while (run) {
       // check for events
       SDL_Event e;
@@ -60,37 +62,80 @@ int main(int argc, char* argv[]) {
         }
       }
       const Uint8 *keyboard = SDL_GetKeyboardState(NULL);
-      ControlPacketElement p;
-      float rate = 0.1;
-      p.thrust = 0;
-      if (keyboard[SDL_SCANCODE_W] || keyboard[SDL_SCANCODE_UP]) {
-        p.pitch = rate;
+      ControlPacketElement c;
+      float rate = 1;
+      c.thrust = 0;
+      if (keyboard[SDL_SCANCODE_RETURN]) {
+        c.pitch = -1;
+        c.yaw = 1;
+        c.roll = -1;
+        c.thrust = -1;
+        last_thrust = -1;
+      } else {
+        if (keyboard[SDL_SCANCODE_W] || keyboard[SDL_SCANCODE_UP]) {
+          c.pitch = rate;
+        }
+        else if (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) {
+          c.pitch = -rate;
+        }
+        else {
+          c.pitch = 0;
+        }
+        if (keyboard[SDL_SCANCODE_A] || keyboard[SDL_SCANCODE_LEFT]) {
+          c.roll = -rate;
+        }
+        else if (keyboard[SDL_SCANCODE_D] || keyboard[SDL_SCANCODE_RIGHT]) {
+          c.roll = rate;
+        }
+        else {
+          c.roll = 0;
+        }
+        if (keyboard[SDL_SCANCODE_Q] || keyboard[SDL_SCANCODE_PAGEUP]) {
+          c.yaw = -rate;
+        }
+        else if (keyboard[SDL_SCANCODE_E] || keyboard[SDL_SCANCODE_PAGEDOWN]) {
+          c.yaw = rate;
+        }
+        else {
+          c.yaw = 0;
+        }
+        if (keyboard[SDL_SCANCODE_0]) {
+          last_thrust = 1;
+        }
+        if (keyboard[SDL_SCANCODE_9]) {
+          last_thrust = .8;
+        }
+        if (keyboard[SDL_SCANCODE_8]) {
+          last_thrust = .6;
+        }
+        if (keyboard[SDL_SCANCODE_7]) {
+          last_thrust = .4;
+        }
+        if (keyboard[SDL_SCANCODE_6]) {
+          last_thrust = .2;
+        }
+        if (keyboard[SDL_SCANCODE_5]) {
+          last_thrust = 0;
+        }
+        if (keyboard[SDL_SCANCODE_4]) {
+          last_thrust = -.2;
+        }
+        if (keyboard[SDL_SCANCODE_3]) {
+          last_thrust = -.4;
+        }
+        if (keyboard[SDL_SCANCODE_2]) {
+          last_thrust = -.6;
+        }
+        if (keyboard[SDL_SCANCODE_1]) {
+          last_thrust = -.8;
+        }
+        if (keyboard[SDL_SCANCODE_ESCAPE] || keyboard[SDL_SCANCODE_GRAVE]) {
+          last_thrust = -1;
+        }
+        c.thrust = last_thrust;
       }
-      else if (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) {
-        p.pitch = -rate;
-      }
-      else {
-        p.pitch = 0;
-      }
-      if (keyboard[SDL_SCANCODE_A] || keyboard[SDL_SCANCODE_LEFT]) {
-        p.roll = -rate;
-      }
-      else if (keyboard[SDL_SCANCODE_D] || keyboard[SDL_SCANCODE_RIGHT]) {
-        p.roll = rate;
-      }
-      else {
-        p.roll = 0;
-      }
-      if (keyboard[SDL_SCANCODE_Q]) {
-        p.yaw = -rate;
-      }
-      else if (keyboard[SDL_SCANCODE_E]) {
-        p.yaw = rate;
-      }
-      else {
-        p.yaw = 0;
-      }
-      cmdtlm.control(&p);
+      cmdtlm.control(&c);
+      cout << c.toString();
 
       unsigned char *pixels;
       int pixel_pitch;
