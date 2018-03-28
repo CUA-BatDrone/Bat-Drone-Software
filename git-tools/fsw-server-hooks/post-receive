@@ -1,0 +1,16 @@
+#!/bin/sh
+DIR=~/Bat-Drone-Software
+echo "Updating ${DIR}"
+git --work-tree ${DIR} checkout -f
+cd ${DIR}
+echo "Generating build files"
+cmake . -DFSW=ON
+echo "Compiling"
+cd fsw
+make -j$(( $(nproc --all) + 1)) fsw
+echo "Starting FSW"
+sudo make install
+sudo systemctl daemon-reload
+#sudo systemctl enable fsw
+sudo systemctl restart fsw
+systemctl status fsw
