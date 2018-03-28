@@ -1,0 +1,10 @@
+[Unit]
+Description=Bat Drone Flight Software
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/fsw
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
