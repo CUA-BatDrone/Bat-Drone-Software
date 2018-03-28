@@ -11,17 +11,20 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
   try {
-    const char *address;
-    if (argc > 1) {
+    const char *address = "127.0.0.1";
+    int port = 1995;
+    switch (argc) {
+    default:
+    case 3:
+      port = stoi(argv[2]);
+    case 2:
       address = argv[1];
-    }
-    else {
-      // address = "192.168.0.1";
-      address = "127.0.0.1";
+    case 1:
+    case 0:
     }
 
     UDPSocket s;
-    s.connect(address, 1995);
+    s.connect(address, port);
     UDPSplitPacketWriter w(0, s);
     UDPSplitPacketReader r(s);
     CmdTlm cmdtlm(&r, &w);
