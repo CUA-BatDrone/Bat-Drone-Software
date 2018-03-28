@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
         if (keyboard[SDL_SCANCODE_1]) {
           last_thrust = -.8;
         }
-        if (keyboard[SDL_SCANCODE_ESCAPE] || keyboard[SDL_SCANCODE_GRAVE]) {
+        if (keyboard[SDL_SCANCODE_ESCAPE] || keyboard[SDL_SCANCODE_GRAVE] || keyboard[SDL_SCANCODE_SPACE]) {
           last_thrust = -1;
         }
         c.thrust = last_thrust;
