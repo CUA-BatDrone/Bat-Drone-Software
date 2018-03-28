@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     case 2:
       address = argv[1];
     case 1:
-    case 0:
+    case 0:;
     }
 
     UDPSocket s;
