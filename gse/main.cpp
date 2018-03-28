@@ -16,8 +16,8 @@ int main(int argc, char* argv[]) {
       address = argv[1];
     }
     else {
-      address = "192.168.0.1";
-      // address = "127.0.0.1";
+      // address = "192.168.0.1";
+      address = "127.0.0.1";
     }
 
     UDPSocket s;
