@@ -141,7 +141,7 @@ void pt1_stop() {
   xioctl(fd, VIDIOC_STREAMOFF, &type);
 }
 
-void pt1_get_frame(struct frame *frame) {
+void pt1_get_frame(struct pt1_frame *frame) {
   /* queue last buffer */
   ioctl(fd, VIDIOC_QBUF, &buf);
 

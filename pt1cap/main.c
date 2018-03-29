@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 
   FILE *fd = fopen(filename, "w");
   pt1_start();
-  struct frame frame;
+  struct pt1_frame frame;
   int count;
   for (count = 0; (count < num_frames || num_frames == 0) && run; count++) {
     pt1_get_frame(&frame);

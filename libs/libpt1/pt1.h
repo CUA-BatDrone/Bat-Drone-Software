@@ -42,7 +42,7 @@ void pt1_stop();
 /**
  * Contains the buffer, sequence, and timing of a frame.
  */
-struct frame {
+struct pt1_frame {
   void *start;
   size_t length;
   struct timeval timestamp;
@@ -52,7 +52,7 @@ struct frame {
 /**
  *
  */
-void pt1_get_frame(struct frame *frame);
+void pt1_get_frame(struct pt1_frame *frame);
 
 /**
  * Deinitialize the camera.
