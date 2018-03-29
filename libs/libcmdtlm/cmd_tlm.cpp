@@ -15,20 +15,21 @@ void CmdTlm::telemetry(Commands *callback) {
     {
       ControlPacketElement c;
       *packetReader >> c;
-      callback->control(&c);
+      callback->control(c);
     }
     break;
   case 1:
     {
-      uint16_t (*buffer)[60][80];
-      LWIRFrame f;
+      uint16_t frame[60][80];
+      *packetReader >> frame;
+      // TODO
     }
   }
 }
 
-void CmdTlm::control(ControlPacketElement *c) {
+void CmdTlm::control(ControlPacketElement &c) {
   uint8_t packet_id = 0;
-  *packetWriter << packet_id << *c;
+  *packetWriter << packet_id << c;
   packetWriter->write_packet();
 }
 

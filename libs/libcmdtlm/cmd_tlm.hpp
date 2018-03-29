@@ -17,7 +17,7 @@ private:
 public:
   CmdTlm(PacketReader *reader, PacketWriter *writer);
   void telemetry(Commands *callback);
-  virtual void control(ControlPacketElement *e);
+  virtual void control(ControlPacketElement &e);
   virtual void lwirFrame(SWIRFrame *frame);
   virtual void swirFrame(SWIRFrame *frame);
 };

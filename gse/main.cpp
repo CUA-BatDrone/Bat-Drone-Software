@@ -224,10 +224,10 @@ int main(int argc, char* argv[]) {
       ControlPacketElement c;
       // Direction inputted with WASDQE or arrowkeys and page up/down.
       if (joystick) {
-        cmdtlm.control(&handleJoystick(joystick));
+        cmdtlm.control(handleJoystick(joystick));
         last_thrust = -1.0;
       } else {
-        cmdtlm.control(&handleKeyboard(last_thrust));
+        cmdtlm.control(handleKeyboard(last_thrust));
       }
 
       unsigned char *pixels;
