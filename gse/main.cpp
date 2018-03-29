@@ -158,19 +158,19 @@ SDL_Joystick *getJoystick() {
 }
 
 int main(int argc, char* argv[]) {
-  try {
-    const char *address = "127.0.0.1";
-    int port = 1995;
-    switch (argc) {
-    default:
-    case 3:
-      port = stoi(argv[2]);
-    case 2:
-      address = argv[1];
-    case 1:
-    case 0:;
-    }
+  const char *address = "127.0.0.1";
+  int port = 1995;
+  switch (argc) {
+  default:
+  case 3:
+    port = stoi(argv[2]);
+  case 2:
+    address = argv[1];
+  case 1:
+  case 0:;
+  }
 
+    try {
     UDPSocket s;
     s.connect(address, port);
     UDPSplitPacketWriter w(0, s);
