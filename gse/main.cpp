@@ -151,13 +151,17 @@ int main(int argc, char* argv[]) {
         }
         if (keyboard[SDL_SCANCODE_SPACE]) {
            if (!keyboard[SDL_SCANCODE_LCTRL]) {
-             if (last_thrust <= 0.9) last_thrust += .1;
+             if (last_thrust <= 0.9) c.thrust = last_thrust + 0.1;
+           } else {
+             c.thrust = last_thrust - 0.1;
            }
+
+        } else if (keyboard[SDL_SCANCODE_LCTRL]) {
+          if (last_thrust >= -0.9) c.thrust = last_thrust - 0.1;
+        } else {
+          c.thrust = last_thrust;
         }
-        if (keyboard[SDL_SCANCODE_LCTRL]) {
-           if (last_thrust >= 0.9) last_thrust -= .1;
-        }
-        c.thrust = last_thrust;
+
       }
       cmdtlm.control(&c);
       cout << c.toString();
@@ -173,7 +177,7 @@ int main(int argc, char* argv[]) {
       SDL_RenderClear(renderer);
       SDL_RenderCopy(renderer, texture, NULL, NULL);
       SDL_RenderPresent(renderer);
-      SDL_Delay(40);
+      SDL_Delay(400);
     }
 
     // SDL_Delay(3000);
