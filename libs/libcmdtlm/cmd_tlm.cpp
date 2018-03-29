@@ -27,7 +27,7 @@ void CmdTlm::telemetry(Commands *callback) {
   }
 }
 
-void CmdTlm::control(ControlPacketElement &c) {
+void CmdTlm::control(const ControlPacketElement &c) {
   uint8_t packet_id = 0;
   *packetWriter << packet_id << c;
   packetWriter->write_packet();
