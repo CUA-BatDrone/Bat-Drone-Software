@@ -68,6 +68,7 @@ int main(int argc, char* argv[]) {
       ControlPacketElement c;
       float rate = 1;
       c.thrust = 0;
+      // Direction inputted with WASDQE or arrowkeys and page up/down.
       if (keyboard[SDL_SCANCODE_RETURN]) {
         c.pitch = -1;
         c.yaw = 1;
@@ -75,65 +76,86 @@ int main(int argc, char* argv[]) {
         c.thrust = -1;
         last_thrust = -1;
       } else {
+        // Forward
         if (keyboard[SDL_SCANCODE_W] || keyboard[SDL_SCANCODE_UP]) {
-          c.pitch = rate;
-        }
-        else if (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) {
+          // And back
+          if (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) {
+            c.pitch = 0;
+          // Just forward
+          } else {
+            c.pitch = rate;
+          }
+        // Backward
+        } else if (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) {
           c.pitch = -rate;
-        }
-        else {
+        // None
+        } else {
           c.pitch = 0;
         }
+        // Left
         if (keyboard[SDL_SCANCODE_A] || keyboard[SDL_SCANCODE_LEFT]) {
-          c.roll = -rate;
-        }
-        else if (keyboard[SDL_SCANCODE_D] || keyboard[SDL_SCANCODE_RIGHT]) {
+          // And Right
+          if (keyboard[SDL_SCANCODE_D] || keyboard[SDL_SCANCODE_RIGHT]) {
+            c.roll = 0;
+          // Just left
+          } else {
+            c.roll = -rate;
+          }
+        // Right
+        } else if (keyboard[SDL_SCANCODE_D] || keyboard[SDL_SCANCODE_RIGHT]) {
           c.roll = rate;
-        }
-        else {
+        // None
+        } else {
           c.roll = 0;
         }
+        // Rotate Left
         if (keyboard[SDL_SCANCODE_Q] || keyboard[SDL_SCANCODE_PAGEUP]) {
-          c.yaw = -rate;
-        }
-        else if (keyboard[SDL_SCANCODE_E] || keyboard[SDL_SCANCODE_PAGEDOWN]) {
+          // And right
+          if (keyboard[SDL_SCANCODE_E] || keyboard[SDL_SCANCODE_PAGEDOWN]) {
+            c.yaw = 0;
+          // Just left
+          } else {
+            c.yaw = -rate;
+          }
+        // Rotate Right
+        } else if (keyboard[SDL_SCANCODE_E] || keyboard[SDL_SCANCODE_PAGEDOWN]) {
           c.yaw = rate;
-        }
-        else {
+        } else {
           c.yaw = 0;
         }
-        if (keyboard[SDL_SCANCODE_0]) {
-          last_thrust = 1;
+
+        // Thrust inputted using keys '`' through '0' are -1 through 1.
+        // ### Key 0 IS MAX THRUST!!! ###
+        if (keyboard[SDL_SCANCODE_ESCAPE] || keyboard[SDL_SCANCODE_GRAVE]) {
+          last_thrust = -1.0;
+        } else if (keyboard[SDL_SCANCODE_1]) {
+          last_thrust = -0.8;
+        } else if (keyboard[SDL_SCANCODE_2]) {
+          last_thrust = -0.6;
+        } else if (keyboard[SDL_SCANCODE_3]) {
+          last_thrust = -0.4;
+        } else if (keyboard[SDL_SCANCODE_4]) {
+          last_thrust = -0.2;
+        } else if (keyboard[SDL_SCANCODE_5]) {
+          last_thrust = 0.0;
+        } else if (keyboard[SDL_SCANCODE_6]) {
+          last_thrust = 0.2;
+        } else if (keyboard[SDL_SCANCODE_7]) {
+          last_thrust = 0.4;
+        } else if (keyboard[SDL_SCANCODE_8]) {
+          last_thrust = 0.6;
+        } else if (keyboard[SDL_SCANCODE_9]) {
+          last_thrust = 0.8;
+        } else if (keyboard[SDL_SCANCODE_0]) {
+          last_thrust = 1.0;
         }
-        if (keyboard[SDL_SCANCODE_9]) {
-          last_thrust = .8;
+        if (keyboard[SDL_SCANCODE_SPACE]) {
+           if (!keyboard[SDL_SCANCODE_LCTRL]) {
+             if (last_thrust <= 0.9) last_thrust += .1;
+           }
         }
-        if (keyboard[SDL_SCANCODE_8]) {
-          last_thrust = .6;
-        }
-        if (keyboard[SDL_SCANCODE_7]) {
-          last_thrust = .4;
-        }
-        if (keyboard[SDL_SCANCODE_6]) {
-          last_thrust = .2;
-        }
-        if (keyboard[SDL_SCANCODE_5]) {
-          last_thrust = 0;
-        }
-        if (keyboard[SDL_SCANCODE_4]) {
-          last_thrust = -.2;
-        }
-        if (keyboard[SDL_SCANCODE_3]) {
-          last_thrust = -.4;
-        }
-        if (keyboard[SDL_SCANCODE_2]) {
-          last_thrust = -.6;
-        }
-        if (keyboard[SDL_SCANCODE_1]) {
-          last_thrust = -.8;
-        }
-        if (keyboard[SDL_SCANCODE_ESCAPE] || keyboard[SDL_SCANCODE_GRAVE] || keyboard[SDL_SCANCODE_SPACE]) {
-          last_thrust = -1;
+        if (keyboard[SDL_SCANCODE_LCTRL]) {
+           if (last_thrust >= 0.9) last_thrust -= .1;
         }
         c.thrust = last_thrust;
       }
