@@ -67,7 +67,6 @@ int main(int argc, char* argv[]) {
       const Uint8 *keyboard = SDL_GetKeyboardState(NULL);
       ControlPacketElement c;
       float rate = 1;
-      c.thrust = 0;
       // Direction inputted with WASDQE or arrowkeys and page up/down.
       if (keyboard[SDL_SCANCODE_RETURN]) {
         c.pitch = -1;
@@ -150,14 +149,17 @@ int main(int argc, char* argv[]) {
           last_thrust = 1.0;
         }
         if (keyboard[SDL_SCANCODE_SPACE]) {
-           if (!keyboard[SDL_SCANCODE_LCTRL]) {
-             if (last_thrust <= 0.9) c.thrust = last_thrust + 0.1;
-           } else {
-             c.thrust = last_thrust - 0.1;
-           }
-
+          if (last_thrust <= 0.9 && !keyboard[SDL_SCANCODE_LCTRL]) {
+            c.thrust = last_thrust + 0.1;
+          } else {
+            c.thrust = last_thrust;
+          }
         } else if (keyboard[SDL_SCANCODE_LCTRL]) {
-          if (last_thrust >= -0.9) c.thrust = last_thrust - 0.1;
+          if (last_thrust >= -0.9) {
+            c.thrust = last_thrust - 0.1;
+          } else {
+            c.thrust = last_thrust;
+          }
         } else {
           c.thrust = last_thrust;
         }
