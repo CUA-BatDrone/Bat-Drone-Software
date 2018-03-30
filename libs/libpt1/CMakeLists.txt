@@ -5,7 +5,11 @@ cmake_minimum_required(VERSION 3.0)
 project(libpt1)
 
 # Compile library pt1 using pt1.c, pt1.cpp, pt1.cc etc.
+if(FSW)
 add_library(pt1 pt1)
+else()
+add_library(pt1 pt1_fake)
+endif()
 
 # include headers from the current directory '.' for the pt1 library. Directories listed after PUBLIC will be included by those using the library as well. Directories listad after PRIVATE will only be used by the library itself.
 target_include_directories(pt1 PUBLIC .)

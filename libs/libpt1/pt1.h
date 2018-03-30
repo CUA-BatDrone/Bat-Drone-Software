@@ -6,13 +6,20 @@
 extern "C" {
 #endif
 
+#ifdef _WIN32
+  struct timeval {
+    long tv_sec;
+    long tv_usec;
+  };
+#else
 #include <sys/time.h>
 #include <sys/types.h>
+#endif
 #include <stdint.h>
 
-#define PT1_WIDTH = 80;
-#define PT1_HEIGHT = 60;
-#define PT1_PMAX = 0x3FFF
+#define PT1_WIDTH 80
+#define PT1_HEIGHT 60
+#define PT1_PMAX 0x3FFF
 
 /**
  * Initialize the camera.
