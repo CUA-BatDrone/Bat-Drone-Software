@@ -1,3 +1,6 @@
+#ifndef PWM_HPP
+#define PWM_HPP
+
 #include <stdint.h>
 
 const uint8_t address = 0x40;
@@ -17,3 +20,5 @@ public:
    */
 	void setPosition(unsigned char channel, float position);
 };
+
+#endif
