@@ -27,7 +27,7 @@ void TelemetryHandler::mainLoop() {
   while (run) {
     pt1_frame frame;
     pt1_get_frame(&frame);
-    cmdtlm->lwirFrame((const uint8_t (*)[80])frame.start);
+    cmdtlm->lwirFrame((const uint16_t (*)[80])frame.start);
   }
   pt1_stop();
 }

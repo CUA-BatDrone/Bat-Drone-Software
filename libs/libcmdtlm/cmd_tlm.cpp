@@ -22,7 +22,7 @@ void CmdTlm::telemetry(Commands &callback) {
     break;
   case 1:
     {
-      uint8_t frame[60][80];
+      uint16_t frame[60][80];
       *packetReader >> frame;
       callback.lwirFrame(frame);
     }
