@@ -24,7 +24,7 @@ void CmdTlm::telemetry(Commands &callback) {
     {
       uint8_t frame[60][80];
       *packetReader >> frame;
-      // TODO
+      callback.lwirFrame(frame);
     }
   }
 }
@@ -37,5 +37,4 @@ void CmdTlm::control(const ControlPacketElement &c) {
 
 void CmdTlm::lwirFrame(const uint16_t frame[60][80]) {
   *packetWriter << 1 << frame;
-  // TODO
 }
