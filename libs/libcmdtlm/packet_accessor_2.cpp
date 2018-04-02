@@ -15,7 +15,8 @@
 
 UDPSocket::UDPSocket() {
 #ifdef _WIN32
-  int err = WSAStartup(MAKEWORD(2, 2), &WSADATA());
+  WSADATA d = WSADATA();
+  int err = WSAStartup(MAKEWORD(2, 2), &d);
   if (err != 0) {
     throw std::string("WSAStartup failed with error ") + std::to_string(err);
   }

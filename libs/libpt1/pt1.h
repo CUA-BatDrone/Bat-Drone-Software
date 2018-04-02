@@ -7,13 +7,14 @@ extern "C" {
 #endif
 
 #ifdef _WIN32
-  struct timeval {
+  struct pt1_timeval {
     long tv_sec;
     long tv_usec;
   };
 #else
-#include <sys/time.h>
-#include <sys/types.h>
+  #include <sys/time.h>
+  #include <sys/types.h>
+  #define pt1_timeval timeval
 #endif
 #include <stdint.h>
 
@@ -24,7 +25,7 @@ extern "C" {
 /**
  * Initialize the camera.
  */
-void pt1_init();
+void pt1_init(const char *device);
 
 /**
  * Run FFC.
@@ -52,12 +53,12 @@ void pt1_stop();
 struct pt1_frame {
   void *start;
   size_t length;
-  struct timeval timestamp;
+  struct pt1_timeval timestamp;
   long sequence;
 };
 
 /**
- *
+ * Gets a new frame. Previous frame becomes invalid
  */
 void pt1_get_frame(struct pt1_frame *frame);
 

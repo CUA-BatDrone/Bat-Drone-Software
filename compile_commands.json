@@ -1,0 +1,61 @@
+[
+{
+  "directory": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/buildwn",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang-cl.exe  -I../libs/libpt1/.  /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1   -o libs\\libpt1\\CMakeFiles\\pt1.dir\\pt1_fake.c.obj   -c C:\\Users\\micha\\Developer\\SeniorDesign\\Bat-Drone-Software\\libs\\libpt1\\pt1_fake.c",
+  "file": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/libs/libpt1/pt1_fake.c"
+},
+
+{
+  "directory": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/buildwn",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang-cl.exe   -I../libs/libpwm/.  -g   -o libs\\libpwm\\CMakeFiles\\pwm.dir\\pwm_fake.cpp.obj -c C:\\Users\\micha\\Developer\\SeniorDesign\\Bat-Drone-Software\\libs\\libpwm\\pwm_fake.cpp",
+  "file": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/libs/libpwm/pwm_fake.cpp"
+},
+
+{
+  "directory": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/buildwn",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang-cl.exe   -I../libs/libcmdtlm/.  -g   -o libs\\libcmdtlm\\CMakeFiles\\cmdtlm.dir\\cmd_tlm.cpp.obj -c C:\\Users\\micha\\Developer\\SeniorDesign\\Bat-Drone-Software\\libs\\libcmdtlm\\cmd_tlm.cpp",
+  "file": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/libs/libcmdtlm/cmd_tlm.cpp"
+},
+
+{
+  "directory": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/buildwn",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang-cl.exe   -I../libs/libcmdtlm/.  -g   -o libs\\libcmdtlm\\CMakeFiles\\cmdtlm.dir\\packet_elements.cpp.obj -c C:\\Users\\micha\\Developer\\SeniorDesign\\Bat-Drone-Software\\libs\\libcmdtlm\\packet_elements.cpp",
+  "file": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/libs/libcmdtlm/packet_elements.cpp"
+},
+
+{
+  "directory": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/buildwn",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang-cl.exe   -I../libs/libcmdtlm/.  -g   -o libs\\libcmdtlm\\CMakeFiles\\cmdtlm.dir\\packet_accessor_2.cpp.obj -c C:\\Users\\micha\\Developer\\SeniorDesign\\Bat-Drone-Software\\libs\\libcmdtlm\\packet_accessor_2.cpp",
+  "file": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/libs/libcmdtlm/packet_accessor_2.cpp"
+},
+
+{
+  "directory": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/buildwn",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang-cl.exe   -I../libs/libcmdtlm/. -I../libs/libpwm/. -I../libs/libpt1/.  -g   -o fsw\\CMakeFiles\\fsw.dir\\main.cpp.obj -c C:\\Users\\micha\\Developer\\SeniorDesign\\Bat-Drone-Software\\fsw\\main.cpp",
+  "file": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/fsw/main.cpp"
+},
+
+{
+  "directory": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/buildwn",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang-cl.exe   -I../libs/libcmdtlm/. -I../libs/libpwm/. -I../libs/libpt1/.  -g   -o fsw\\CMakeFiles\\fsw.dir\\command_handler.cpp.obj -c C:\\Users\\micha\\Developer\\SeniorDesign\\Bat-Drone-Software\\fsw\\command_handler.cpp",
+  "file": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/fsw/command_handler.cpp"
+},
+
+{
+  "directory": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/buildwn",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang-cl.exe   -I../libs/libcmdtlm/. -I../libs/libpwm/. -I../libs/libpt1/.  -g   -o fsw\\CMakeFiles\\fsw.dir\\telemetry_thread.cpp.obj -c C:\\Users\\micha\\Developer\\SeniorDesign\\Bat-Drone-Software\\fsw\\telemetry_thread.cpp",
+  "file": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/fsw/telemetry_thread.cpp"
+},
+
+{
+  "directory": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/buildwn",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang-cl.exe  -I../windows/SDL2-2.0.7/include  /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1   -o pt1cap\\CMakeFiles\\pt1play.dir\\viewer.c.obj   -c C:\\Users\\micha\\Developer\\SeniorDesign\\Bat-Drone-Software\\pt1cap\\viewer.c",
+  "file": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/pt1cap/viewer.c"
+},
+
+{
+  "directory": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/buildwn",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang-cl.exe   -I../windows/SDL2-2.0.7/include -I../libs/libcmdtlm/.  -g   -o gse\\CMakeFiles\\gse.dir\\main.cpp.obj -c C:\\Users\\micha\\Developer\\SeniorDesign\\Bat-Drone-Software\\gse\\main.cpp",
+  "file": "C:/Users/micha/Developer/SeniorDesign/Bat-Drone-Software/gse/main.cpp"
+}
+]

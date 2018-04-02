@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(flight-software)
-add_executable(fsw main.cpp)
-target_link_libraries(fsw cmdtlm pwm)
+add_executable(fsw main command_handler telemetry_handler)
+target_link_libraries(fsw cmdtlm pwm pt1)
 install(TARGETS fsw DESTINATION bin)
 install(FILES fsw.service DESTINATION /lib/systemd/system)

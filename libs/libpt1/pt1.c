@@ -59,7 +59,7 @@ void pt1_disable_ffc() {
   ioctl(fd, UVCIOC_CTRL_QUERY, &q);
 }
 
-void pt1_init(char *device) {
+void pt1_init(const char *device) {
   struct v4l2_format fmt;
   struct v4l2_requestbuffers req;
   unsigned int i;

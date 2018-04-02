@@ -12,7 +12,7 @@ void pt1_disable_ffc() {
   printf("pt1_disable_ffc()\n");
 }
 
-void pt1_init(char *device) {
+void pt1_init(const char *device) {
   printf("pt1_init(%s)\n", device);
 }
 

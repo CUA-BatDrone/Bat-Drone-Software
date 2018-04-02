@@ -1,36 +1,26 @@
 #include "cmd_tlm.hpp"
 #include "pwm.hpp"
 #include <iostream>
+#include "command_handler.hpp"
+#include <thread>
+#include "telemetry_handler.hpp"
+#include "command_handler.hpp"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
+
   try {
     UDPSocket s;
     s.bind(1995);
     UDPSplitPacketReader r(s);
-    CmdTlm cmdtlm(&r, NULL);
-    PWMDevice pwm("/dev/i2c-1");
+    UDPPacketWriter w(s);
+    CmdTlm cmdtlm(&r, &w);
 
-    class CommandListener : public Commands {
-    public:
-      PWMDevice *pwm;
-      CommandListener(PWMDevice *pwm) {
-        this->pwm = pwm;
-      }
-      
-      void control(ControlPacketElement *e) {
-        // AETR
-        pwm->setPosition(4, e->roll);
-        pwm->setPosition(5, e->pitch);
-        pwm->setPosition(6, e->thrust);
-        pwm->setPosition(7, e->yaw);
-      }
-    } cl(&pwm);
-
-    while (true) {
-      cmdtlm.telemetry(&cl);
-    }
+    TelemetryHandler t(&cmdtlm, "/dev/video1");
+    t.startThread();
+    CommandHandler c(&cmdtlm, "/dev/i2c-1");
+    c.mainLoop();
     return 0;
   }
   catch (string e) {
