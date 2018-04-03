@@ -160,6 +160,7 @@ SDL_Joystick *getJoystick() {
 int main(int argc, char* argv[]) {
   const char *address = "127.0.0.1";
   int port = 1995;
+  const char *maddress = "232.232.232.232";
   switch (argc) {
   default:
   case 3:
@@ -173,6 +174,7 @@ int main(int argc, char* argv[]) {
     try {
     UDPSocket s;
     s.connect(address, port);
+    s.add(maddress, address);
     UDPSplitPacketWriter w(0, s);
     UDPSplitPacketReader r(s);
     CmdTlm cmdtlm(&r, &w);
@@ -252,6 +254,7 @@ int main(int argc, char* argv[]) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+    s.drop(maddress, address);
     return 0;
   }
   catch (string *e) {
