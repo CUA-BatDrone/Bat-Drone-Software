@@ -32,6 +32,14 @@ public:
   void bind(int port);
   void connect(sockaddr_storage addr);
   void connect(const char *addr, int port);
+  void add(in_addr grpaddr, in_addr srcaddr);
+  void add(const char *group, const char *source);
+  void add(in_addr grpaddr);
+  void add(const char *group);
+  void drop(in_addr grpaddr, in_addr srcaddr);
+  void drop(const char *group, const char *source);
+  void drop(in_addr grpaddr);
+  void drop(const char *group);
 };
 
 class Reader {

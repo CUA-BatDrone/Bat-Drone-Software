@@ -40,7 +40,7 @@ UDPSocket::~UDPSocket() {
 }
 
 sockaddr_storage Socket::stringToAddr(const char *addr_in, int port) {
-  struct sockaddr_storage storage = {0};
+  struct sockaddr_storage storage = {};
   struct sockaddr_in &addr_out = (struct sockaddr_in &) storage;
   addr_out.sin_family = AF_INET;
   addr_out.sin_port = htons(port);
@@ -70,6 +70,88 @@ void UDPSocket::connect(sockaddr_storage addr) {
 
 void UDPSocket::connect(const char *addr, int port) {
   connect(stringToAddr(addr, port));
+}
+
+void UDPSocket::add(in_addr grpaddr, in_addr srcaddr) {
+  struct ip_mreq_source imr = {};
+  imr.imr_multiaddr = grpaddr;
+  imr.imr_sourceaddr = srcaddr;
+  imr.imr_interface.s_addr = INADDR_ANY;
+#ifdef _WIN32
+  setsockopt(sockfd, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, (const char *) &imr, sizeof(imr));
+#else
+  setsockopt(sockfd, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, (void *) &imr, sizeof(imr));
+#endif
+}
+
+void UDPSocket::add(in_addr grpaddr) {
+  struct ip_mreq imr = {};
+  imr.imr_multiaddr = grpaddr;
+  imr.imr_interface.s_addr = INADDR_ANY;
+#ifdef _WIN32
+  if (setsockopt(sockfd, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, (const char *)&imr, sizeof(imr)) < 0) {
+    throw std::string("UDPSocket::UDPSocket()") + std::to_string(WSAGetLastError());
+  }
+#else
+  if (setsockopt(sockfd, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, (void *)&imr, sizeof(imr)) < 0) {
+    throw std::string(strerror(errno));
+  }
+#endif
+}
+
+void UDPSocket::add(const char *group, const char *source) {
+  in_addr grpaddr = {};
+  in_addr srcaddr = {};
+  inet_pton(AF_INET, group, &grpaddr);
+  inet_pton(AF_INET, source, &srcaddr);
+  add(grpaddr, srcaddr);
+}
+
+void UDPSocket::add(const char *group) {
+  in_addr grpaddr = {};
+  inet_pton(AF_INET, group, &grpaddr);
+  add(grpaddr);
+}
+
+void UDPSocket::drop(in_addr grpaddr, in_addr srcaddr) {
+  struct ip_mreq_source imr = {};
+  imr.imr_multiaddr = grpaddr;
+  imr.imr_sourceaddr = srcaddr;
+  imr.imr_interface.s_addr = INADDR_ANY;
+#ifdef _WIN32
+  if (setsockopt(sockfd, IPPROTO_IP, IP_DROP_SOURCE_MEMBERSHIP, (const char *)&imr, sizeof(imr)) < 0) {
+    throw std::string("UDPSocket::UDPSocket()") + std::to_string(WSAGetLastError());
+  }
+#else
+  if (setsockopt(sockfd, IPPROTO_IP, IP_DROP_SOURCE_MEMBERSHIP, (void *)&imr, sizeof(imr)) < 0) {
+    throw std::string(strerror(errno));
+  }
+#endif
+}
+
+void UDPSocket::drop(in_addr grpaddr) {
+  struct ip_mreq imr = {};
+  imr.imr_multiaddr = grpaddr;
+  imr.imr_interface.s_addr = INADDR_ANY;
+#ifdef _WIN32
+  setsockopt(sockfd, IPPROTO_IP, IP_DROP_SOURCE_MEMBERSHIP, (const char *) &imr, sizeof(imr));
+#else
+  setsockopt(sockfd, IPPROTO_IP, IP_DROP_SOURCE_MEMBERSHIP, (void *) &imr, sizeof(imr));
+#endif
+}
+
+void UDPSocket::drop(const char *group, const char *source) {
+  in_addr grpaddr = {};
+  in_addr srcaddr = {};
+  inet_pton(AF_INET, group, &grpaddr);
+  inet_pton(AF_INET, source, &srcaddr);
+  drop(grpaddr, srcaddr);
+}
+
+void UDPSocket::drop(const char *group) {
+  in_addr grpaddr = {};
+  inet_pton(AF_INET, group, &grpaddr);
+  drop(grpaddr);
 }
 
 
