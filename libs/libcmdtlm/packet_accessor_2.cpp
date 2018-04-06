@@ -23,7 +23,7 @@ UDPSocket::UDPSocket() {
 #endif
   if((sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
 #ifdef _WIN32
-    throw std::string("UDPSocket::UDPSocket(): ") + std::to_string(WSAGetLastError());
+    throw std::string("UDPSocket::UDPSocket(): ") + std::string("WSA Error: ")  + std::to_string(WSAGetLastError());
 #else
     throw std::string("UDPSocket::UDPSocket():") + std::string(strerror(errno));
 #endif
@@ -54,14 +54,18 @@ void UDPSocket::bind(int port) {
   addr.sin_port = htons(port);
   addr.sin_addr.s_addr = INADDR_ANY;
   if (::bind(sockfd, (sockaddr *) &addr, sizeof(addr)) < 0) {
+#ifdef _WIN32
+    throw std::string("WSA Error: ")  + std::to_string(WSAGetLastError());
+#else
     throw std::string(strerror(errno));
+#endif
   }
 }
 
 void UDPSocket::connect(sockaddr_storage addr) {
   if (::connect(sockfd, (sockaddr *) &addr, sizeof(addr)) < 0) {
 #ifdef _WIN32
-    throw std::string("UDPSocket::UDPSocket()") + std::to_string(WSAGetLastError());
+    throw std::string("UDPSocket::UDPSocket()") + std::string("WSA Error: ")  + std::to_string(WSAGetLastError());
 #else
     throw std::string(strerror(errno));
 #endif
@@ -90,7 +94,7 @@ void UDPSocket::add(in_addr grpaddr) {
   imr.imr_interface.s_addr = INADDR_ANY;
 #ifdef _WIN32
   if (setsockopt(sockfd, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, (const char *)&imr, sizeof(imr)) < 0) {
-    throw std::string("UDPSocket::UDPSocket()") + std::to_string(WSAGetLastError());
+    throw std::string("UDPSocket::UDPSocket()") + std::string("WSA Error: ")  + std::to_string(WSAGetLastError());
   }
 #else
   if (setsockopt(sockfd, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, (void *)&imr, sizeof(imr)) < 0) {
@@ -120,7 +124,7 @@ void UDPSocket::drop(in_addr grpaddr, in_addr srcaddr) {
   imr.imr_interface.s_addr = INADDR_ANY;
 #ifdef _WIN32
   if (setsockopt(sockfd, IPPROTO_IP, IP_DROP_SOURCE_MEMBERSHIP, (const char *)&imr, sizeof(imr)) < 0) {
-    throw std::string("UDPSocket::UDPSocket()") + std::to_string(WSAGetLastError());
+    throw std::string("UDPSocket::UDPSocket()") + std::string("WSA Error: ")  + std::to_string(WSAGetLastError());
   }
 #else
   if (setsockopt(sockfd, IPPROTO_IP, IP_DROP_SOURCE_MEMBERSHIP, (void *)&imr, sizeof(imr)) < 0) {
@@ -329,8 +333,21 @@ UDPSplitPacketReader::UDPSplitPacketReader(Socket::sockfd_t socket, int max, int
 }
 
 int UDPSplitPacketReader::recv(void *data, int length) {
-  if ((length = ::recv(socket, (char *) data, length, 0)) < 0) {
-    throw std::string(strerror(errno));
+  while (true) {
+    if ((length = ::recv(socket, (char *)data, length, 0)) < 0) {
+#ifdef _WIN32
+      if (WSAGetLastError() == WSAECONNRESET) {
+        std::cout << "reset" << std::endl;
+        continue;
+      } else {
+        throw std::string("WSA Error: ") + std::to_string(WSAGetLastError());
+      }
+#else
+      throw std::string(strerror(errno));
+#endif
+    } else {
+      break;
+    }
   }
   return length;
 }
@@ -407,6 +424,9 @@ void UDPSplitPacketReader::read_packet() {
       int length = recv(current->buf_start, current->buf_end - current->buf_start);
       current->read_end = current->buf_start + length;
       current->buf_current += 4;
+
+      //std::cout << current->getCount() << std::endl;
+      //std::cout << *((uint32_t *)current->buf_start) << std::endl;
 
       // find copies
       std::list<SplitPacket>::iterator copy;
@@ -549,19 +569,23 @@ UDPSplitAddrPacketReader::UDPSplitAddrPacketReader(Socket::sockfd_t socket, int 
 int UDPSplitAddrPacketReader::recv(void *data, int length) {
   socklen_t addrlen = sizeof(reply_addr);
   if ((length = ::recvfrom(socket, (char *) data, length, 0, (sockaddr *) &reply_addr, &addrlen)) < 0) {
+#ifdef _WIN32
+    throw std::string("WSA Error: ")  + std::to_string(WSAGetLastError());
+#else
     throw std::string(strerror(errno));
+#endif
   }
   return length;
 }
 
 UDPSplitAddrPacketWriter UDPSplitAddrPacketReader::getReplyPacketWriter(int id, int buf_size) {
-  return UDPSplitAddrPacketWriter(mtu, id, reply_addr, socket, buf_size);
+  return UDPSplitAddrPacketWriter(reply_addr, socket, id, mtu, buf_size);
 }
 
 
-UDPSplitPacketWriter::UDPSplitPacketWriter(uint16_t id, Socket &socket, int mtu, int buf_size) : UDPSplitPacketWriter(id, socket.sockfd, mtu, buf_size) {}
+UDPSplitPacketWriter::UDPSplitPacketWriter(Socket &socket, uint16_t id, int mtu, int buf_size) : UDPSplitPacketWriter(socket.sockfd, id, mtu, buf_size) {}
 
-UDPSplitPacketWriter::UDPSplitPacketWriter(uint16_t id, Socket::sockfd_t socket, int mtu, int buf_size) : BufferWriter(buf_size) {
+UDPSplitPacketWriter::UDPSplitPacketWriter(Socket::sockfd_t socket, uint16_t id, int mtu, int buf_size) : BufferWriter(buf_size) {
   this->mtu = mtu;
   this->id = id;
   this->socket = socket;
@@ -571,7 +595,11 @@ UDPSplitPacketWriter::UDPSplitPacketWriter(uint16_t id, Socket::sockfd_t socket,
 
 void UDPSplitPacketWriter::send(void *data, int length) {
   if (::send(socket, (char *) data, length, 0) < 0) {
+#ifdef _WIN32
+    throw std::string("WSA Error: ")  + std::to_string(WSAGetLastError());
+#else
     throw std::string(strerror(errno));
+#endif
   }
 }
 
@@ -587,18 +615,19 @@ void UDPSplitPacketWriter::write_packet() {
     uint16_t type_count = count | 0x4000;
     memcpy(buf_start + sizeof(id), &type_count, sizeof(type_count));
     send(buf_start, mtu);
-    count = count + 1 & 0x3FFFF;
+    count = (count + 1) & 0x3FFFF;
 
     // Send middle packets
     buf_t *current;
-    for (current = buf_start + mtu; current + mtu - header_size < buf_end; current += mtu - header_size) {
+    for (current = buf_start + mtu - header_size; current + mtu - header_size < buf_end; current += mtu - header_size) {
+      Sleep(1);
       // Write multiplex header
       memcpy(current, &id, sizeof(id));
       // type and count are merged together
       uint16_t type_count = count | 0xC000;
       memcpy(current + sizeof(id), &type_count, sizeof(type_count));
-      send(buf_start, mtu);
-      count = count + 1 & 0x3FFFF;
+      send(current, mtu);
+      count = (count + 1) & 0x3FFFF;
     }
 
     // Send end packet;
@@ -606,32 +635,38 @@ void UDPSplitPacketWriter::write_packet() {
     // type and count are merged together
     type_count = count | 0x8000;
     memcpy(current + sizeof(id), &type_count, sizeof(type_count));
-    send(buf_start, mtu);
-    count = count + 1 & 0x3FFFF;
+    send(current, buf_end - current);
+    count = (count + 1) & 0x3FFFF;
+
   // Sweet, buffer doesn't need to be split!
   } else {
     // Send a full packet
+    Sleep(100);
     memcpy(buf_start, &id, sizeof(id));
     // type and count are merged together
     uint16_t type_count = count;
     memcpy(buf_start + sizeof(id), &type_count, sizeof(type_count));
     send(buf_start, buf_current - buf_start);
-    count = count + 1 & 0x3FFFF;
+    count = (count + 1) & 0x3FFFF;
   }
   buf_current = buf_start + header_size;
 }
 
 
-UDPSplitAddrPacketWriter::UDPSplitAddrPacketWriter(int mtu, uint16_t id, struct sockaddr_storage &address, Socket &socket, int buf_size) : UDPSplitAddrPacketWriter(mtu, id, address, socket.sockfd, buf_size) {
+UDPSplitAddrPacketWriter::UDPSplitAddrPacketWriter(struct sockaddr_storage &address, Socket &socket, uint16_t id, int mtu, int buf_size) : UDPSplitAddrPacketWriter(address, socket.sockfd, id, mtu, buf_size) {
   this->address = address;
 }
 
-UDPSplitAddrPacketWriter::UDPSplitAddrPacketWriter(int mtu, uint16_t id, struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size) : UDPSplitPacketWriter(id, socket, mtu, buf_size) {
+UDPSplitAddrPacketWriter::UDPSplitAddrPacketWriter(struct sockaddr_storage &address, Socket::sockfd_t socket, uint16_t id, int mtu, int buf_size) : UDPSplitPacketWriter(socket, id, mtu, buf_size) {
   this->address = address;
 }
 
 void UDPSplitAddrPacketWriter::send(void *data, int length) {
   if (::sendto(socket, (char *) data, length, 0, (sockaddr *) &address, sizeof(address)) < 0) {
+#ifdef _WIN32
+    throw std::string("WSA Error: ")  + std::to_string(WSAGetLastError());
+#else
     throw std::string(strerror(errno));
+#endif
   }
 }

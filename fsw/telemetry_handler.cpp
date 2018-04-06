@@ -1,6 +1,10 @@
 #include "telemetry_handler.hpp"
 #include "pt1.h"
 #include "cmd_tlm.hpp"
+#include <iostream>
+#include <string>
+
+using namespace std;
 
 TelemetryHandler::TelemetryHandler(CmdTlm *cmdtlm, const char *pt1Device) : cmdtlm(cmdtlm), run(true) {
   pt1_init(pt1Device);
@@ -23,11 +27,16 @@ void TelemetryHandler::joinThread() {
 }
 
 void TelemetryHandler::mainLoop() {
-  pt1_start();
-  while (run) {
-    pt1_frame frame;
-    pt1_get_frame(&frame);
-    cmdtlm->lwirFrame((const uint16_t (*)[80])frame.start);
+  try {
+    pt1_start();
+    while (run) {
+      pt1_frame frame;
+      pt1_get_frame(&frame);
+      cmdtlm->lwirFrame((const uint16_t(*)[80])frame.start);
+    }
+    pt1_stop();
+  } catch (string e) {
+    pt1_stop();
+    cout << e << endl;
   }
-  pt1_stop();
 }

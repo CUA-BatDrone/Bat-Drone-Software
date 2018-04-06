@@ -14,10 +14,10 @@ PWMDevice::~PWMDevice() {
 }
 
 void PWMDevice::setPeriod(unsigned char channel, unsigned short period) {
-	cout << PWM_TAG << " PWMDevice::setPeriod {\n  channel: " << (int) channel << ",\n  period:  " << period << "\n}" << endl;
+	//cout << PWM_TAG << " PWMDevice::setPeriod {\n  channel: " << (int) channel << ",\n  period:  " << period << "\n}" << endl;
 }
 
 void PWMDevice::setPosition(unsigned char channel, float position) {
-	cout << PWM_TAG << " PWMDevice::setPosition {\n  channel:  " << (int) channel << ",\n  position: " << position << "\n}" << endl;
+	//cout << PWM_TAG << " PWMDevice::setPosition {\n  channel:  " << (int) channel << ",\n  position: " << position << "\n}" << endl;
 	// setPeriod(channel, (position + 1) / 2 * 0xcd + 0xcd);
 }

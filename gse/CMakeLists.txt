@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(ground-station-equipment)
 
-add_executable(gse main.cpp)
+add_executable(gse main ui telemetry_handler)
 target_include_directories(gse PRIVATE ${SDL2_INCLUDE_DIRS})
 target_link_libraries(gse ${SDL2_LIBRARIES} cmdtlm)
 

@@ -36,5 +36,7 @@ void CmdTlm::control(const ControlPacketElement &c) {
 }
 
 void CmdTlm::lwirFrame(const uint16_t frame[60][80]) {
-  *packetWriter << 1 << frame;
+  *packetWriter << 1;
+  packetWriter->write(frame, 80 * 60 * sizeof(uint16_t));
+  packetWriter->write_packet();
 }
