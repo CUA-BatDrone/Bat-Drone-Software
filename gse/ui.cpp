@@ -173,17 +173,19 @@ void UI::updateTexture() {
 }
 
 void UI::updateTexture(const uint16_t frame[60][80]) {
-  // 3400 to 3900 is human
-  uint16_t offset = -3400; // to 3800
-  float scale = 255.0f / (3900 - 3400);
-  unsigned char *pixels;
-  int pixel_pitch;
-  SDL_LockTexture(texture, NULL, (void **)&pixels, &pixel_pitch);
-  for (int i = 0; i < 80 * 60; i++) {
-    uint16_t value = (((uint16_t *)frame)[i] + offset) * scale;
-    pixels[i * 3] = pixels[i * 3 + 1] = pixels[i * 3 + 2] = value;
+  if (texture) {
+    // 3400 to 3900 is human
+    uint16_t offset = -3400; // to 3800
+    float scale = 255.0f / (3900 - 3400);
+    unsigned char *pixels;
+    int pixel_pitch;
+    SDL_LockTexture(texture, NULL, (void **)&pixels, &pixel_pitch);
+    for (int i = 0; i < 80 * 60; i++) {
+      uint16_t value = (((uint16_t *)frame)[i] + offset) * scale;
+      pixels[i * 3] = pixels[i * 3 + 1] = pixels[i * 3 + 2] = value;
+    }
+    SDL_UnlockTexture(texture);
   }
-  SDL_UnlockTexture(texture);
 }
 
 void UI::mainLoop() {

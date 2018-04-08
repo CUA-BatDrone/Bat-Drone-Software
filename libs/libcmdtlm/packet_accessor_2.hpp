@@ -39,6 +39,14 @@ public:
   void drop(const char *group, const char *source);
   void drop(in_addr grpaddr);
   void drop(const char *group);
+  unsigned int getMTU();
+  enum IP_PMTUDISC {
+    WANT,
+    DONT,
+    DO,
+    PROBE
+  };
+  void setMTUDiscovery(enum IP_PMTUDISC e);
 };
 
 class Reader {

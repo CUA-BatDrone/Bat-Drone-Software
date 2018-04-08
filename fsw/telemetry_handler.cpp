@@ -33,10 +33,15 @@ void TelemetryHandler::mainLoop() {
       pt1_frame frame;
       pt1_get_frame(&frame);
       cmdtlm->lwirFrame((const uint16_t(*)[80])frame.start);
+#ifdef _WIN32
+      Sleep(60);
+#else
+#endif
     }
     pt1_stop();
   } catch (string e) {
     pt1_stop();
+    cout << "ERROR" << endl;
     cout << e << endl;
   }
 }

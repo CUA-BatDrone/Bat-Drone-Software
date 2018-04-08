@@ -93,11 +93,11 @@ void UDPSocket::add(in_addr grpaddr) {
   imr.imr_multiaddr = grpaddr;
   imr.imr_interface.s_addr = INADDR_ANY;
 #ifdef _WIN32
-  if (setsockopt(sockfd, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, (const char *)&imr, sizeof(imr)) < 0) {
+  if (setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char *)&imr, sizeof(imr)) < 0) {
     throw std::string("UDPSocket::UDPSocket()") + std::string("WSA Error: ")  + std::to_string(WSAGetLastError());
   }
 #else
-  if (setsockopt(sockfd, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, (void *)&imr, sizeof(imr)) < 0) {
+  if (setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (void *)&imr, sizeof(imr)) < 0) {
     throw std::string(strerror(errno));
   }
 #endif
@@ -156,6 +156,36 @@ void UDPSocket::drop(const char *group) {
   in_addr grpaddr = {};
   inet_pton(AF_INET, group, &grpaddr);
   drop(grpaddr);
+}
+
+unsigned int UDPSocket::getMTU() {
+  int v;
+  int l = sizeof(v);
+  getsockopt(sockfd, IPPROTO_IP, IP_MTU, (char *) &v, &l);
+  return v;
+}
+
+void UDPSocket::setMTUDiscovery(enum IP_PMTUDISC e) {
+  int v;
+  int l = sizeof(v);
+  switch (e) {
+  case WANT:
+#ifdef _WIN32
+    return;
+#else
+    v = IP_PMTUDISC_WANT;
+    break;
+#endif
+  case DONT:
+    v = IP_PMTUDISC_DONT;
+    break;
+  case DO:
+    v = IP_PMTUDISC_DO;
+    break;
+  case PROBE:
+    v = IP_PMTUDISC_PROBE;
+  }
+  setsockopt(sockfd, IPPROTO_IP, IP_MTU_DISCOVER, (char *)&v, l);
 }
 
 
@@ -267,6 +297,7 @@ void UDPPacketWriter::send(void *data, int length) {
 
 void UDPPacketWriter::write_packet() {
   send(buf_start, buf_current - buf_start);
+  buf_current = buf_start;
 }
 
 
@@ -280,7 +311,11 @@ UDPAddrPacketWriter::UDPAddrPacketWriter(struct sockaddr_storage &address, Socke
 
 void UDPAddrPacketWriter::send(void *data, int length) {
   if (::sendto(socket, (char *) data, length, 0, (sockaddr *) &address, sizeof(address)) < 0) {
+#ifdef _WIN32
+    throw std::string("WSA Error: ") + std::to_string(WSAGetLastError());
+#else
     throw std::string(strerror(errno));
+#endif
   }
 }
 
