@@ -12,17 +12,18 @@ int main(int argc, char* argv[]) {
 
   try {
     UDPSocket rs;
+    rs.bind(1212);
     UDPSocket ws;
     ws.setMTUDiscovery(UDPSocket::IP_PMTUDISC::DONT);
     UDPPacketReader r(rs);
-    UDPAddrPacketWriter w(Socket::stringToAddr("232.1.1.1", 2121), ws);
+    UDPAddrPacketWriter w(Socket::stringToAddr("232.232.232.232", 2121), ws);
     CmdTlm cmdtlm(&r, &w);
 
     TelemetryHandler t(&cmdtlm, "/dev/video1");
     t.startThread();
-    //CommandHandler c(&cmdtlm, "/dev/i2c-1");
-    //c.mainLoop();
-    //t.stopThread();
+    CommandHandler c(&cmdtlm, "/dev/i2c-1");
+    c.mainLoop();
+    t.stopThread();
     t.joinThread();
     return 0;
   }

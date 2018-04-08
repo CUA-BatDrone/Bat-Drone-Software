@@ -13,9 +13,9 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  const char *address = "192.168.1.216";
+  const char *address = "192.168.0.1";
   int port = 1212;
-  const char *maddress = "232.1.1.1";
+  const char *maddress = "232.232.232.232";
   switch (argc) {
   default:
   case 4:
@@ -33,10 +33,9 @@ int main(int argc, char* argv[]) {
     UDPSocket rs;
     ws.setMTUDiscovery(UDPSocket::IP_PMTUDISC::DONT);
     rs.bind(2121);
-    //rs.connect(address, 1212);
-    //ws.connect(address, port);
-    rs.add("232.1.1.1", "192.168.1.216");
-    UDPAddrPacketWriter w(Socket::stringToAddr("127.0.0.1", 1212), ws);
+    ws.connect(address, port);
+    rs.add(maddress, address);
+    UDPAddrPacketWriter w(Socket::stringToAddr(address, 1212), ws);
     UDPPacketReader r(rs);
     CmdTlm cmdtlm(&r, &w);
 
