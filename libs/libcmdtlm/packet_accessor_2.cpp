@@ -159,15 +159,19 @@ void UDPSocket::drop(const char *group) {
 }
 
 unsigned int UDPSocket::getMTU() {
-  int v;
-  int l = sizeof(v);
-  getsockopt(sockfd, IPPROTO_IP, IP_MTU, (char *) &v, &l);
+  unsigned int v;
+  unsigned int l = sizeof(v);
+#ifdef _WIN32
+  getsockopt(sockfd, IPPROTO_IP, IP_MTU, (char *) &v, (int *) &l);
+#else
+  getsockopt(sockfd, IPPROTO_IP, IP_MTU, &v, &l);
+#endif
   return v;
 }
 
 void UDPSocket::setMTUDiscovery(enum IP_PMTUDISC_ENUM e) {
-  int v;
-  int l = sizeof(v);
+  unsigned int v;
+  unsigned int l = sizeof(v);
   switch (e) {
   case WANT:
 #ifdef _WIN32
@@ -302,9 +306,9 @@ void UDPPacketWriter::write_packet() {
 
 
 
-UDPAddrPacketWriter::UDPAddrPacketWriter(struct sockaddr_storage &address, Socket &socket, int buf_size) : UDPAddrPacketWriter(address, socket.sockfd, buf_size) {}
+UDPAddrPacketWriter::UDPAddrPacketWriter(const struct sockaddr_storage &address, Socket &socket, int buf_size) : UDPAddrPacketWriter(address, socket.sockfd, buf_size) {}
 
-UDPAddrPacketWriter::UDPAddrPacketWriter(struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size) : UDPPacketWriter(socket, buf_size) {
+UDPAddrPacketWriter::UDPAddrPacketWriter(const struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size) : UDPPacketWriter(socket, buf_size) {
   this->socket = socket;
   this->address = address;
 }
@@ -655,7 +659,6 @@ void UDPSplitPacketWriter::write_packet() {
     // Send middle packets
     buf_t *current;
     for (current = buf_start + mtu - header_size; current + mtu - header_size < buf_end; current += mtu - header_size) {
-      Sleep(1);
       // Write multiplex header
       memcpy(current, &id, sizeof(id));
       // type and count are merged together
@@ -676,7 +679,6 @@ void UDPSplitPacketWriter::write_packet() {
   // Sweet, buffer doesn't need to be split!
   } else {
     // Send a full packet
-    Sleep(100);
     memcpy(buf_start, &id, sizeof(id));
     // type and count are merged together
     uint16_t type_count = count;

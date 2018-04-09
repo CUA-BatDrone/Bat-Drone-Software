@@ -149,8 +149,8 @@ protected:
   virtual void send(void *data, int length);
 public:
   struct sockaddr_storage address;
-  UDPAddrPacketWriter(struct sockaddr_storage &address, Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
-  UDPAddrPacketWriter(struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
+  UDPAddrPacketWriter(const struct sockaddr_storage &address, Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
+  UDPAddrPacketWriter(const struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
 };
 
 class UDPSplitPacketWriter : public BufferWriter, public virtual PacketWriter {

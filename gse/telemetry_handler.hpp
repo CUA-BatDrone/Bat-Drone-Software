@@ -8,7 +8,7 @@ private:
   bool run;
   UI &ui;
   CmdTlm &cmdtlm;
-  thread thread;
+  thread tlmthread;
 public:
   TelemetryHandler(CmdTlm &cmdtlm, UI &ui);
   void mainLoop();

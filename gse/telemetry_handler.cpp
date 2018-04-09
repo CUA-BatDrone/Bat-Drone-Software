@@ -32,7 +32,7 @@ void TelemetryHandler::mainLoop() {
 }
 
 void TelemetryHandler::start() {
-  thread = thread::thread(&TelemetryHandler::mainLoop, this);
+  tlmthread = thread(&TelemetryHandler::mainLoop, this);
 }
 
 void TelemetryHandler::stop() {
@@ -40,5 +40,5 @@ void TelemetryHandler::stop() {
 }
 
 void TelemetryHandler::join() {
-  thread.join();
+  tlmthread.join();
 }
