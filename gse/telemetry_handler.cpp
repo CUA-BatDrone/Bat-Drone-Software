@@ -19,6 +19,9 @@ void TelemetryHandler::mainLoop() {
       void lwirFrame(const uint16_t frame[60][80]) {
         ui.updateTexture(frame);
       }
+      void blob(uint16_t x, uint16_t y) {
+        cout << "XY: " << x << ", " << y << endl;
+      }
     } cl(ui);
     while (run) {
       cmdtlm.telemetry(cl);
