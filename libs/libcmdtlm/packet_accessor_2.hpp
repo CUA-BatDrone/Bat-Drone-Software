@@ -41,13 +41,13 @@ public:
   void drop(in_addr grpaddr);
   void drop(const char *group);
   unsigned int getMTU();
-  enum IP_PMTUDISC {
+  enum IP_PMTUDISC_ENUM {
     WANT,
     DONT,
     DO,
     PROBE
   };
-  void setMTUDiscovery(enum IP_PMTUDISC e);
+  void setMTUDiscovery(enum IP_PMTUDISC_ENUM e);
 };
 
 class Reader {

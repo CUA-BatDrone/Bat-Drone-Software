@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
     UDPSocket rs;
     rs.bind(1212);
     UDPSocket ws;
-    ws.setMTUDiscovery(UDPSocket::IP_PMTUDISC::DONT);
+    ws.setMTUDiscovery(UDPSocket::IP_PMTUDISC_ENUM::DONT);
     UDPPacketReader r(rs);
     UDPAddrPacketWriter w(Socket::stringToAddr("232.232.232.232", 2121), ws);
     CmdTlm cmdtlm(&r, &w);

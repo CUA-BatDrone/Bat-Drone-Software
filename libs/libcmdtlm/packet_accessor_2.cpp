@@ -165,7 +165,7 @@ unsigned int UDPSocket::getMTU() {
   return v;
 }
 
-void UDPSocket::setMTUDiscovery(enum IP_PMTUDISC e) {
+void UDPSocket::setMTUDiscovery(enum IP_PMTUDISC_ENUM e) {
   int v;
   int l = sizeof(v);
   switch (e) {

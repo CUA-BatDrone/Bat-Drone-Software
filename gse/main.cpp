@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     try {
     UDPSocket ws;
     UDPSocket rs;
-    ws.setMTUDiscovery(UDPSocket::IP_PMTUDISC::DONT);
+    ws.setMTUDiscovery(UDPSocket::IP_PMTUDISC_ENUM::DONT);
     rs.bind(2121);
     ws.connect(address, port);
     rs.add(maddress, address);
