@@ -4,6 +4,7 @@
 #include <winsock2.h>
 #else
 #include <sys/socket.h>
+#include <netinet/ip.h>
 #include <unistd.h>
 #endif
 #include <string>
