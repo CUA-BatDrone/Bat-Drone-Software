@@ -1,17 +1,16 @@
 #include <iostream>
 #include <string>
 #include <stack>
+#include "ciaran.hpp"
+
 
 using namespace std;
 
-
-const int rows = 60;
-const int cols = 80;
+uint16_t dx = 0;
+uint16_t dy = 0;
 int nPixels = 0;
 int nBlobs = 0;
-int dx = 0;
-int dy = 0;
-int arr[rows][cols];
+uint16_t arr[rows][cols];
 stack<int> xStack;
 stack<int> yStack;
 int previous = 0;
@@ -20,7 +19,6 @@ int previous = 0;
 int calculateCenterX(int x, int n) {
 	if (n != 0) {
 		int centerX = x / n + (x % n != 0);
-		cout << centerX << endl;
 		return centerX;
 	}
 }
@@ -81,7 +79,7 @@ void calculatePrioriy() {
 	}
 }
 
-int DFS(int arr[][cols], int x, int y) {
+uint16_t DFS(uint16_t arr[][cols], int x, int y) {
 	arr[x][y] = 0;
 	while (!(xStack.empty() && yStack.empty())) {
 		if (arr[x][y + 1] == 1 && y + 1 < cols) {
@@ -120,7 +118,7 @@ int DFS(int arr[][cols], int x, int y) {
 
 
 
-int detectBlob(int arr[rows][cols]) {
+int detectBlob(uint16_t arr[rows][cols]) {
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++) {
 			if (arr[i][j] == 1) {
@@ -131,6 +129,7 @@ int detectBlob(int arr[rows][cols]) {
 			}
 		}
 	}
+
 	return 0;
 }
 
@@ -138,7 +137,7 @@ void programRunner() {
 	detectBlob(arr);
 }
 
-int main() {
+int main2() {
 	programRunner();
 
 	system("pause");

@@ -3,6 +3,7 @@
 #include "cmd_tlm.hpp"
 #include <iostream>
 #include <string>
+#include "ciaran.hpp"
 
 using namespace std;
 
@@ -33,6 +34,8 @@ void TelemetryHandler::mainLoop() {
       pt1_frame frame;
       pt1_get_frame(&frame);
       cmdtlm->lwirFrame((const uint16_t(*)[80])frame.start);
+	  detectBlob((uint16_t(*)[cols])frame.start);
+	  cmdtlm->blob(dx, dy);
 #ifdef _WIN32
       Sleep(60);
 #else
