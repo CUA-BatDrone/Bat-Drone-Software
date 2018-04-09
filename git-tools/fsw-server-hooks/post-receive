@@ -8,8 +8,9 @@ cmake . -DFSW=ON
 echo "Compiling"
 cd fsw
 make -j$(( $(nproc --all) + 1)) fsw
-echo "Starting FSW"
+echo "Installing"
 sudo make install
+echo "Starting FSW"
 sudo systemctl daemon-reload
 #sudo systemctl enable fsw
 sudo systemctl restart fsw
