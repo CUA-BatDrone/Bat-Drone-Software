@@ -6,4 +6,4 @@ project(Ciaran's-Library)
 add_library(ciaran ciaran)
 
 # include headers from the current directory '.' for the library. Directories listed after PUBLIC will be included by those using the library as well. Directories listad after PRIVATE will only be used by the library itself.
-target_include_directories(cmdtlm PUBLIC .)
+target_include_directories(ciaran PUBLIC .)
