@@ -33,6 +33,7 @@ void CmdTlm::telemetry(Commands &callback) {
       *packetReader >> x >> y;
       callback.blob(x, y);
     }
+    break;
   }
 }
 
