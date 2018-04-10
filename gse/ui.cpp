@@ -250,6 +250,15 @@ void UI::mainLoop() {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_Rect rect;
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
+    rect.x = 32;
+    rect.y = 32;
+    rect.w = w - 32 * 2;
+    rect.h = h - 32 * 2;
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_RenderDrawRect(renderer, &rect);
     SDL_RenderPresent(renderer);
     //SDL_Delay(400);
   }
