@@ -10,7 +10,7 @@ TelemetryHandler::TelemetryHandler(CmdTlm &cmdtlm, UI &ui) : cmdtlm(cmdtlm), ui(
 }
 
 void TelemetryHandler::mainLoop() {
-  try {
+  //try {
     class CommandListener : public Commands {
     public:
       UI & ui;
@@ -26,9 +26,9 @@ void TelemetryHandler::mainLoop() {
     while (run) {
       cmdtlm.telemetry(cl);
     }
-  } catch (string e) {
-    cout << e << endl;
-  }
+  //} catch (string e) {
+    //cout << e << endl;
+  //}
 }
 
 void TelemetryHandler::start() {

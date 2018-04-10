@@ -26,6 +26,7 @@ void CmdTlm::telemetry(Commands &callback) {
       *packetReader >> frame;
       callback.lwirFrame(frame);
     }
+    break;
   case 2:
     {
       uint16_t x, y;
@@ -42,12 +43,12 @@ void CmdTlm::control(const ControlPacketElement &c) {
 }
 
 void CmdTlm::lwirFrame(const uint16_t frame[60][80]) {
-  *packetWriter << 1;
+  *packetWriter << (uint8_t) 1;
   packetWriter->write(frame, 80 * 60 * sizeof(uint16_t));
   packetWriter->write_packet();
 }
 
 void CmdTlm::blob(uint16_t x, uint16_t y) {
-  *packetWriter << x << y;
+  *packetWriter << (uint8_t) 2 << x << y;
   packetWriter->write_packet();
 }

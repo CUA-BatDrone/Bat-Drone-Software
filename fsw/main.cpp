@@ -11,9 +11,13 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
   try {
+    cout << "Creating read socket" << endl;
     UDPSocket rs;
+    cout << "Binding read socket" << endl;
     rs.bind(1212);
+    cout << "Creating write socket" << endl;
     UDPSocket ws;
+    cout << "Setting write MTU" << endl;
     ws.setMTUDiscovery(UDPSocket::IP_PMTUDISC_ENUM::DONT);
     UDPPacketReader r(rs);
     UDPAddrPacketWriter w(Socket::stringToAddr("232.232.232.232", 2121), ws);
@@ -22,8 +26,8 @@ int main(int argc, char* argv[]) {
     TelemetryHandler t(&cmdtlm, "/dev/video0");
     t.startThread();
     CommandHandler c(&cmdtlm, "/dev/i2c-1");
-    c.mainLoop();
-    t.stopThread();
+    //c.mainLoop();
+    //t.stopThread();
     t.joinThread();
     return 0;
   }

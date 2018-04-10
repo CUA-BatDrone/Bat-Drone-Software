@@ -28,6 +28,8 @@ int main(int argc, char* argv[]) {
   case 0:;
   }
 
+  cout << "using " << address << endl;
+
     try {
     UDPSocket ws;
     UDPSocket rs;
@@ -45,7 +47,7 @@ int main(int argc, char* argv[]) {
     ui.mainLoop();
     th.stop();
     th.join();
-    //rs.drop(maddress, address);
+    rs.drop(maddress, address);
     return 0;
   }
   catch (string *e) {

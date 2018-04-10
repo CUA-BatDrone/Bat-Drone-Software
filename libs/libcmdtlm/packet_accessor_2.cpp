@@ -222,7 +222,7 @@ BufferReader::BufferReader(int size) : Buffer(size) {
 void BufferReader::read(void *data, int length) {
   buf_t *buf_next = buf_current + length;
   if (buf_next > read_end) {
-    throw std::string("Read out of range");
+    throw std::string("BufferReader::read: Read out of range");
   }
   memcpy(data, buf_current, length);
   buf_current = buf_next;
@@ -238,7 +238,7 @@ BufferWriter::BufferWriter(int size) : Buffer(size) {}
 void BufferWriter::write(const void *data, int length) {
   buf_t *buf_next = buf_current + length;
   if (buf_next > buf_end) {
-    throw std::string("Write out of range");
+    throw std::string("BufferWriter::write: Write out of range");
   }
   memcpy(buf_current, data, length);
   buf_current = buf_next;
