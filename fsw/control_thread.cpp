@@ -20,10 +20,10 @@ void ControlThread::joinThread() {
 
 void ControlThread::control(float a, float e, float t, float r) {
   m_mutex.lock();
-  control_a = a;
-  control_e = e;
-  control_t = t;
-  control_r = r;
+  m_control.roll = a;
+  m_control.pitch = e;
+  m_control.thrust = t;
+  m_control.yaw = r;
   state = State::MANUAL;
   m_mutex.unlock();
   m_condition.notify_all();
@@ -59,6 +59,7 @@ void ControlThread::mainLoop() {
       }
       case State::TRACK: {
         // Unimplemented
+        state = State::FAILSAFE;
       }
     }
   }
@@ -73,8 +74,8 @@ void ControlThread::setDefaultControls() {
 }
 void ControlThread::setControls() {
   // AETR
-  pwm.setPosition(4, control_a);
-  pwm.setPosition(5, control_e);
-  pwm.setPosition(6, control_t);
-  pwm.setPosition(7, control_r);
+  pwm.setPosition(4, m_control.roll);
+  pwm.setPosition(5, m_control.pitch);
+  pwm.setPosition(6, m_control.thrust);
+  pwm.setPosition(7, m_control.yaw);
 }

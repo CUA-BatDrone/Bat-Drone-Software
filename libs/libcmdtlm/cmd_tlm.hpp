@@ -34,8 +34,10 @@ public:
   CmdTlm(PacketReader *reader, PacketWriter *writer);
   virtual void telemetry(Commands &callback);
   virtual void control(const ControlPacketElement &e);
+  virtual void control(float ailerons, float elevator, float thrust, float rudder);
   virtual void lwirFrame(const uint16_t frame[60][80]);
   virtual void blob(uint16_t x, uint16_t y);
+  virtual void track();
 };
 
 #endif

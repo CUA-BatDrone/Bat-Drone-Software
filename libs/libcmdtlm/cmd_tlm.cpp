@@ -13,33 +13,40 @@ void CmdTlm::telemetry(Commands &callback) {
   uint8_t packet_id;
   *packetReader >> packet_id;
   switch(packet_id) {
-  case 0:
-    {
-      ControlPacketElement c;
-      *packetReader >> c;
+    case 0: {
+      float roll, pitch, thrust, yaw;
+      *packetReader >> roll >> pitch >> thrust >> yaw;
+      callback.control(roll, pitch, thrust, yaw);
+      ControlPacketElement c(pitch, roll, yaw, thrust);
       callback.control(c);
-    }
     break;
-  case 1:
-    {
+    }
+    case 1: {
       uint16_t frame[60][80];
       *packetReader >> frame;
       callback.lwirFrame(frame);
-    }
     break;
-  case 2:
-    {
+    }
+    case 2: {
       uint16_t x, y;
       *packetReader >> x >> y;
       callback.blob(x, y);
-    }
     break;
+    }
+    case 3: {
+      callback.track();
+    }
   }
 }
 
+// Use control(float, float, float, float) instead
 void CmdTlm::control(const ControlPacketElement &c) {
+  control(c.roll, c.pitch, c.thrust, c.yaw);
+}
+
+void CmdTlm::control(float roll, float pitch, float thrust, float yaw) {
   uint8_t packet_id = 0;
-  *packetWriter << packet_id << c;
+  *packetWriter << (uint8_t)0 << roll << pitch << thrust << yaw;
   packetWriter->write_packet();
 }
 
@@ -51,5 +58,10 @@ void CmdTlm::lwirFrame(const uint16_t frame[60][80]) {
 
 void CmdTlm::blob(uint16_t x, uint16_t y) {
   *packetWriter << (uint8_t) 2 << x << y;
+  packetWriter->write_packet();
+}
+
+void CmdTlm::track() {
+  *packetWriter << (uint8_t) 3;
   packetWriter->write_packet();
 }
