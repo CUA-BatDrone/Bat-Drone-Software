@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(flight-software)
-add_executable(fsw main command_handler telemetry_handler )
+add_executable(fsw main command_handler telemetry_handler control_thread)
 find_package(Threads REQUIRED)
 target_link_libraries(fsw cmdtlm pwm pt1 ciaran Threads::Threads)
 install(TARGETS fsw DESTINATION bin)
