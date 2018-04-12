@@ -274,9 +274,13 @@ UDPAddrPacketReader::UDPAddrPacketReader(Socket::sockfd_t socket, int buf_size) 
 
 int UDPAddrPacketReader::recv(void *data, int length) {
   socklen_t addrlen = sizeof(reply_addr);
-  if ((length = ::recvfrom(socket, (char *) data, length, 0, (sockaddr *) &reply_addr, &addrlen)) < 0) {
+  if ((length = ::recvfrom(socket, (char *) data, length, 0, (struct sockaddr *) &reply_addr, &addrlen)) < 0) {
     buf_current = buf_start;
-    throw std::string(strerror(errno));
+#ifdef _WIN32
+    throw std::string("UDPAddrPacketReader::recv:") + std::to_string(WSAGetLastError());
+#else
+    throw std::string("UDPAddrPacketReader::recv:") + std::string(strerror(errno));
+#endif
   }
   return length;
 }

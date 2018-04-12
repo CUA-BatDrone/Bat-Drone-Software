@@ -115,7 +115,7 @@ public:
 class UDPPacketReader : public BufferReader, public virtual PacketReader {
 protected:
   Socket::sockfd_t socket;
-  int recv(void *data, int length);
+  virtual int recv(void *data, int length);
 public:
   UDPPacketReader(Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
   UDPPacketReader(Socket::Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
