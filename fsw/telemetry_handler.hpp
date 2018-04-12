@@ -10,12 +10,12 @@ class CmdTlm;
 
 class TelemetryHandler {
 protected:
-  bool run;
+  bool &run;
   CmdTlm *cmdtlm;
   thread tlm_thread;
   void mainLoop();
 public:
-  TelemetryHandler(CmdTlm *cmdtlm, const char *pt1Device);
+  TelemetryHandler(bool &run, CmdTlm *cmdtlm, const char *pt1Device);
   ~TelemetryHandler();
   void startThread();
   void stopThread();

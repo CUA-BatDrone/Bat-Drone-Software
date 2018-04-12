@@ -1,13 +1,14 @@
 #include "command_handler.hpp"
 #include "pwm.hpp"
 
-CommandHandler::CommandHandler(CmdTlm *ct, const char *pwmDevice) : cmdtlm(ct), pwm(pwmDevice) {}
+CommandHandler::CommandHandler(bool &run, CmdTlm *cmdtlm, const char *pwmDevice) : cmdtlm(cmdtlm), pwm(pwmDevice), ctl(run, pwm), run(run) {}
 
 void CommandHandler::mainLoop() {
   class CommandListener : public Commands {
   public:
-    PWMDevice & pwm;
-    CommandListener(PWMDevice &pwm) : pwm(pwm) {
+    PWMDevice &pwm;
+    ControlThread &ctl;
+    CommandListener(PWMDevice &pwm, ControlThread &ctl) : pwm(pwm), ctl(ctl) {
     }
 
     void control(const ControlPacketElement &e) {
@@ -18,8 +19,8 @@ void CommandHandler::mainLoop() {
       pwm.setPosition(6, e.thrust);
       pwm.setPosition(7, e.yaw);
     }
-  } cl(pwm);
-  while (true) {
+  } cl(pwm, ctl);
+  while (run) {
     cmdtlm->telemetry(cl);
   }
 

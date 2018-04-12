@@ -23,11 +23,12 @@ int main(int argc, char* argv[]) {
     UDPAddrPacketWriter w(Socket::stringToAddr("232.232.232.232", 2121), ws);
     CmdTlm cmdtlm(&r, &w);
 
-    TelemetryHandler t(&cmdtlm, "/dev/video0");
+    bool run = true;
+    TelemetryHandler t(run, &cmdtlm, "/dev/video0");
     t.startThread();
-    CommandHandler c(&cmdtlm, "/dev/i2c-1");
-    //c.mainLoop();
-    //t.stopThread();
+    CommandHandler c(run, &cmdtlm, "/dev/i2c-1");
+    c.mainLoop();
+    t.stopThread();
     t.joinThread();
     return 0;
   }

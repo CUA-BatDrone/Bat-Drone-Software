@@ -7,7 +7,7 @@
 
 using namespace std;
 
-TelemetryHandler::TelemetryHandler(CmdTlm *cmdtlm, const char *pt1Device) : cmdtlm(cmdtlm), run(true) {
+TelemetryHandler::TelemetryHandler(bool &run, CmdTlm *cmdtlm, const char *pt1Device) : cmdtlm(cmdtlm), run(run) {
   pt1_init(pt1Device);
 }
 
