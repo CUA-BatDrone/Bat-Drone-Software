@@ -9,18 +9,21 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
+  const char *address = "232.232.232.232";
+  int port = 2121;
+  switch (argc) {
+  default:
+  case 3:
+  	port = stoi(argv[2]);
+  case 2:
+	address = argv[1];
+  case 1:
+  case 0:;
+  }
+
   try {
-	const char *address = "232.232.232.232";
-	int port = 1212;
-	switch (argc) {
-	default:
-	case 3:
-		port = stoi(argv[2]);
-	case 2:
-		address = argv[1];
-	case 1:
-	case 0:;
-	}
+
+	cout << "using " << address << endl;
 
     cout << "Creating read socket" << endl;
     UDPSocket rs;
