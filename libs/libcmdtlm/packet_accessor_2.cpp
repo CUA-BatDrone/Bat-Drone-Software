@@ -13,25 +13,29 @@
 #endif
 #include <iostream>
 
-std::string sock_error_string(const char *message) {
-  std::string s(message);
-  s += std::string(": ");
+using namespace std;
+
+string sock_error_string(const char *message) {
+  string s(message);
+  s += string(": ");
 #ifdef _WIN32
-  char msgbuf[256] = "";
+  char *msgbuf = NULL;
   int err = WSAGetLastError(); 
-  s += std::string("WSA Error Number ") + std::to_string(err) + std::string(". ");
-  FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,   // flags
+  s += string("WSA Error Number ") + to_string(err) + string(".");
+  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,   // flags
     NULL,                // lpsource
     err,                 // message id
     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),    // languageid
-    msgbuf,              // output buffer
-    sizeof(msgbuf),     // size of msgbuf, bytes
+    (LPSTR) &msgbuf,              // output buffer
+    0,     // size of msgbuf, bytes
     NULL);               // va_list of arguments
 
-  if (*msgbuf)
-    s += std::string(msgbuf);  // insert message if any
+  if (msgbuf) {
+    s += string(" ") + string(msgbuf);  // insert message if any
+    LocalFree(msgbuf);
+  }
 #else
-  s += std::string(strerror(errno));
+  s += string(strerror(errno));
 #endif
   return s;
 }
@@ -234,7 +238,7 @@ BufferReader::BufferReader(int size) : Buffer(size) {
 void BufferReader::read(void *data, int length) {
   buf_t *buf_next = buf_current + length;
   if (buf_next > read_end) {
-    throw std::string("BufferReader::read: Read out of range");
+    throw string("BufferReader::read: Read out of range");
   }
   memcpy(data, buf_current, length);
   buf_current = buf_next;
@@ -250,7 +254,7 @@ BufferWriter::BufferWriter(int size) : Buffer(size) {}
 void BufferWriter::write(const void *data, int length) {
   buf_t *buf_next = buf_current + length;
   if (buf_next > buf_end) {
-    throw std::string("BufferWriter::write: Write out of range");
+    throw string("BufferWriter::write: Write out of range");
   }
   memcpy(buf_current, data, length);
   buf_current = buf_next;
@@ -400,7 +404,7 @@ void UDPSplitPacketReader::read(void *buffer, int length) {
       }
       if (currentLength < length) {
         if (!currentPacket->hasNext) {
-          throw std::string("UDPSplitPacketReader::read: no more packets to read");
+          throw string("UDPSplitPacketReader::read: no more packets to read");
         }
         currentPacket->read(buffer, currentLength);
         buffer = (char *) buffer + currentLength;
@@ -411,7 +415,7 @@ void UDPSplitPacketReader::read(void *buffer, int length) {
       }
     }
   } else {
-    throw std::string("UDPSplitPacketReader::read: no packets read");
+    throw string("UDPSplitPacketReader::read: no packets read");
   }
 }
 
@@ -419,7 +423,7 @@ void UDPSplitPacketReader::read_packet() {
   while(1) {
     // erase old packets
     if (receivedPackets.size() >= max || receivedPacket) {
-      std::list<SplitPacket>::iterator current;
+      list<SplitPacket>::iterator current;
       if(receivedPacket) {
         current = currentPacket;
         receivedPacket = false;
@@ -427,10 +431,10 @@ void UDPSplitPacketReader::read_packet() {
         current = --receivedPackets.end();
       }
       if (current->hasNext) {
-        std::list<SplitPacket>::iterator it;
+        list<SplitPacket>::iterator it;
         it = current->next;
         while (it->hasNext) {
-          std::list<SplitPacket>::iterator temp;
+          list<SplitPacket>::iterator temp;
           temp = it->next;
           receivedPackets.erase(it);
           it = temp;
@@ -438,10 +442,10 @@ void UDPSplitPacketReader::read_packet() {
         receivedPackets.erase(it);
       }
       if (current->hasPrevious) {
-        std::list<SplitPacket>::iterator it;
+        list<SplitPacket>::iterator it;
         it = current->previous;
         while (it->hasPrevious) {
-          std::list<SplitPacket>::iterator temp;
+          list<SplitPacket>::iterator temp;
           temp = it->previous;
           receivedPackets.erase(it);
           it = temp;
@@ -453,7 +457,7 @@ void UDPSplitPacketReader::read_packet() {
 
     // create packet
     receivedPackets.emplace_front(mtu);
-    std::list<SplitPacket>::iterator current;
+    list<SplitPacket>::iterator current;
     current = receivedPackets.begin();
 
     // read until copy not read;
@@ -463,11 +467,11 @@ void UDPSplitPacketReader::read_packet() {
       current->read_end = current->buf_start + length;
       current->buf_current += 4;
 
-      //std::cout << current->getCount() << std::endl;
-      //std::cout << *((uint32_t *)current->buf_start) << std::endl;
+      //cout << current->getCount() << endl;
+      //cout << *((uint32_t *)current->buf_start) << endl;
 
       // find copies
-      std::list<SplitPacket>::iterator copy;
+      list<SplitPacket>::iterator copy;
       for (copy = ++receivedPackets.begin(); copy != receivedPackets.end(); copy++) {
         if ((current->getID() == copy->getID()) && (current->getCount() == copy->getCount())) {
           break;
@@ -506,7 +510,7 @@ void UDPSplitPacketReader::read_packet() {
     // for start and middle packets
     if (!current->isEnd()) {
       // find the next one.
-      std::list<SplitPacket>::iterator next;
+      list<SplitPacket>::iterator next;
       // findNext
       for (next = ++receivedPackets.begin(); next != receivedPackets.end(); next++) {
         if ((current->getID() == next->getID()) && (current->getNextCount() == next->getCount())) {
@@ -527,7 +531,7 @@ void UDPSplitPacketReader::read_packet() {
     }
     // for middle and end packets
     if (!current->isStart()) {
-      std::list<SplitPacket>::iterator previous;
+      list<SplitPacket>::iterator previous;
       // findPrevious
       // previous = findPrevious(current);
       for (previous = ++receivedPackets.begin(); previous != receivedPackets.end(); previous++) {
@@ -565,7 +569,7 @@ void UDPSplitPacketReader::read_packet() {
     // test if all packet available and propogate values of hasEnd and hasStart
     // if connected to or is a start packet
     if (current->hasStart) {
-      std::list<SplitPacket>::iterator it;
+      list<SplitPacket>::iterator it;
       it = current;
       // Indicate to following packet that there is a start
       // or return if found an end
@@ -582,7 +586,7 @@ void UDPSplitPacketReader::read_packet() {
     }
     // if connected to end packet
     if (current->hasEnd) {
-      std::list<SplitPacket>::iterator it;
+      list<SplitPacket>::iterator it;
       it = current;
       while(it->hasPrevious) {
         it = it->previous;
