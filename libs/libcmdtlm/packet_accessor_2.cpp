@@ -39,13 +39,12 @@ UDPSocket::~UDPSocket() {
 #endif
 }
 
-sockaddr_storage Socket::stringToAddr(const char *addr_in, int port) {
-  struct sockaddr_storage storage = {};
-  struct sockaddr_in &addr_out = (struct sockaddr_in &) storage;
+sockaddr_in Socket::stringToAddr(const char *addr_in, int port) {
+  struct sockaddr_in addr_out = {};
   addr_out.sin_family = AF_INET;
   addr_out.sin_port = htons(port);
   inet_pton(AF_INET, addr_in, &addr_out.sin_addr);
-  return storage;
+  return addr_out;
 }
 
 void UDPSocket::bind(int port) {
@@ -62,7 +61,7 @@ void UDPSocket::bind(int port) {
   }
 }
 
-void UDPSocket::connect(sockaddr_storage addr) {
+void UDPSocket::connect(sockaddr_in addr) {
   if (::connect(sockfd, (sockaddr *) &addr, sizeof(addr)) < 0) {
 #ifdef _WIN32
     throw std::string("UDPSocket::UDPSocket()") + std::string("WSA Error: ")  + std::to_string(WSAGetLastError());
@@ -306,9 +305,9 @@ void UDPPacketWriter::write_packet() {
 
 
 
-UDPAddrPacketWriter::UDPAddrPacketWriter(const struct sockaddr_storage &address, Socket &socket, int buf_size) : UDPAddrPacketWriter(address, socket.sockfd, buf_size) {}
+UDPAddrPacketWriter::UDPAddrPacketWriter(const struct sockaddr_in &address, Socket &socket, int buf_size) : UDPAddrPacketWriter(address, socket.sockfd, buf_size) {}
 
-UDPAddrPacketWriter::UDPAddrPacketWriter(const struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size) : UDPPacketWriter(socket, buf_size) {
+UDPAddrPacketWriter::UDPAddrPacketWriter(const struct sockaddr_in &address, Socket::sockfd_t socket, int buf_size) : UDPPacketWriter(socket, buf_size) {
   this->socket = socket;
   this->address = address;
 }

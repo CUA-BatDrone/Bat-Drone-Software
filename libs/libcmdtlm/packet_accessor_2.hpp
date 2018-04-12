@@ -16,7 +16,7 @@
 
 class Socket {
 public:
-  static sockaddr_storage stringToAddr(const char *addr, int port);
+  static sockaddr_in stringToAddr(const char *addr, int port);
 #ifdef _WIN32
   typedef SOCKET sockfd_t;
 #else
@@ -30,7 +30,7 @@ public:
   UDPSocket();
   virtual ~UDPSocket();
   void bind(int port);
-  void connect(sockaddr_storage addr);
+  void connect(sockaddr_in addr);
   void connect(const char *addr, int port);
   void add(in_addr grpaddr, in_addr srcaddr);
   void add(const char *group, const char *source);
@@ -128,7 +128,7 @@ class UDPAddrPacketReader : public UDPPacketReader {
 protected:
   virtual int recv(void *data, int length);
 public:
-  struct sockaddr_storage reply_addr;
+  struct sockaddr_in reply_addr;
   UDPAddrPacketReader(Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
   UDPAddrPacketReader(Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
   UDPAddrPacketWriter getReplyPacketWriter(int buf_size = DEFAULT_BUFFER_SIZE);
@@ -148,9 +148,9 @@ class UDPAddrPacketWriter : public UDPPacketWriter {
 protected:
   virtual void send(void *data, int length);
 public:
-  struct sockaddr_storage address;
-  UDPAddrPacketWriter(const struct sockaddr_storage &address, Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
-  UDPAddrPacketWriter(const struct sockaddr_storage &address, Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
+  struct sockaddr_in address;
+  UDPAddrPacketWriter(const struct sockaddr_in &address, Socket &socket, int buf_size = DEFAULT_BUFFER_SIZE);
+  UDPAddrPacketWriter(const struct sockaddr_in &address, Socket::sockfd_t socket, int buf_size = DEFAULT_BUFFER_SIZE);
 };
 
 class UDPSplitPacketWriter : public BufferWriter, public virtual PacketWriter {
