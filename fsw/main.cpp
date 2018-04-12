@@ -9,8 +9,19 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-
   try {
+	const char *address = "232.232.232.232";
+	int port = 1212;
+	switch (argc) {
+	default:
+	case 3:
+		port = stoi(argv[2]);
+	case 2:
+		address = argv[1];
+	case 1:
+	case 0:;
+	}
+
     cout << "Creating read socket" << endl;
     UDPSocket rs;
     cout << "Binding read socket" << endl;
@@ -20,7 +31,7 @@ int main(int argc, char* argv[]) {
     cout << "Setting write MTU" << endl;
     ws.setMTUDiscovery(UDPSocket::IP_PMTUDISC_ENUM::DONT);
     UDPPacketReader r(rs);
-    UDPAddrPacketWriter w(Socket::stringToAddr("232.232.232.232", 2121), ws);
+    UDPAddrPacketWriter w(Socket::stringToAddr(address, port), ws);
     CmdTlm cmdtlm(&r, &w);
 
     bool run = true;

@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     rs.bind(2121);
     ws.connect(address, port);
     rs.add(maddress, address);
-    UDPAddrPacketWriter w(Socket::stringToAddr(address, 1212), ws);
+    UDPAddrPacketWriter w(Socket::stringToAddr(address, port), ws);
     UDPPacketReader r(rs);
     CmdTlm cmdtlm(&r, &w);
 
