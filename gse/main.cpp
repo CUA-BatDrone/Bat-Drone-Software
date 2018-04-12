@@ -14,14 +14,16 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
   const char *address = "192.168.0.1";
-  int port = 1212;
+  int port_send = 1212, port_recv = 2121;
   const char *maddress = "232.232.232.232";
   switch (argc) {
   default:
+  case 5:
+    port_recv = stoi(argv[4]);
   case 4:
     maddress = argv[3];
   case 3:
-    port = stoi(argv[2]);
+    port_send = stoi(argv[2]);
   case 2:
     address = argv[1];
   case 1:
@@ -34,10 +36,10 @@ int main(int argc, char* argv[]) {
     UDPSocket ws;
     UDPSocket rs;
     ws.setMTUDiscovery(UDPSocket::IP_PMTUDISC_ENUM::DONT);
-    rs.bind(2121);
-    ws.connect(address, port);
+    rs.bind(port_recv);
+    ws.connect(address, port_send);
     rs.add(maddress, address);
-    UDPAddrPacketWriter w(Socket::stringToAddr(address, port), ws);
+    UDPAddrPacketWriter w(Socket::stringToAddr(address, port_send), ws);
     UDPPacketReader r(rs);
     CmdTlm cmdtlm(&r, &w);
 
