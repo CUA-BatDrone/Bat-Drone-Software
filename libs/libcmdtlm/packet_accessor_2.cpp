@@ -319,9 +319,9 @@ UDPAddrPacketWriter::UDPAddrPacketWriter(const struct sockaddr_in &address, Sock
 void UDPAddrPacketWriter::send(void *data, int length) {
   if (::sendto(socket, (char *) data, length, 0, (sockaddr *) &address, sizeof(address)) < 0) {
 #ifdef _WIN32
-    throw std::string("WSA Error: ") + std::to_string(WSAGetLastError());
+    throw std::string("UDPAddrPacketWriter::send:") + std::to_string(WSAGetLastError());
 #else
-    throw std::string(strerror(errno));
+    throw std::string("UDPAddrPacketWriter::send:") + std::string(strerror(errno));
 #endif
   }
 }
