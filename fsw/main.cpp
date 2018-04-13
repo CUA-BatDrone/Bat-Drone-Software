@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
     bool run = true;
     TelemetryHandler t(run, &cmdtlm, "/dev/video0");
     t.startThread();
-    CommandHandler c(run, &cmdtlm, "/dev/i2c-1");
+    CommandHandler c(run, &cmdtlm, "/dev/i2c-1", chrono::seconds(2));
     c.mainLoop();
     t.stopThread();
     t.joinThread();
