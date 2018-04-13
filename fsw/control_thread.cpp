@@ -4,10 +4,17 @@
 using namespace std;
 using namespace chrono;
 
-ControlThread::ControlThread(bool &run, PWMDevice &pwm) : run(run), pwm(pwm) {}
+ControlThread::ControlThread(bool &run, PWMDevice &pwm, steady_clock::duration timeout) : run(run), pwm(pwm), timeout(timeout), state(State::FAILSAFE) {
+  startThread();
+}
+
+ControlThread::~ControlThread() {
+  stopThread();
+  joinThread();
+}
 
 void ControlThread::startThread() {
-  m_thread = std::thread(&ControlThread::mainLoop, this);
+  m_thread = thread(&ControlThread::mainLoop, this);
 }
 
 void ControlThread::stopThread() {
@@ -25,6 +32,7 @@ void ControlThread::control(float a, float e, float t, float r) {
   m_control.thrust = t;
   m_control.yaw = r;
   state = State::MANUAL;
+  command_pending = true;
   m_mutex.unlock();
   m_condition.notify_all();
 }
@@ -32,20 +40,25 @@ void ControlThread::control(float a, float e, float t, float r) {
 void ControlThread::track() {
   m_mutex.lock();
   state = State::TRACK;
+  command_pending = true;
   m_mutex.unlock();
   m_condition.notify_all();
 }
 
 void ControlThread::mainLoop() {
   unique_lock<mutex> ul(m_mutex);
+  // Main state machine
   while (run) {
     switch (state) {
+      // Send manual control;
       case State::MANUAL: {
+        // Set controls
         setControls();
         command_pending = false;
-        steady_clock::time_point timeout = steady_clock::now() + seconds(2);
+        // Wait for next command or enter failsafe state
+        steady_clock::time_point t = steady_clock::now() + timeout;
         do {
-          if (m_condition.wait_until(ul, timeout) == cv_status::timeout) {
+          if (m_condition.wait_until(ul, t) == cv_status::timeout) {
             state = State::FAILSAFE;
             break;
           }
@@ -53,19 +66,20 @@ void ControlThread::mainLoop() {
         break;
       }
       case State::FAILSAFE: {
-        setDefaultControls();
+        setFailsafeControls();
         while (!command_pending) m_condition.wait(ul);
         break;
       }
       case State::TRACK: {
         // Unimplemented
+        command_pending = false;
         state = State::FAILSAFE;
       }
     }
   }
 }
 
-void ControlThread::setDefaultControls() {
+void ControlThread::setFailsafeControls() {
   // AETR
   pwm.setPosition(4, 0.0f);
   pwm.setPosition(5, 0.0f);

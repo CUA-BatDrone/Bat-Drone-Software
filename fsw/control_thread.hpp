@@ -6,19 +6,19 @@
 #include <thread>
 #include <pwm.hpp>
 #include <commands.hpp>
+#include <chrono>
 
 using namespace std;
+using namespace chrono;
 
-class ControlThread : Commands {
+class ControlThread : public Commands {
 public:
-  ControlThread(bool &run, PWMDevice &pwm);
-  void startThread();
-  void stopThread();
-  void joinThread();
+  ControlThread(bool &run, PWMDevice &pwm, steady_clock::duration timeout);
+  ~ControlThread();
   virtual void control(float a, float e, float t, float r);
   virtual void track();
-  void mainLoop();
 protected:
+  steady_clock::duration timeout;
   bool &run;
   PWMDevice &pwm;
   bool command_pending;
@@ -27,7 +27,7 @@ protected:
     float roll, pitch, thrust, yaw;
   } m_control;
   void setControls();
-  void setDefaultControls();
+  void setFailsafeControls();
   mutex m_mutex;
   condition_variable m_condition;
   thread m_thread;
@@ -36,6 +36,10 @@ protected:
     MANUAL,
     FAILSAFE
   } state;
+  void startThread();
+  void stopThread();
+  void joinThread();
+  void mainLoop();
 };
 
 #endif

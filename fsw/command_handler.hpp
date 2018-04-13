@@ -4,8 +4,6 @@
 #include "pwm.hpp"
 #include "control_thread.hpp"
 
-using namespace std;
-
 class CommandHandler {
 protected:
   bool &run;
@@ -13,7 +11,7 @@ protected:
   CmdTlm *cmdtlm;
   ControlThread ctl;
 public:
-  CommandHandler(bool &run, CmdTlm *cmdtlm, const char *pwmDevice);
+  CommandHandler(bool &run, CmdTlm *cmdtlm, const char *pwmDevice, std::chrono::steady_clock::duration timeout);
   void mainLoop();
 };
 

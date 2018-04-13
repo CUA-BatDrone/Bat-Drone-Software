@@ -1,25 +1,24 @@
 #include "command_handler.hpp"
 #include "pwm.hpp"
 
-CommandHandler::CommandHandler(bool &run, CmdTlm *cmdtlm, const char *pwmDevice) : cmdtlm(cmdtlm), pwm(pwmDevice), ctl(run, pwm), run(run) {}
+using namespace std;
+using namespace chrono;
+
+CommandHandler::CommandHandler(bool &run, CmdTlm *cmdtlm, const char *pwmDevice, steady_clock::duration timeout) : cmdtlm(cmdtlm), pwm(pwmDevice), ctl(run, pwm, timeout), run(run) {}
 
 void CommandHandler::mainLoop() {
   class CommandListener : public Commands {
   public:
-    PWMDevice &pwm;
     ControlThread &ctl;
-    CommandListener(PWMDevice &pwm, ControlThread &ctl) : pwm(pwm), ctl(ctl) {
+    CommandListener(ControlThread &ctl) : ctl(ctl) {
     }
-
-    void control(const ControlPacketElement &e) {
-      // Receiver label
-      // AETR
-      pwm.setPosition(4, e.roll);
-      pwm.setPosition(5, e.pitch);
-      pwm.setPosition(6, e.thrust);
-      pwm.setPosition(7, e.yaw);
+    virtual void track() {
+      ctl.track();
     }
-  } cl(pwm, ctl);
+    virtual void control(float roll, float pitch, float thrust, float yaw) {
+      ctl.control(roll, pitch, thrust, yaw);
+    }
+  } cl(ctl);
   while (run) {
     cmdtlm->telemetry(cl);
   }
