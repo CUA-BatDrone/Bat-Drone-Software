@@ -5,7 +5,7 @@
 using namespace std;
 using namespace chrono;
 
-ControlThread::ControlThread(bool &run, PWMDevice &pwm, steady_clock::duration timeout) : run(run), pwm(pwm), timeout(timeout), state(State::FAILSAFE) {
+ControlThread::ControlThread(bool &run, PWMDevice &pwm, steady_clock::duration timeout) : run(run), pwm(pwm), timeout(timeout), state(State::FAILSAFE), command_pending(false) {
   startThread();
 }
 
@@ -61,7 +61,7 @@ void ControlThread::mainLoop() {
         do {
           if (m_condition.wait_until(ul, t) == cv_status::timeout) {
             state = State::FAILSAFE;
-            break;
+            continue;
           }
         } while (!command_pending);
         break;
