@@ -1,5 +1,6 @@
 #include "control_thread.hpp"
 #include <cmd_tlm.hpp>
+#include <iostream>
 
 using namespace std;
 using namespace chrono;
@@ -67,6 +68,7 @@ void ControlThread::mainLoop() {
       }
       case State::FAILSAFE: {
         setFailsafeControls();
+        command_pending = false;
         while (!command_pending) m_condition.wait(ul);
         break;
       }
