@@ -35,7 +35,7 @@ string sock_error_string(const char *message) {
     LocalFree(msgbuf);
   }
 #else
-  s += string(strerror(errno));
+  s += string("Linux errno ") + to_string(errno) + string(". ") + string(strerror(errno));
 #endif
   return s;
 }
