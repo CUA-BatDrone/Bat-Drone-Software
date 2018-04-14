@@ -53,7 +53,6 @@ void ControlThread::mainLoop() {
     switch (state) {
       // Send manual control;
       case State::MANUAL: {
-        cout << "MANUAL" << endl;
         // Set controls
         setControls();
         command_pending = false;
@@ -68,7 +67,6 @@ void ControlThread::mainLoop() {
         break;
       }
       case State::FAILSAFE: {
-        cout << "FAILSAFE" << endl;
         setFailsafeControls();
         command_pending = false;
         while (!command_pending) m_condition.wait(ul);
