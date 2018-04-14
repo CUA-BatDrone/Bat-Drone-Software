@@ -1,8 +1,8 @@
+#include "cmd_tlm.hpp"
 #include "ui.hpp"
 #include "packet_elements.hpp"
 #include <SDL.h>
 #include <iostream>
-#include "cmd_tlm.hpp"
 
 using namespace std;
 
@@ -159,21 +159,9 @@ SDL_Joystick *UI::getJoystick() {
   return NULL;
 }
 
-void UI::updateTexture() {
-  while (run) {
-    SDL_Delay(400);
-    unsigned char *pixels;
-    int pixel_pitch;
-    SDL_LockTexture(texture, NULL, (void **)&pixels, &pixel_pitch);
-    for (int i = 0; i < pixel_pitch * 60; i += 3) {
-      pixels[i] = pixels[i + 1] = pixels[i + 2] = rand();
-    }
-    SDL_UnlockTexture(texture);
-  }
-}
-
-void UI::updateTexture(const uint16_t frame[60][80]) {
-  if (texture) {
+void UI::lwirFrame(const uint16_t frame[60][80]) {
+  unique_lock<mutex> ul(texture_mutex);
+  if (texture && run) {
     // 3400 to 3900 is human
     uint16_t offset = -3400; // to 3800
     float scale = 255.0f / (3900 - 3400);
@@ -188,7 +176,12 @@ void UI::updateTexture(const uint16_t frame[60][80]) {
   }
 }
 
+void UI::blob(uint16_t x, uint16_t y) {
+  cout << "Blob at (" << x << "," << y << ")" << endl;
+}
+
 void UI::mainLoop() {
+  unique_lock<mutex> ul(texture_mutex);
   SDL_Window *window;
   SDL_Renderer *renderer;
   SDL_Joystick *joystick = NULL;
@@ -214,6 +207,7 @@ void UI::mainLoop() {
   }
   float last_thrust = -1;
   while (run) {
+  ul.unlock();
 
     // Setup game controllers
     int num_joysticks = SDL_NumJoysticks();
@@ -249,6 +243,8 @@ void UI::mainLoop() {
     //SDL_UnlockTexture(texture);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
+
+    ul.lock();
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_Rect rect;
     int w, h;

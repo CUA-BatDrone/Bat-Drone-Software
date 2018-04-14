@@ -2,12 +2,15 @@ class ControlPacketElement;
 class CmdTlm;
 #include <SDL.h>
 #include <stdint.h>
+#include <mutex>
+#include <commands.hpp>
 
 
-class UI {
-private:
+class UI : public Commands{
+protected:
   CmdTlm &cmdtlm;
   bool run;
+  mutex texture_mutex;
   SDL_Texture *texture;
   SDL_Joystick *getJoystick();
   ControlPacketElement handleJoystick(SDL_Joystick *joystick);
@@ -15,6 +18,6 @@ private:
 public:
   UI(CmdTlm &cmdtlm);
   void mainLoop();
-  void updateTexture();
-  void updateTexture(const uint16_t frame[60][80]);
+  virtual void lwirFrame(const uint16_t frame[60][80]);
+  virtual void blob(uint16_t x, uint16_t y);
 };
