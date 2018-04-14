@@ -11,6 +11,7 @@ protected:
   CmdTlm &cmdtlm;
   bool run;
   mutex texture_mutex;
+  int blobx, bloby;
   SDL_Texture *texture;
   SDL_Joystick *getJoystick();
   ControlPacketElement handleJoystick(SDL_Joystick *joystick);

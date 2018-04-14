@@ -178,6 +178,8 @@ void UI::lwirFrame(const uint16_t frame[60][80]) {
 
 void UI::blob(uint16_t x, uint16_t y) {
   cout << "Blob at (" << x << "," << y << ")" << endl;
+  blobx = x;
+  bloby = y;
 }
 
 void UI::mainLoop() {
@@ -249,10 +251,10 @@ void UI::mainLoop() {
     SDL_Rect rect;
     int w, h;
     SDL_GetWindowSize(window, &w, &h);
-    rect.x = 32;
-    rect.y = 32;
-    rect.w = w - 32 * 2;
-    rect.h = h - 32 * 2;
+    rect.x = blobx - 16;
+    rect.y = bloby - 16;
+    rect.w = 32;
+    rect.h = 32;
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     SDL_RenderDrawRect(renderer, &rect);
     SDL_RenderPresent(renderer);
