@@ -23,11 +23,11 @@ void TelemetryHandler::joinThread() {
 }
 
 void TelemetryHandler::mainLoop() {
-  try {
-    while (run) {
+  while (run) {
+    try {
       if (pt1_init(pt1Device) < 0) {
         cerr << "Unable to init libpt1" << endl;
-        continue;
+        while (pt1_init(pt1Device) < 0);
       }
       if (pt1_start() < 0) {
         cerr << "Unable to start libpt1" << endl;
@@ -37,8 +37,7 @@ void TelemetryHandler::mainLoop() {
         cerr << "Unable to disable ffc" << endl;
         continue;
       }
-
-
+      break;
       while (run) {
         pt1_frame frame;
         if (pt1_get_frame(&frame) < 0) {
@@ -53,11 +52,11 @@ void TelemetryHandler::mainLoop() {
       }
       pt1_stop();
       pt1_deinit();
+    } catch (string e) {
+      pt1_stop();
+      pt1_deinit();
+      cout << "TelemetryHandler error" << endl;
+      cout << e << endl;
     }
-  } catch (string e) {
-    pt1_stop();
-    pt1_deinit();
-    cout << "TelemetryHandler error" << endl;
-    cout << e << endl;
   }
 }
