@@ -25,27 +25,27 @@ extern "C" {
 /**
  * Initialize the camera.
  */
-void pt1_init(const char *device);
+int pt1_init(const char *device);
 
 /**
  * Run FFC.
  */
-void pt1_perform_ffc();
+int pt1_perform_ffc();
 
 /**
  * Disable FFC.
  */
-void pt1_disable_ffc();
+int pt1_disable_ffc();
 
 /**
  * Enable video capture.
  */
-void pt1_start();
+int pt1_start();
 
 /**
  * Disable video capture.
  */
-void pt1_stop();
+int pt1_stop();
 
 /**
  * Contains the buffer, sequence, and timing of a frame.
@@ -60,12 +60,12 @@ struct pt1_frame {
 /**
  * Gets a new frame. Previous frame becomes invalid
  */
-void pt1_get_frame(struct pt1_frame *frame);
+int pt1_get_frame(struct pt1_frame *frame);
 
 /**
  * Deinitialize the camera.
  */
-void pt1_deinit();
+int pt1_deinit();
 
 #ifdef __cplusplus
 }
