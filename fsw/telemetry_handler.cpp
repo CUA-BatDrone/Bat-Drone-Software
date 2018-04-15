@@ -27,11 +27,18 @@ void TelemetryHandler::mainLoop() {
     while (run) {
       if (pt1_init(pt1Device) < 0) {
         cerr << "Unable to init libpt1" << endl;
-}
+        continue;
+      }
       if (pt1_start() < 0) {
         cerr << "Unable to start libpt1" << endl;
         continue;
       }
+      if (pt1_disable_ffc() < 0) {
+        cerr << "Unable to disable ffc" << endl;
+        continue;
+      }
+
+
       while (run) {
         pt1_frame frame;
         if (pt1_get_frame(&frame) < 0) {
