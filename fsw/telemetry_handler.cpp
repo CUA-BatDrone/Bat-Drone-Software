@@ -7,12 +7,7 @@
 
 using namespace std;
 
-TelemetryHandler::TelemetryHandler(bool &run, CmdTlm *cmdtlm, const char *pt1Device) : cmdtlm(cmdtlm), run(run) {
-  pt1_init(pt1Device);
-}
-
-TelemetryHandler::~TelemetryHandler() {
-  pt1_deinit();
+TelemetryHandler::TelemetryHandler(bool &run, CmdTlm *cmdtlm, const char *pt1Device) : cmdtlm(cmdtlm), run(run), pt1Device(pt1Device) {
 }
 
 void TelemetryHandler::startThread() {
@@ -29,22 +24,33 @@ void TelemetryHandler::joinThread() {
 
 void TelemetryHandler::mainLoop() {
   try {
-    pt1_start();
     while (run) {
-      pt1_frame frame;
-      pt1_get_frame(&frame);
-      cmdtlm->lwirFrame((const uint16_t(*)[80])frame.start);
-	  detectBlob((uint16_t(*)[cols])frame.start);
-	  cmdtlm->blob(dx, dy);
+      if (pt1_init(pt1Device) < 0) {
+        cerr << "Unable to init libpt1" << endl;
+}
+      if (pt1_start() < 0) {
+        cerr << "Unable to start libpt1" << endl;
+        continue;
+      }
+      while (run) {
+        pt1_frame frame;
+        if (pt1_get_frame(&frame) < 0) {
+          break;
+        }
+        cmdtlm->lwirFrame((const uint16_t(*)[80])frame.start);
+        detectBlob((uint16_t(*)[cols])frame.start);
+        cmdtlm->blob(dx, dy);
 #ifdef _WIN32
-      Sleep(60);
-#else
+        Sleep(60);
 #endif
+      }
+      pt1_stop();
+      pt1_deinit();
     }
-    pt1_stop();
   } catch (string e) {
     pt1_stop();
-    cout << "ERROR" << endl;
+    pt1_deinit();
+    cout << "TelemetryHandler error" << endl;
     cout << e << endl;
   }
 }
