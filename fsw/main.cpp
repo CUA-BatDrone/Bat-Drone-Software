@@ -9,7 +9,8 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  const char *address = "232.232.232.232";
+  // const char *address = "232.232.232.232";
+  const char *address = "192.168.0.16";
   int port_send = 2121, port_recv = 1212;
   switch (argc) {
   default:
