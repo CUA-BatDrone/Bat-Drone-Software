@@ -84,14 +84,14 @@ void ControlThread::mainLoop() {
 
 void ControlThread::setFailsafeControls() {
   // AETR
-  pwm.setPosition(4, 0.0f);
+  pwm.setPosition(3, 0.0f);
   pwm.setPosition(5, 0.0f);
-  pwm.setPosition(6, 0.0f);
+  pwm.setPosition(6, -1.0f);
   pwm.setPosition(7, 0.0f);
 }
 void ControlThread::setControls() {
   // AETR
-  pwm.setPosition(4, m_control.roll);
+  pwm.setPosition(3, m_control.roll);
   pwm.setPosition(5, m_control.pitch);
   pwm.setPosition(6, m_control.thrust);
   pwm.setPosition(7, m_control.yaw);
