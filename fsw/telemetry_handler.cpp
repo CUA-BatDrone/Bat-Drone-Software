@@ -25,27 +25,45 @@ void TelemetryHandler::joinThread() {
 void TelemetryHandler::mainLoop() {
   while (run) {
     try {
-      if (pt1_init(pt1Device) < 0) {
+      while (pt1_init(pt1Device) < 0) {
         cerr << "Unable to init libpt1" << endl;
-        while (pt1_init(pt1Device) < 0);
+        this_thread::sleep_for(chrono::seconds(1));
+        continue;
       }
       if (pt1_start() < 0) {
         cerr << "Unable to start libpt1" << endl;
+        this_thread::sleep_for(chrono::seconds(1));
         continue;
       }
       if (pt1_disable_ffc() < 0) {
         cerr << "Unable to disable ffc" << endl;
+        this_thread::sleep_for(chrono::seconds(1));
         continue;
       }
       break;
       while (run) {
         pt1_frame frame;
         if (pt1_get_frame(&frame) < 0) {
+          cerr << "Unable to disable get frame" << endl;
+          this_thread::sleep_for(chrono::seconds(1));
           break;
         }
-        cmdtlm->lwirFrame((const uint16_t(*)[80])frame.start);
+        try {
+          cmdtlm->lwirFrame((const uint16_t(*)[80])frame.start);
+        } catch (string e) {
+          cerr << e;
+          this_thread::sleep_for(chrono::seconds(1));
+          continue;
+        }
         detectBlob((uint16_t(*)[cols])frame.start);
-        cmdtlm->blob(dx, dy);
+        try {
+          cmdtlm->blob(dx, dy);
+        }
+        catch (string e) {
+          cerr << e;
+          this_thread::sleep_for(chrono::seconds(1));
+          continue;
+        }
 #ifdef _WIN32
         Sleep(60);
 #endif
