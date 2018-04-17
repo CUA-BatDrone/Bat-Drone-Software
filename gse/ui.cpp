@@ -13,7 +13,7 @@ UI::UI(CmdTlm &cmdtlm) : cmdtlm(cmdtlm) {
 
 ControlPacketElement UI::handleKeyboard(float &last_thrust) {
   ControlPacketElement c;
-  float rate = 1.0;
+  const float rate = 0.25;
   const Uint8 *keyboard = SDL_GetKeyboardState(NULL);
   if (keyboard[SDL_SCANCODE_RETURN]) {
     c.pitch = -1;
