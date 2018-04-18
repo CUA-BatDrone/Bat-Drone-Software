@@ -44,7 +44,7 @@ void TelemetryHandler::mainLoop() {
       while (run) {
         pt1_frame frame;
         if (pt1_get_frame(&frame) < 0) {
-          cerr << "Unable to disable get frame" << endl;
+          cerr << "Unable to get frame" << endl;
           this_thread::sleep_for(chrono::seconds(1));
           break;
         }
