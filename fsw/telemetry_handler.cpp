@@ -40,7 +40,6 @@ void TelemetryHandler::mainLoop() {
         this_thread::sleep_for(chrono::seconds(1));
         continue;
       }
-      break;
       while (run) {
         pt1_frame frame;
         if (pt1_get_frame(&frame) < 0) {
@@ -53,19 +52,18 @@ void TelemetryHandler::mainLoop() {
         } catch (string e) {
           cerr << e;
           this_thread::sleep_for(chrono::seconds(1));
-          continue;
+          break;
         }
         detectBlob((uint16_t(*)[cols])frame.start);
         try {
           cmdtlm->blob(dx, dy);
-        }
-        catch (string e) {
+        } catch (string e) {
           cerr << e;
           this_thread::sleep_for(chrono::seconds(1));
-          continue;
+          break;
         }
 #ifdef _WIN32
-        Sleep(60);
+        this_thread::sleep_for(chrono::milliseconds(60));
 #endif
       }
       pt1_stop();
