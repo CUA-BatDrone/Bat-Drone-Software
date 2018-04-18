@@ -29,7 +29,7 @@ struct buffer {
   size_t length;
 } buffers[3];
 
-static void xioctl(int fh, int request, void *arg) {
+static int xioctl(int fh, int request, void *arg) {
   int r;
 
   do {
