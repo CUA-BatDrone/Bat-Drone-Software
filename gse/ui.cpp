@@ -199,6 +199,10 @@ void UI::mainLoop() {
     return;
   }
   SDL_DisableScreenSaver();
+  if (SDL_GL_SetSwapInterval(-1)) {
+    SDL_GL_SetSwapInterval(1);
+    cout << "VSYNC ON" << endl;
+  }
   if (!(renderer = SDL_CreateRenderer(window, -1, 0))) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create renderer: %s", SDL_GetError());
     return;
@@ -209,6 +213,7 @@ void UI::mainLoop() {
   }
   float last_thrust = -1;
   while (run) {
+    this_thread::sleep_for(chrono::milliseconds(1000/60));
   ul.unlock();
 
     // Setup game controllers
@@ -233,7 +238,11 @@ void UI::mainLoop() {
       last_thrust = -1.0;
     }
     else {
-      cmdtlm.control(handleKeyboard(last_thrust));
+      try {
+        cmdtlm.control(handleKeyboard(last_thrust));
+      } catch (string e) {
+
+      }
     }
 
     //unsigned char *pixels;
