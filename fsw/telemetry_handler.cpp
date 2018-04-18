@@ -24,22 +24,25 @@ void TelemetryHandler::joinThread() {
 
 void TelemetryHandler::mainLoop() {
   while (run) {
-    try {
-      while (pt1_init(pt1Device) < 0) {
-        cerr << "Unable to init libpt1" << endl;
-        this_thread::sleep_for(chrono::seconds(1));
-        continue;
-      }
-      if (pt1_start() < 0) {
-        cerr << "Unable to start libpt1" << endl;
-        this_thread::sleep_for(chrono::seconds(1));
-        continue;
-      }
-      if (pt1_disable_ffc() < 0) {
-        cerr << "Unable to disable ffc" << endl;
-        this_thread::sleep_for(chrono::seconds(1));
-        continue;
-      }
+    if (pt1_init(pt1Device) < 0) {
+      cerr << "Unable to init libpt1" << endl;
+      pt1_deinit();
+      this_thread::sleep_for(chrono::seconds(1));
+      continue;
+    }
+    cout << "LWIR Initialized" << endl;
+    if (pt1_start() < 0) {
+      cerr << "Unable to start libpt1" << endl;
+      pt1_deinit();
+      this_thread::sleep_for(chrono::seconds(1));
+      continue;
+    }
+    if (pt1_disable_ffc() < 0) {
+      cerr << "Unable to disable ffc" << endl;
+      pt1_deinit();
+      this_thread::sleep_for(chrono::seconds(1));
+      continue;
+    }
       while (run) {
         pt1_frame frame;
         if (pt1_get_frame(&frame) < 0) {
@@ -50,17 +53,15 @@ void TelemetryHandler::mainLoop() {
         try {
           cmdtlm->lwirFrame((const uint16_t(*)[80])frame.start);
         } catch (string e) {
-          cerr << e;
+          cerr << "Error sending LWIR frame: " << e << endl;
           this_thread::sleep_for(chrono::seconds(1));
-          break;
         }
         detectBlob((uint16_t(*)[cols])frame.start);
         try {
           cmdtlm->blob(dx, dy);
         } catch (string e) {
-          cerr << e;
+          cerr << "Error sending blob: " << e << endl;
           this_thread::sleep_for(chrono::seconds(1));
-          break;
         }
 #ifdef _WIN32
         this_thread::sleep_for(chrono::milliseconds(60));
@@ -68,11 +69,5 @@ void TelemetryHandler::mainLoop() {
       }
       pt1_stop();
       pt1_deinit();
-    } catch (string e) {
-      pt1_stop();
-      pt1_deinit();
-      cout << "TelemetryHandler error" << endl;
-      cout << e << endl;
-    }
   }
 }
