@@ -1,0 +1,73 @@
+#define THROTTLE_FLAG 1
+#define THROTTLE 2
+volatile uint16_t unThrottleInShared;
+uint32_t ulThrottleStart;
+volatile uint8_t bUpdateFlagsShared;
+unsigned long pulse_time  ;
+
+
+void setup() {
+  // put your setup code here, to run once:
+   attachInterrupt(0 /* INT0 = THROTTLE_IN_PIN */,calcThrottle,CHANGE);
+    pinMode(3,OUTPUT);
+   pulse_time =millis() ;
+   
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+   static uint8_t bUpdateFlags;
+   static uint16_t unThrottleIn;
+  if(bUpdateFlagsShared)
+  {
+    noInterrupts(); // turn interrupts off quickly while we take local copies of the shared variables
+    
+     pulse_time =millis() ;
+      // take a local copy of which channels were updated in case we need to use this in the rest of loop
+    bUpdateFlags = bUpdateFlagsShared;
+
+    // in the current code, the shared values are always populated
+    // so we could copy them without testing the flags
+    // however in the future this could change, so lets
+    // only copy when the flags tell us we can.
+
+    if(bUpdateFlags & THROTTLE_FLAG)
+    {
+      if(unThrottleIn <= 1500)
+      {
+        digitalWrite (3,HIGH);
+      }
+      else if (unThrottleIn > 1500)
+      {
+        digitalWrite (3,LOW);
+      }
+      unThrottleIn = unThrottleInShared;
+    }
+    // clear shared copy of updated flags as we have already taken the updates
+    // we still have a local copy if we need to use it in bUpdateFlags
+    bUpdateFlagsShared = 0;
+
+    interrupts(); // we have local copies of the inputs, so now we can turn interrupts back on
+    // as soon as interrupts are back on, we can no longer use the shared copies, the interrupt
+    // service routines own these and could update them at any time. During the update, the
+    // shared copies may contain junk. Luckily we have our local copies to work with :-)
+  }
+
+}
+
+void calcThrottle()
+{
+  // if the pin is high, its a rising edge of the signal pulse, so lets record its value
+  if(digitalRead(THROTTLE) == HIGH)
+  {
+    ulThrottleStart = micros();
+  }
+  else
+  {
+    // else it must be a falling edge, so lets get the time and subtract the time of the rising edge
+    // this gives use the time between the rising and falling edges i.e. the pulse duration.
+    unThrottleInShared = (uint16_t)(micros() - ulThrottleStart);
+    // use set the throttle flag to indicate that a new throttle signal has been received
+    bUpdateFlagsShared |= THROTTLE_FLAG;
+  }
+}
