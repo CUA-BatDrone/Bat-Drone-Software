@@ -8,6 +8,8 @@ using namespace std;
 
 uint16_t dx = 0;
 uint16_t dy = 0;
+uint16_t centerX = 0;
+uint16_t centerY = 0;
 int nPixels = 0;
 int nBlobs = 0;
 uint16_t arr[rows][cols];
@@ -72,10 +74,26 @@ int storeLargerY(int y) {
 	return y;
 }
 
+void setCenterX(int x) {
+	centerX = x;
+}
+
+void setCenterY(int y) {
+	centerY = y;
+}
+
+int getCenterX() {
+	return centerX;
+}
+
+int getCenterY() {
+	return centerY;
+}
+
 void calculatePrioriy() {
 	if (isLarger(nPixels)) {
-		storeLargerX(calculateCenterX(dx, nPixels));
-		storeLargerY(calculateCenterY(dy, nPixels));
+		setCenterX(calculateCenterX(dx, nPixels));
+		setCenterY(calculateCenterY(dy, nPixels));
 	}
 }
 
