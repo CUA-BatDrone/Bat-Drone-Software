@@ -1,3 +1,4 @@
+
 # Bat-Drone-Software
 
 Contains all software needed for the Bat Drone project.
@@ -20,6 +21,10 @@ Currently the dependencies for all projects are:
 ### Installing Dependencies For Ubuntu
 
 `sudo apt install -y git cmake libv4l-dev`
+
+### Installing Dependencies for Windows
+
+No action needed. Library included.
 
 ## Set up environment
 

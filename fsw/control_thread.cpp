@@ -86,7 +86,7 @@ void ControlThread::setFailsafeControls() {
   // AETR
   pwm.setPosition(4, 0.0f);
   pwm.setPosition(5, 0.0f);
-  pwm.setPosition(6, -1.0f);
+  pwm.setPosition(6, 0.0f);
   pwm.setPosition(7, 0.0f);
 }
 void ControlThread::setControls() {

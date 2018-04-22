@@ -1,3 +1,6 @@
+#ifndef BLOB_HPP
+#define BLOB_HPP
+
 #include <stdint.h>
 #include <vector>
 
@@ -12,3 +15,5 @@ public:
 };
 
 vector<Blob> detectLWIRBlob(uint16_t image[60][80]);
+
+#endif BLOB_HPP
