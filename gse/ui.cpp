@@ -198,6 +198,10 @@ void UI::blob(uint16_t x, uint16_t y) {
   bloby = y;
 }
 
+void UI::control(float aileron, float elevator, float thrust, float rudder) {
+  cout << "Calculated direction (" << aileron << ", " << elevator << ", " << thrust << ", " << rudder << ")" << endl;
+}
+
 void UI::mainLoop() {
   unique_lock<mutex> ul(texture_mutex);
   SDL_Window *window;

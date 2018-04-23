@@ -21,4 +21,5 @@ public:
   void mainLoop();
   virtual void lwirFrame(const uint16_t frame[60][80]);
   virtual void blob(uint16_t x, uint16_t y);
+  virtual void control(float aileron, float elevator, float thrust, float rudder);
 };
