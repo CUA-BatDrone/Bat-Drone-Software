@@ -207,6 +207,7 @@ void Autonomy::giveFrame(uint16_t frame[ROWS][COLS]) {
 
 void Autonomy::mainLoop(bool & run) {
   while (run) {
+    cout << "Loop" << endl;
 	  buffer.swapBack();
 	  detectBlob(buffer.getBack());
   }
