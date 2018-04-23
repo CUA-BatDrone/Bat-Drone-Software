@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(flight-software)
-add_executable(fsw main sender frame_grabber receiver control_arbiter autonomy autonomy2 drone_controller)
+add_executable(fsw main sender frame_grabber receiver control_arbiter autonomy2 drone_controller)
 find_package(Threads REQUIRED)
 target_link_libraries(fsw cmdtlm pwm pt1 ciaran Threads::Threads)
 install(TARGETS fsw DESTINATION bin)
