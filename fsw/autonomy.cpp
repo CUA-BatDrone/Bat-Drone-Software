@@ -193,12 +193,12 @@ void Autonomy::detectBlob(uint16_t arr[ROWS][COLS]) {
 				DFS(arr, i, j);
 				setBlobSize(nPixels);
 				nBlobs++;
-        cout << centerX << " " << centerY << endl;
 				sendFlightCommands(centerX, centerY);
 				resetVariables();
 			}
 		}
 	}
+  cout << "nBlobs: " << nBlobs << endl;
 }
 
 void Autonomy::giveFrame(uint16_t frame[ROWS][COLS]) {
