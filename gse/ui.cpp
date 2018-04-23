@@ -160,18 +160,33 @@ SDL_Joystick *UI::getJoystick() {
   return NULL;
 }
 
-void UI::lwirFrame(const uint16_t frame[60][80]) {
+void UI::lwirFrame(const uint16_t lwirFrame[60][80]) {
   unique_lock<mutex> ul(texture_mutex);
   if (texture && run) {
-    // 3400 to 3900 is human
-    uint16_t offset = -3400; // to 3800
-    float scale = 255.0f / (3900 - 3400);
-    unsigned char *pixels;
+    // 2800 to 3200 is human
+    const uint16_t low = 2800, high = 3200;
+    uint16_t offset = -low;
+    const float scale = 255.0f / (high - low);
+    unsigned char (*rgbFrame)[80][3];
     int pixel_pitch;
-    SDL_LockTexture(texture, NULL, (void **)&pixels, &pixel_pitch);
-    for (int i = 0; i < 80 * 60; i++) {
-      uint16_t value = (((uint16_t *)frame)[i] + offset) * scale;
-      pixels[i * 3] = pixels[i * 3 + 1] = pixels[i * 3 + 2] = value;
+    SDL_LockTexture(texture, NULL, (void **)&rgbFrame, &pixel_pitch);
+    for (int y = 0; y < 60; y++) {
+      for (int x = 0; x < 80; x++) {
+        if (lwirFrame[y][x] > high) {
+          rgbFrame[y][x][0] = 255;
+          rgbFrame[y][x][1] = 192;
+          rgbFrame[y][x][2] = 192;
+        } else if (lwirFrame[y][x] < low) {
+          rgbFrame[y][x][0] = 0;
+          rgbFrame[y][x][1] = 64;
+          rgbFrame[y][x][2] = 64;
+        } else {
+          uint16_t value = lwirFrame[y][x] * scale;
+          rgbFrame[y][x][0] = rgbFrame[y][x][1] = rgbFrame[y][x][2] = value;
+        }
+      }
+      /*uint16_t value = (((uint16_t *)frame)[i] + offset) * scale;
+      pixels[i * 3] = pixels[i * 3 + 1] = pixels[i * 3 + 2] = value;*/
     }
     SDL_UnlockTexture(texture);
   }
