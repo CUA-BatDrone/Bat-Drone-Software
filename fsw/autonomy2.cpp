@@ -23,6 +23,11 @@ list<Blob> Autonomy2::findBlobs(bool tFrame[ROWS][COLS]) {
   bool visited[ROWS][COLS] = {};
   for (int y = 0; y < ROWS; y++) {
     for (int x = 0; x < COLS; x++) {
+      visited[y][x] = false;
+    }
+  }
+  for (int y = 0; y < ROWS; y++) {
+    for (int x = 0; x < COLS; x++) {
       if (tFrame[y][x] && !visited[y][x]) {
         Blob blob;
         next.push(make_pair(x, y));
