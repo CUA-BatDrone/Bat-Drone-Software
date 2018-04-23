@@ -14,7 +14,7 @@ protected:
 public:
   Sender(CmdTlm & cmdtlm);
   void sendFrame(Frame frame);
-  void sendControl(Control control);
+  void sendAutonomyControl(Control control);
 };
 
 #endif
