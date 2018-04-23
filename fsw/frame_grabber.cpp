@@ -9,9 +9,8 @@ FrameGrabber::FrameGrabber(Autonomy & autonomy, Sender & sender, const char * de
 
 void FrameGrabber::mainLoop(bool & run) {
   while (run) {
-    if (pt1_init(device) < 0 && pt1_init("/dev/video0") && pt1_init("/dev/video1")) {
+    if ((pt1_init(device)  < 0 || pt1_deinit) && (pt1_init("/dev/video0")  < 0 || pt1_deinit()) && (pt1_init("/dev/video0")  < 0 || pt1_deinit())) {
       cerr << "Unable to init libpt1" << endl;
-      pt1_deinit();
       this_thread::sleep_for(chrono::seconds(1));
       continue;
     }
