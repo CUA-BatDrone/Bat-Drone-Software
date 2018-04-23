@@ -19,17 +19,16 @@ void Autonomy2::threshold(bool out[ROWS][COLS], const uint16_t in[ROWS][COLS], u
 
 list<Blob> Autonomy2::findBlobs(bool tFrame[ROWS][COLS]) {
   list<Blob> blobs;
-  cout << blobs.size() << endl;
   list<list<Blob>::iterator> blobPointers;
   list<list<Blob>::iterator>::iterator blobDoublePointers[ROWS][COLS];
   for (int y = 0; y < ROWS; y++) {
     for (int x = 0; x < COLS; x++) {
       if (tFrame[y][x]) {
         if (y > 0 && tFrame[y - 1][x]) {
-          if (x > 0 && tFrame[y][x - 1] && *blobDoublePointers[y][x - 1] != *blobDoublePointers[y - 1][x]) {
+          if (x > 0 && tFrame[y][x - 1] && &**blobDoublePointers[y][x - 1] != &**blobDoublePointers[y - 1][x]) {
             // merge blob pointers
             (*blobDoublePointers[y - 1][x])->mergeBlob(**blobDoublePointers[y][x - 1]);
-            blobs.erase(*blobDoublePointers[y][x - 1]);
+            //blobs.erase(*blobDoublePointers[y][x - 1]);
             *blobDoublePointers[y][x - 1] = *blobDoublePointers[y - 1][x];
           }
           blobDoublePointers[y][x] = blobDoublePointers[y - 1][x];
