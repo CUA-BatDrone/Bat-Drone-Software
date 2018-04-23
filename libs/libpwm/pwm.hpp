@@ -10,7 +10,7 @@ private:
 	int fd;
 	void setPeriod(unsigned char channel, unsigned short value);
 public:
-	PWMDevice(const char *path);
+	PWMDevice(const char *path = "/dev/i2c-1");
 	~PWMDevice();
 
   /**
