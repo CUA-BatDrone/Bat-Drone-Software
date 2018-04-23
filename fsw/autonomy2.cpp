@@ -49,7 +49,7 @@ list<Blob> Autonomy2::findBlobs(bool tFrame[ROWS][COLS]) {
             visited[cy + 1][cx] = true;
             next.push(make_pair(cx, cy + 1));
           }
-          if (!next.empty()) break;
+          if (next.empty()) break;
           cx = next.top().first;
           cy = next.top().second;
           next.pop();
