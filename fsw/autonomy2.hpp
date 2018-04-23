@@ -18,17 +18,13 @@ public:
   void addPixel(int x, int y) {
     Blob::x += x;
     Blob::y += y;
+    size++;
   }
   void calculateCentroid() {
     if (size) {
       x /= size;
       y /= size;
     }
-  }
-  void mergeBlob(Blob & blob) {
-    x += blob.x;
-    y += blob.y;
-    size += blob.size;
   }
 };
 

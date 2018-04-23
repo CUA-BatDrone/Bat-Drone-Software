@@ -164,7 +164,7 @@ void UI::lwirFrame(const uint16_t lwirFrame[60][80]) {
   unique_lock<mutex> ul(texture_mutex);
   if (texture && run) {
     // 2800 to 3200 is human
-    const uint16_t low = 2800, high = 3200;
+    const uint16_t low = 3200, high = 3600;
     uint16_t offset = -low;
     const float scale = 255.0f / (high - low);
     unsigned char (*rgbFrame)[80][3];
