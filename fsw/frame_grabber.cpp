@@ -9,14 +9,14 @@ FrameGrabber::FrameGrabber(Autonomy & autonomy, Sender & sender, const char * de
 
 void FrameGrabber::mainLoop(bool & run) {
   while (run) {
-    if (pt1_init(device) < 0) {
-      cerr << "Unable to init libpt1 using " << device << endl;
+    if (pt1_init(device) < 0 && pt1_init("/dev/video0") && pt1_init("/dev/video1")) {
+      cerr << "Unable to init libpt1" << endl;
       pt1_deinit();
       this_thread::sleep_for(chrono::seconds(1));
       continue;
     }
     cout << "LWIR Initialized" << endl;
-    this_thread::sleep_for(chrono::seconds(6));
+    this_thread::sleep_for(chrono::seconds(2));
     if (pt1_start() < 0) {
       cerr << "Unable to start libpt1" << endl;
       pt1_deinit();
