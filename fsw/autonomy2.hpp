@@ -14,6 +14,7 @@
 class Blob {
 public:
   int x, y, size;
+  Blob() : x(0), y(0) {}
   void addPixel(int x, int y) {
     Blob::x += x;
     Blob::y += y;
