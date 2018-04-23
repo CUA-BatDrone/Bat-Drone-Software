@@ -14,6 +14,6 @@ public:
   // feel free to add more fields to this class
 };
 
-vector<Blob> detectLWIRBlob(uint16_t image[60][80]);
+std::vector<Blob> detectLWIRBlob(uint16_t image[60][80]);
 
 #endif BLOB_HPP
