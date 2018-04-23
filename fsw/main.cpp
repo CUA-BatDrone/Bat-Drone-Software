@@ -6,7 +6,7 @@
 #include "drone_controller.hpp"
 #include "control_arbiter.hpp"
 #include "receiver.hpp"
-#include "autonomy.hpp"
+#include "autonomy2.hpp"
 #include "frame_grabber.hpp"
 #include "sender.hpp"
 
