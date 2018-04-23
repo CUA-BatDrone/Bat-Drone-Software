@@ -26,7 +26,7 @@ protected:
   public:
     float roll, pitch, thrust, yaw;
   } m_control;
-  void setControls();
+  void setPendingControls();
   void setFailsafeControls();
   mutex m_mutex;
   condition_variable m_condition;

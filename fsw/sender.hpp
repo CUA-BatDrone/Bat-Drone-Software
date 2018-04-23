@@ -1,6 +1,7 @@
 #ifndef SENDER_HPP
 #define SENDER_HPP
 
+#include <stdint.h>
 #include <cmd_tlm.hpp>
 #include <mutex>
 
@@ -9,11 +10,11 @@
 
 class Sender {
 protected:
-  mutex sendMutex;
+  mutex m;
   CmdTlm & cmdtlm;
 public:
   Sender(CmdTlm & cmdtlm);
-  void sendFrame(Frame frame);
+  void sendFrame(uint16_t frame[60][80]);
   void sendAutonomyControl(Control control);
 };
 

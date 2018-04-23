@@ -1,5 +1,5 @@
-#ifndef CONTROL
-#define CONTROL
+#ifndef CONTROL_HPP
+#define CONTROL_HPP
 
 /**
  * A directional control for the drone

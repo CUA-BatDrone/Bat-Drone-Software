@@ -1,11 +1,11 @@
 #include <stdlib.h>
+#include <cstring>
 #include <stack>
 #include <string>
 #include <iostream>
 #include "autonomy.hpp"
 #include "control.hpp"
 #include "control_arbiter.hpp"
-#include "frame.hpp"
 
 using namespace std;
 
@@ -148,12 +148,12 @@ void calculatePrioriy() {
 uint16_t DFS(uint16_t arr[][COLS], int x, int y) {
 	arr[x][y] = 0;
 	while (!(xStack.empty() && yStack.empty())) {
-		if (arr[x][y + 1] == 1 && y + 1 < cols) {
+		if (arr[x][y + 1] == 1 && y + 1 < COLS) {
 			arr[x][y + 1] = 0;
 			stackX(x); stackY(y);
 			return DFS(arr, x, y + 1);
 		}
-		else if (arr[x + 1][y] == 1 && x + 1 < rows) {
+		else if (arr[x + 1][y] == 1 && x + 1 < COLS) {
 			arr[x + 1][y] = 0;
 			stackX(x); stackY(y);
 			return DFS(arr, x + 1, y);
@@ -198,14 +198,16 @@ void Autonomy::detectBlob(uint16_t arr[ROWS][COLS]) {
 	}
 }
 
-void Autonomy::giveFrame(Frame & frame) {
-	buffer.getFront() = frame;
+void Autonomy::giveFrame(uint16_t frame[ROWS][COLS]) {
+	memcpy(&buffer.getFront(), frame, sizeof(uint16_t [ROWS][COLS]));
 	buffer.swapFront();
 }
 
-void Autonomy::mainLoop() {
-	buffer.swapBack();
-	detectBlob(buffer.getBack().frame);
+void Autonomy::mainLoop(bool & run) {
+  while (run) {
+	  buffer.swapBack();
+	  detectBlob(buffer.getBack());
+  }
 }
 
 //Synced at 12:20

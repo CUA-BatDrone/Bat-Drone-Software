@@ -54,7 +54,7 @@ void ControlThread::mainLoop() {
       // Send manual control;
       case State::MANUAL: {
         // Set controls
-        setControls();
+        setPendingControls();
         command_pending = false;
         // Wait for next command or enter failsafe state
         steady_clock::time_point t = steady_clock::now() + timeout;
@@ -89,7 +89,7 @@ void ControlThread::setFailsafeControls() {
   pwm.setPosition(6, 0.0f);
   pwm.setPosition(7, 0.0f);
 }
-void ControlThread::setControls() {
+void ControlThread::setPendingControls() {
   // AETR
   pwm.setPosition(4, m_control.roll);
   pwm.setPosition(5, m_control.pitch);
