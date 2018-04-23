@@ -19,6 +19,7 @@ void Autonomy2::threshold(bool out[ROWS][COLS], const uint16_t in[ROWS][COLS], u
 
 list<Blob> Autonomy2::findBlobs(bool tFrame[ROWS][COLS]) {
   list<Blob> blobs;
+  cout << blobs.size() << endl;
   list<list<Blob>::iterator> blobPointers;
   list<list<Blob>::iterator>::iterator blobDoublePointers[ROWS][COLS];
   for (int y = 0; y < ROWS; y++) {
