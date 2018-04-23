@@ -44,13 +44,6 @@ void FrameGrabber::mainLoop(bool & run) {
         cerr << "Error sending LWIR frame: " << e << endl;
         this_thread::sleep_for(chrono::seconds(1));
       }
-      try {
-        //cmdtlm->blob(dx, dy);
-      }
-      catch (string e) {
-        cerr << "Error sending blob: " << e << endl;
-        this_thread::sleep_for(chrono::seconds(1));
-      }
 #ifdef _WIN32
       this_thread::sleep_for(chrono::milliseconds(60));
 #endif

@@ -47,7 +47,7 @@ int pt1_perform_ffc() {
   __u8 a = 0;
   struct uvc_xu_control_query q = {
       .unit = 5, .selector = 12, .query = UVC_SET_CUR, .size = 1, .data = &a};
-  ioctl(fd, UVCIOC_CTRL_QUERY, &q);
+  if (xioctl(fd, UVCIOC_CTRL_QUERY, &q) < 0) return -1;
   return 0;
 }
 
@@ -55,10 +55,10 @@ int pt1_disable_ffc() {
   __u8 a[32];
   struct uvc_xu_control_query q = {
       .unit = 6, .selector = 16, .query = UVC_GET_CUR, .size = 32, .data = a};
-  ioctl(fd, UVCIOC_CTRL_QUERY, &q);
+  if (xioctl(fd, UVCIOC_CTRL_QUERY, &q) < 0) return -1;
   a[0] = 0;
   q.query = UVC_SET_CUR;
-  ioctl(fd, UVCIOC_CTRL_QUERY, &q);
+  if (xioctl(fd, UVCIOC_CTRL_QUERY, &q) < 0) return -1;
   return 0;
 }
 
@@ -80,7 +80,7 @@ int pt1_init(const char *device) {
   fmt.fmt.pix.height = 60;
   fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_Y16;
   fmt.fmt.pix.field = V4L2_FIELD_NONE;
-  xioctl(fd, VIDIOC_S_FMT, &fmt);
+  if (xioctl(fd, VIDIOC_S_FMT, &fmt) < 0) return -1;
   if (fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_Y16) {
     puts("Pixel format error");
     return -1;
@@ -96,7 +96,7 @@ int pt1_init(const char *device) {
   req.count = 3;
   req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   req.memory = V4L2_MEMORY_MMAP;
-  xioctl(fd, VIDIOC_REQBUFS, &req);
+  if (xioctl(fd, VIDIOC_REQBUFS, &req) < 0) return -1;
   if (req.count > 3) {
     perror("Too many buffers");
     return -1;
@@ -109,7 +109,7 @@ int pt1_init(const char *device) {
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf.memory = V4L2_MEMORY_MMAP;
     buf.index = n_buffers;
-    xioctl(fd, VIDIOC_QUERYBUF, &buf);
+    if (xioctl(fd, VIDIOC_QUERYBUF, &buf) < 0) return -1;
     buffers[n_buffers].start = v4l2_mmap(
         NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, buf.m.offset);
 
@@ -126,7 +126,7 @@ int pt1_init(const char *device) {
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf.memory = V4L2_MEMORY_MMAP;
     buf.index = i;
-    xioctl(fd, VIDIOC_QBUF, &buf);
+    if (xioctl(fd, VIDIOC_QBUF, &buf) < 0) return -1;
   }
   /* Don't queue the last buffer. Will be queued in pt1_get_frame() */
   CLEAR(buf);
@@ -138,25 +138,25 @@ int pt1_init(const char *device) {
 
 int pt1_start() {
   enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  xioctl(fd, VIDIOC_STREAMON, &type);
+  if (xioctl(fd, VIDIOC_STREAMON, &type) < 0) return -1;
   return 0;
 }
 
 int pt1_stop() {
   enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  xioctl(fd, VIDIOC_STREAMOFF, &type);
+  if (xioctl(fd, VIDIOC_STREAMOFF, &type) < 0) return -1;
   return 0;
 }
 
 int pt1_get_frame(struct pt1_frame *frame) {
   /* queue last buffer */
-  ioctl(fd, VIDIOC_QBUF, &buf);
+  if (xioctl(fd, VIDIOC_QBUF, &buf) < 0) return -1;
 
   /* dequeue next available buffer */
   CLEAR(buf);
   buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   buf.memory = V4L2_MEMORY_MMAP;
-  ioctl(fd, VIDIOC_DQBUF, &buf);
+  if (xioctl(fd, VIDIOC_DQBUF, &buf) < 0) return -1;
 
   /* return data */
   frame->start = buffers[buf.index].start;
