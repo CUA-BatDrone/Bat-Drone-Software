@@ -14,24 +14,21 @@ void DroneController::mainLoop(bool & run) {
   setMotorsOffControls();
   unique_lock<mutex> ul(controlMutex);
   while (!controlIsPending) controlNotification.wait(ul);
-  setPendingControls();
-  controlIsPending = false;
   while (run) {
     if (failsafeActive) {
       setFailsafeControls();
       while (!controlIsPending) controlNotification.wait(ul);
       failsafeActive = false;
     } else {
+      setPendingControls();
+      controlIsPending = false;
       steady_clock::time_point t = steady_clock::now() + timeout;
-      while (!controlIsPending) {
+      do {
         if (controlNotification.wait_until(ul, t) == cv_status::timeout) {
           failsafeActive = true;
           break;
-        } else {
-          setPendingControls();
-          controlIsPending = false;
         }
-      }
+      } while (!controlIsPending);
     }
   }
   setMotorsOffControls();
