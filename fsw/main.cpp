@@ -1,10 +1,14 @@
-#include "cmd_tlm.hpp"
-#include "pwm.hpp"
+#include <cmd_tlm.hpp>
 #include <iostream>
-#include "command_handler.hpp"
 #include <thread>
-#include "telemetry_handler.hpp"
-#include "command_handler.hpp"
+#include <string>
+
+#include "drone_controller.hpp"
+#include "control_arbiter.hpp"
+#include "receiver.hpp"
+#include "autonomy.hpp"
+#include "frame_grabber.hpp"
+#include "sender.hpp"
 
 using namespace std;
 
@@ -15,19 +19,18 @@ int main(int argc, char* argv[]) {
   switch (argc) {
   default:
   case 4:
-  	port_recv = stoi(argv[3]);
+    port_recv = stoi(argv[3]);
   case 3:
-  	port_send = stoi(argv[2]);
+    port_send = stoi(argv[2]);
   case 2:
-	  address = argv[1];
+    address = argv[1];
   case 1:
   case 0:;
   }
 
   try {
-
-	cout << "using " << address << endl;
-
+    // setup cmdtlm
+    cout << "using " << address << endl;
     cout << "Creating read socket" << endl;
     UDPSocket rs;
     cout << "Binding read socket" << endl;
@@ -40,13 +43,31 @@ int main(int argc, char* argv[]) {
     UDPAddrPacketWriter w(Socket::stringToAddr(address, port_send), ws);
     CmdTlm cmdtlm(&r, &w);
 
-    bool run = true;
-    TelemetryHandler t(run, &cmdtlm, "/dev/video0");
-    t.startThread();
-    CommandHandler c(run, &cmdtlm, "/dev/i2c-1", chrono::seconds(2));
-    c.mainLoop();
-    t.stopThread();
-    t.joinThread();
+    while (true) {
+      try {
+        // Set up classes
+        DroneController droneController;
+        ControlArbiter controlArbiter(droneController);
+        Receiver receiver(cmdtlm, controlArbiter);
+        Sender sender(cmdtlm);
+        Autonomy autonomy(controlArbiter, sender);
+        FrameGrabber frameGrabber(autonomy, sender);
+        bool run = true;
+        thread droneControllerThread(&DroneController::mainLoop, &droneController, ref(run));
+        thread receiverThread(&Receiver::mainLoop, &receiver, ref(run));
+        thread frameGrabberThread(&FrameGrabber::mainLoop, &frameGrabber, ref(run));
+        thread autonomyThread(&Autonomy::mainLoop, &autonomy, ref(run));
+        droneControllerThread.join();
+        receiverThread.join();
+        frameGrabberThread.join();
+        autonomyThread.join();
+
+      } catch (string e) {
+        cerr << e << endl << "Restarting threads" << endl;
+        this_thread::sleep_for(seconds(1));
+      }
+    }
+
     return 0;
   }
   catch (string e) {
