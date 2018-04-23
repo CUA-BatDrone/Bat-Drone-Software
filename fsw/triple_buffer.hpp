@@ -10,7 +10,7 @@
  * Another thread calls swapBack and reads the back buffer using getBack().
  */
 template <class T> 
-class TrippleBuffer {
+class TripleBuffer {
 protected:
   T buffer[3], *front, *middle, *back;
   mutex m;
@@ -22,7 +22,7 @@ protected:
     b = temp;
   }
 public:
-  TrippleBuffer() {
+  TripleBuffer() {
     front = buffer;
     middle = buffer + 1;
     back = buffer + 2;
