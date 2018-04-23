@@ -1,6 +1,7 @@
 #include "cmd_tlm.hpp"
 #include "ui.hpp"
 #include "packet_elements.hpp"
+#include <thread>
 #include <SDL.h>
 #include <iostream>
 
