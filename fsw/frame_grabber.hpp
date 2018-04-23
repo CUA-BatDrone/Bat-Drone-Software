@@ -1,5 +1,7 @@
 #ifndef FRAME_GRABBER_HPP
 #define FRAME_GRABBER_HPP
+#include "autonomy.hpp"
+#include "sender.hpp"
 
 class FrameGrabber {
 protected:
