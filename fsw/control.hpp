@@ -5,7 +5,7 @@
  * A directional control for the drone
  */
 class Control {
-  float ailerons;
+  float aileron;
   float elevator;
   float thrust;
   float rudder;
