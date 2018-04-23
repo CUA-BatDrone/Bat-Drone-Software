@@ -30,12 +30,9 @@ list<Blob> Autonomy2::findBlobs(bool tFrame[ROWS][COLS]) {
     for (int x = 0; x < COLS; x++) {
       if (tFrame[y][x] && !visited[y][x]) {
         Blob blob;
-        next.push(make_pair(x, y));
-        while (!next.empty()) {
-          blob.addPixel(x, y);
-          int cx = next.top().first;
-          int cy = next.top().second;
-          next.pop();
+        int cx = x, cy = y;
+        while (true) {
+          blob.addPixel(cx, cy);
           if (cx > 0 && tFrame[cy][cx - 1] && !visited[cy][cx - 1]) {
             visited[cy][cx - 1] = true;
             next.push(make_pair(cx - 1, cy));
@@ -52,6 +49,10 @@ list<Blob> Autonomy2::findBlobs(bool tFrame[ROWS][COLS]) {
             visited[cy + 1][cx] = true;
             next.push(make_pair(cx, cy + 1));
           }
+          if (!next.empty()) break;
+          cx = next.top().first;
+          cy = next.top().second;
+          next.pop();
         }
         blob.calculateCentroid();
         blobs.push_front(blob);
