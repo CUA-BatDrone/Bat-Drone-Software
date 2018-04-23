@@ -16,6 +16,7 @@ void FrameGrabber::mainLoop(bool & run) {
       continue;
     }
     cout << "LWIR Initialized" << endl;
+    this_thread::sleep_for(chrono::seconds(4));
     if (pt1_start() < 0) {
       cerr << "Unable to start libpt1" << endl;
       pt1_deinit();
