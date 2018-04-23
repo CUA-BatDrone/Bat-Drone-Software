@@ -96,6 +96,7 @@ void isNewBlobCloser(int previousBlob, int currentBlob) {
 
 // Inputs are centerX and centerY
 void Autonomy::sendFlightCommands(int x, int y) {
+  cout << "(" << x << "," << y << ")" << endl;
   send.sendAutonomyBlob(x, y);
 	//Roll, Yaw, Pitch, Thrust
 	if (x * .90 > 30) {
