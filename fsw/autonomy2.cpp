@@ -19,31 +19,39 @@ void Autonomy2::threshold(bool out[ROWS][COLS], const uint16_t in[ROWS][COLS], u
 
 list<Blob> Autonomy2::findBlobs(bool tFrame[ROWS][COLS]) {
   list<Blob> blobs;
-  list<list<Blob>::iterator> blobPointers;
-  list<list<Blob>::iterator>::iterator blobDoublePointers[ROWS][COLS];
+  stack<pair<int, int>> next;
+  bool visited[ROWS][COLS] = {};
   for (int y = 0; y < ROWS; y++) {
     for (int x = 0; x < COLS; x++) {
-      if (tFrame[y][x]) {
-        if (y > 0 && tFrame[y - 1][x]) {
-          if (x > 0 && tFrame[y][x - 1] && &**blobDoublePointers[y][x - 1] != &**blobDoublePointers[y - 1][x]) {
-            // merge blob pointers
-            (*blobDoublePointers[y - 1][x])->mergeBlob(**blobDoublePointers[y][x - 1]);
-            //blobs.erase(*blobDoublePointers[y][x - 1]);
-            *blobDoublePointers[y][x - 1] = *blobDoublePointers[y - 1][x];
+      if (tFrame[y][x] && !visited[y][x]) {
+        Blob blob;
+        next.push(make_pair(x, y));
+        while (!next.empty()) {
+          blob.addPixel(x, y);
+          int cx = next.top().first;
+          int cy = next.top().second;
+          next.pop();
+          if (cx > 0 && tFrame[cy][cx - 1] && !visited[cy][cx - 1]) {
+            visited[cy][cx - 1] = true;
+            next.push(make_pair(cx - 1, cy));
           }
-          blobDoublePointers[y][x] = blobDoublePointers[y - 1][x];
-          (*blobDoublePointers[y][x])->addPixel(x, y);
-        } else if (x > 0 && tFrame[y][x - 1]) {
-          blobDoublePointers[y][x] = blobDoublePointers[y][x - 1];
-          (*blobDoublePointers[y][x])->addPixel(x, y);
-        } else {
-          blobDoublePointers[y][x] = blobPointers.insert(blobPointers.cend(), blobs.insert(blobs.cend(), Blob()));
+          if (cy > 0 && tFrame[cy - 1][cx] && !visited[cy - 1][cx]) {
+            visited[cy - 1][cx] = true;
+            next.push(make_pair(cx, cy - 1));
+          }
+          if (cx < COLS - 1 && tFrame[cy][cx + 1] && !visited[cy][cx + 1]) {
+            visited[cy][cx + 1] = true;
+            next.push(make_pair(cx + 1, cy));
+          }
+          if (cy < ROWS - 1 && tFrame[cy + 1][cx] && !visited[cy + 1][cx]) {
+            visited[cy + 1][cx] = true;
+            next.push(make_pair(cx, cy + 1));
+          }
         }
+        blob.calculateCentroid();
+        blobs.push_front(blob);
       }
     }
-  }
-  for (Blob &b : blobs) {
-    b.calculateCentroid();
   }
   return blobs;
 }
