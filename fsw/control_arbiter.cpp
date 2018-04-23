@@ -1,6 +1,6 @@
 #include "control_arbiter.hpp"
 
-ControlArbiter::ControlArbiter(DroneController & droneController) : droneController(droneController) {}
+ControlArbiter::ControlArbiter(DroneController & droneController) : droneController(droneController), state(State::MANUAL) {}
 
 void ControlArbiter::autonomousControl(Control & control) {
   if (state == AUTONOMOUS) {
