@@ -5,7 +5,6 @@
 #include <cmd_tlm.hpp>
 #include <mutex>
 
-#include "frame.hpp"
 #include "control.hpp"
 
 class Sender {
