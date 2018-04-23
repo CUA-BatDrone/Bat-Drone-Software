@@ -15,6 +15,7 @@ protected:
 public:
   Sender(CmdTlm & cmdtlm);
   void sendFrame(uint16_t frame[60][80]);
+  void sendAutonomyBlob(int x, int y);
   void sendAutonomyControl(Control control);
 };
 
