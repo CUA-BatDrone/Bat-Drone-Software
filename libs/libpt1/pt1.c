@@ -70,6 +70,7 @@ int pt1_init(const char *device) {
   /* Open camera */
   fd = v4l2_open(device, O_RDWR, 0);
   if (fd < 0) {
+    v4l2_close(fd);
     perror("Cannot open device");
     return -1;
   }
