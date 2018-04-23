@@ -280,8 +280,8 @@ void UI::mainLoop() {
     SDL_Rect rect;
     int w, h;
     SDL_GetWindowSize(window, &w, &h);
-    rect.x = blobx - 16;
-    rect.y = bloby - 16;
+    rect.x = blobx * w / 80 - 16;
+    rect.y = bloby * h / 60 - 16;
     rect.w = 32;
     rect.h = 32;
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
