@@ -58,7 +58,7 @@ void TelemetryHandler::mainLoop() {
         }
         detectBlob((uint16_t(*)[cols])frame.start);
         try {
-          cmdtlm->blob(dx, dy);
+          //cmdtlm->blob(dx, dy);
         } catch (string e) {
           cerr << "Error sending blob: " << e << endl;
           this_thread::sleep_for(chrono::seconds(1));
