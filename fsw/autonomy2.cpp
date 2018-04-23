@@ -76,6 +76,7 @@ void Autonomy2::mainLoop(bool & run) {
         if (i->size > largest->size) largest = i;
       }
       send.sendAutonomyBlob(largest->x, largest->y);
+      cout << largest->x << " " << largest->y << " " << largest->size << endl;
     }
   }
 }
