@@ -30,7 +30,7 @@ public:
 
 class Autonomy2 {
 protected:
-  void threshold(bool out[ROWS][COLS], const uint16_t in[ROWS][COLS], uint16_t low = 3200, uint16_t high = 3600);
+  void threshold(bool out[ROWS][COLS], const uint16_t in[ROWS][COLS], uint16_t low = 2800, uint16_t high = 3600);
   list<Blob> findBlobs(bool in[ROWS][COLS]);
 public:
 	Autonomy2(ControlArbiter &a, Sender &send) : arbiter(a), send(send) {}
