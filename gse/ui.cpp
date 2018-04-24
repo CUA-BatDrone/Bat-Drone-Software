@@ -164,7 +164,8 @@ void UI::lwirFrame(const uint16_t lwirFrame[60][80]) {
   unique_lock<mutex> ul(texture_mutex);
   if (texture && run) {
     // 2800 to 3200 is human
-    const uint16_t low = 3200, high = 3600;
+    const uint16_t low = 2000, high = 4000;
+    const uint16_t tlow = 2800, thigh = 3600;
     uint16_t offset = -low;
     const float scale = 255.0f / (high - low);
     unsigned char (*rgbFrame)[80][3];
@@ -174,15 +175,23 @@ void UI::lwirFrame(const uint16_t lwirFrame[60][80]) {
       for (int x = 0; x < 80; x++) {
         if (lwirFrame[y][x] > high) {
           rgbFrame[y][x][0] = 255;
-          rgbFrame[y][x][1] = 192;
-          rgbFrame[y][x][2] = 192;
+          rgbFrame[y][x][1] = 0;
+          rgbFrame[y][x][2] = 0;
         } else if (lwirFrame[y][x] < low) {
           rgbFrame[y][x][0] = 0;
-          rgbFrame[y][x][1] = 64;
-          rgbFrame[y][x][2] = 64;
+          rgbFrame[y][x][1] = 0;
+          rgbFrame[y][x][2] = 255;
         } else {
           uint16_t value = lwirFrame[y][x] * scale;
-          rgbFrame[y][x][0] = rgbFrame[y][x][1] = rgbFrame[y][x][2] = value;
+          if (lwirFrame[y][x] > thigh) {
+            rgbFrame[y][x][0] = rgbFrame[y][x][1] = rgbFrame[y][x][2] = value;
+          } else if (lwirFrame[y][x] < tlow) {
+            rgbFrame[y][x][0] = rgbFrame[y][x][1] = rgbFrame[y][x][2] = value;
+          } else {
+            rgbFrame[y][x][0] = 0;
+            rgbFrame[y][x][1] = value;
+            rgbFrame[y][x][2] = 0;
+          }
         }
       }
       /*uint16_t value = (((uint16_t *)frame)[i] + offset) * scale;
