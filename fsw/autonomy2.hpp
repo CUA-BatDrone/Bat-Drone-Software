@@ -11,24 +11,26 @@
 #include "triple_buffer.hpp"
 #include <list>
 
-class Blob {
-public:
-  int x, y, size;
-  Blob() : x(0), y(0), size(0) {}
-  void addPixel(int x, int y) {
-    Blob::x += x;
-    Blob::y += y;
-    size++;
-  }
-  void calculateCentroid() {
-    if (size) {
-      x /= size;
-      y /= size;
-    }
-  }
-};
+
 
 class Autonomy2 {
+public:
+  class Blob {
+  public:
+    int x, y, size;
+    Blob() : x(0), y(0), size(0) {}
+    void addPixel(int x, int y) {
+      Blob::x += x;
+      Blob::y += y;
+      size++;
+    }
+    void calculateCentroid() {
+      if (size) {
+        x /= size;
+        y /= size;
+      }
+    }
+  };
 protected:
   void threshold(bool out[ROWS][COLS], const uint16_t in[ROWS][COLS], uint16_t low = 2800, uint16_t high = 3600);
   list<Blob> findBlobs(bool in[ROWS][COLS]);

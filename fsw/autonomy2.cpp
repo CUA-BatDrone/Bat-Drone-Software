@@ -17,7 +17,7 @@ void Autonomy2::threshold(bool out[ROWS][COLS], const uint16_t in[ROWS][COLS], u
   }
 }
 
-list<Blob> Autonomy2::findBlobs(bool tFrame[ROWS][COLS]) {
+list<Autonomy2::Blob> Autonomy2::findBlobs(bool tFrame[ROWS][COLS]) {
   list<Blob> blobs;
   stack<pair<int, int>> next;
   bool visited[ROWS][COLS] = {};
