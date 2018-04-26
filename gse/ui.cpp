@@ -299,6 +299,7 @@ void UI::mainLoop() {
                   break;
                 }
               }
+              cmdtlm.pid(pid_values.p, pid_values.i, pid_values.d);
               break;
             }
             case SDL_SCANCODE_COMMA: {
@@ -317,6 +318,7 @@ void UI::mainLoop() {
                   break;
                 }
               }
+              cmdtlm.pid(pid_values.p, pid_values.i, pid_values.d);
               break;
             }
             case SDL_SCANCODE_SLASH: {
@@ -335,6 +337,7 @@ void UI::mainLoop() {
                   break;
                 }
               }
+              cmdtlm.pid(pid_values.p, pid_values.i, pid_values.d);
               break;
             }
           }
