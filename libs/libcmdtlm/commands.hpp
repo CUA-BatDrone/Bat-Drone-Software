@@ -3,6 +3,9 @@
 
 #include "packet_elements.hpp"
 #include <stdint.h>
+#include <vector>
+
+using namespace std;
 
 class Commands {
 public:
@@ -13,9 +16,18 @@ public:
   // Send a single lwir frame
   virtual void lwirFrame(const uint16_t frame[60][80]) {}
   // Send the blob coordinates
+  class Blob {
+  public:
+    int x, y, size;
+    Blob(int x, int y, int size = 1) : x(x), y(y), size(size) {}
+    Blob() {}
+  };
   virtual void blob(uint16_t x, uint16_t y) {}
+  virtual void blobs(vector<Blob> blobs) {}
   // Switch to tracking mode
   virtual void track() {}
+  // Set PID values for tracker
+  virtual void pid(float p, float i, float d) {}
 };
 
 #endif
