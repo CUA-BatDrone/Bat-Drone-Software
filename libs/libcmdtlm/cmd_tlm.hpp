@@ -40,6 +40,8 @@ public:
   virtual void track();
   virtual void pid(float p, float i, float d);
   virtual void blobs(vector<Blob> blobs);
+  virtual void manual();
+  virtual void autonomous();
 };
 
 #endif

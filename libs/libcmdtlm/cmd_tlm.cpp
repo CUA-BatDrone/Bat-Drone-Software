@@ -34,14 +34,11 @@ void CmdTlm::telemetry(Commands &callback) {
     break;
     }
     case 3: {
-      callback.track();
-    }
-    case 4: {
       float p, i, d;
       *packetReader >> p >> i >> d;
       callback.pid(p, i, d);
     }
-    case 5:{
+    case 4:{
       uint16_t size;
       *packetReader >> size;
       vector<Blob> blobs(size);
@@ -49,6 +46,12 @@ void CmdTlm::telemetry(Commands &callback) {
         *packetReader >> blob.x >> blob.y >> blob.size;
       }
       callback.blobs(blobs);
+    }
+    case 5: {
+      callback.manual();
+    }
+    case 6: {
+      callback.autonomous();
     }
   }
 }
@@ -75,20 +78,25 @@ void CmdTlm::blob(uint16_t x, uint16_t y) {
   packetWriter->write_packet();
 }
 
-void CmdTlm::track() {
-  *packetWriter << (uint8_t) 3;
-  packetWriter->write_packet();
-}
-
 void CmdTlm::pid(float p, float i, float d) {
-  *packetWriter << (uint8_t) 4 << p << i << d;
+  *packetWriter << (uint8_t) 3 << p << i << d;
   packetWriter->write_packet();
 }
 
 void  CmdTlm::blobs(vector<Blob> blobs) {
-  *packetWriter << (uint8_t) 5 << (uint16_t) blobs.size();
+  *packetWriter << (uint8_t) 4 << (uint16_t) blobs.size();
   for (Blob &blob : blobs) {
     *packetWriter << blob.x << blob.y << blob.size;
   }
+  packetWriter->write_packet();
+}
+
+void CmdTlm::manual() {
+  *packetWriter << (uint8_t) 5;
+  packetWriter->write_packet();
+}
+
+void CmdTlm::autonomous() {
+  *packetWriter << (uint8_t) 6;
   packetWriter->write_packet();
 }

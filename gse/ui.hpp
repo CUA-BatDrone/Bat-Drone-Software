@@ -14,8 +14,8 @@ protected:
   int blobx, bloby;
   SDL_Texture *texture;
   SDL_Joystick *getJoystick();
-  ControlPacketElement handleJoystick(SDL_Joystick *joystick);
-  ControlPacketElement handleKeyboard(float &last_thrust);
+  float handleKeyboard(CmdTlm &cmdtlm, float &last_thrust);
+  float handleJoystick(SDL_Joystick *joystick, CmdTlm &cmdtlm);
 public:
   UI(CmdTlm &cmdtlm);
   void mainLoop();

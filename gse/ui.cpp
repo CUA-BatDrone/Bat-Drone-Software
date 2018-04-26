@@ -12,140 +12,128 @@ UI::UI(CmdTlm &cmdtlm) : cmdtlm(cmdtlm) {
   texture = NULL;
 }
 
-ControlPacketElement UI::handleKeyboard(float &last_thrust) {
-  ControlPacketElement c;
+float UI::handleKeyboard(CmdTlm &cmdtlm, float &last_thrust) {
+  float pitch, yaw, roll, thrust;
   const float rate = 0.25;
   const Uint8 *keyboard = SDL_GetKeyboardState(NULL);
-  if (keyboard[SDL_SCANCODE_RETURN]) {
-    c.pitch = -1;
-    c.yaw = 1;
-    c.roll = -1;
-    c.thrust = -1;
-    last_thrust = -1;
+  if (keyboard[SDL_SCANCODE_RCTRL]) {
+    cmdtlm.manual();
+  } else if(keyboard[SDL_SCANCODE_RALT]) {
+    cmdtlm.autonomous();
   }
-  else {
+  if (keyboard[SDL_SCANCODE_RETURN]) {
+    pitch = -1;
+    yaw = 1;
+    roll = -1;
+    thrust = -1;
+    last_thrust = -1;
+  } else {
     // Forward
     if (keyboard[SDL_SCANCODE_W] || keyboard[SDL_SCANCODE_UP]) {
       // And back
       if (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) {
-        c.pitch = 0;
+        pitch = 0;
         // Just forward
-      }
-      else {
-        c.pitch = rate;
+      } else {
+        pitch = rate;
       }
       // Backward
-    }
-    else if (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) {
-      c.pitch = -rate;
+    } else if (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) {
+      pitch = -rate;
       // None
-    }
-    else {
-      c.pitch = 0;
+    } else {
+      pitch = 0;
     }
     // Left
     if (keyboard[SDL_SCANCODE_A] || keyboard[SDL_SCANCODE_LEFT]) {
       // And Right
       if (keyboard[SDL_SCANCODE_D] || keyboard[SDL_SCANCODE_RIGHT]) {
-        c.roll = 0;
+        roll = 0;
         // Just left
-      }
-      else {
-        c.roll = -rate;
+      } else {
+        roll = -rate;
       }
       // Right
-    }
-    else if (keyboard[SDL_SCANCODE_D] || keyboard[SDL_SCANCODE_RIGHT]) {
-      c.roll = rate;
+    } else if (keyboard[SDL_SCANCODE_D] || keyboard[SDL_SCANCODE_RIGHT]) {
+      roll = rate;
       // None
-    }
-    else {
-      c.roll = 0;
+    } else {
+      roll = 0;
     }
     // Rotate Left
     if (keyboard[SDL_SCANCODE_Q] || keyboard[SDL_SCANCODE_PAGEUP]) {
       // And right
       if (keyboard[SDL_SCANCODE_E] || keyboard[SDL_SCANCODE_PAGEDOWN]) {
-        c.yaw = 0;
+        yaw = 0;
         // Just left
-      }
-      else {
-        c.yaw = -rate;
+      } else {
+        yaw = -rate;
       }
       // Rotate Right
-    }
-    else if (keyboard[SDL_SCANCODE_E] || keyboard[SDL_SCANCODE_PAGEDOWN]) {
-      c.yaw = rate;
-    }
-    else {
-      c.yaw = 0;
+    } else if (keyboard[SDL_SCANCODE_E] || keyboard[SDL_SCANCODE_PAGEDOWN]) {
+      yaw = rate;
+    } else {
+      yaw = 0;
     }
 
     // Thrust inputted using keys '`' through '0' are -1 through 1.
     // ### Key 0 IS MAX THRUST!!! ###
     if (keyboard[SDL_SCANCODE_ESCAPE] || keyboard[SDL_SCANCODE_GRAVE]) {
       last_thrust = -1.0;
-    }
-    else if (keyboard[SDL_SCANCODE_1]) {
+    } else if (keyboard[SDL_SCANCODE_1]) {
       last_thrust = -0.8;
-    }
-    else if (keyboard[SDL_SCANCODE_2]) {
+    } else if (keyboard[SDL_SCANCODE_2]) {
       last_thrust = -0.6;
-    }
-    else if (keyboard[SDL_SCANCODE_3]) {
+    } else if (keyboard[SDL_SCANCODE_3]) {
       last_thrust = -0.4;
-    }
-    else if (keyboard[SDL_SCANCODE_4]) {
+    } else if (keyboard[SDL_SCANCODE_4]) {
       last_thrust = -0.2;
-    }
-    else if (keyboard[SDL_SCANCODE_5]) {
+    } else if (keyboard[SDL_SCANCODE_5]) {
       last_thrust = 0.0;
-    }
-    else if (keyboard[SDL_SCANCODE_6]) {
+    } else if (keyboard[SDL_SCANCODE_6]) {
       last_thrust = 0.2;
-    }
-    else if (keyboard[SDL_SCANCODE_7]) {
+    } else if (keyboard[SDL_SCANCODE_7]) {
       last_thrust = 0.4;
-    }
-    else if (keyboard[SDL_SCANCODE_8]) {
+    } else if (keyboard[SDL_SCANCODE_8]) {
       last_thrust = 0.6;
-    }
-    else if (keyboard[SDL_SCANCODE_9]) {
+    } else if (keyboard[SDL_SCANCODE_9]) {
       last_thrust = 0.8;
-    }
-    else if (keyboard[SDL_SCANCODE_0]) {
+    } else if (keyboard[SDL_SCANCODE_0]) {
       last_thrust = 1.0;
     }
     if (keyboard[SDL_SCANCODE_SPACE]) {
       if (last_thrust <= 0.9 && !keyboard[SDL_SCANCODE_LCTRL]) {
-        c.thrust = last_thrust + 0.1;
+        thrust = last_thrust + 0.1;
+      } else {
+        thrust = last_thrust;
       }
-      else {
-        c.thrust = last_thrust;
-      }
-    }
-    else if (keyboard[SDL_SCANCODE_LCTRL]) {
+    } else if (keyboard[SDL_SCANCODE_LCTRL]) {
       if (last_thrust >= -0.9) {
-        c.thrust = last_thrust - 0.1;
+        thrust = last_thrust - 0.1;
+      } else {
+        thrust = last_thrust;
       }
-      else {
-        c.thrust = last_thrust;
-      }
-    }
-    else {
-      c.thrust = last_thrust;
+    } else {
+      thrust = last_thrust;
     }
   }
-  return c;
+  return thrust;
 }
 
-ControlPacketElement UI::handleJoystick(SDL_Joystick *joystick) {
-  ControlPacketElement c;
-  c.thrust = SDL_JoystickGetAxis(joystick, 3) / (float)-0x7FFF;
-  c.pitch = SDL_JoystickGetAxis(joystick, 1) / (float)-0x7FFF;
-  c.roll = SDL_JoystickGetAxis(joystick, 0) / (float)0x7FFF;
-  c.yaw = SDL_JoystickGetAxis(joystick, 2) / (float)0x7FFF;
-  return c;
+float UI::handleJoystick(SDL_Joystick *joystick, CmdTlm &cmdtlm) {
+  if (SDL_JoystickGetButton(joystick, 0)){
+    cmdtlm.manual();
+  } else if (SDL_JoystickGetButton(joystick, 1)) {
+    cmdtlm.autonomous();
+  }
+  float thrust;
+  float pitch, roll, yaw;
+  thrust = SDL_JoystickGetAxis(joystick, 3) / (float)-0x7FFF;
+  pitch = SDL_JoystickGetAxis(joystick, 1) / (float)-0x7FFF;
+  roll = SDL_JoystickGetAxis(joystick, 0) / (float)0x7FFF;
+  yaw = SDL_JoystickGetAxis(joystick, 2) / (float)0x7FFF;
+  cmdtlm.control(roll, pitch, thrust, yaw);
+  return thrust;
 }
 
 SDL_Joystick *UI::getJoystick() {
@@ -347,15 +335,9 @@ void UI::mainLoop() {
     ControlPacketElement c;
     // Direction inputted with WASDQE or arrowkeys and page up/down.
     if (joystick) {
-      cmdtlm.control(handleJoystick(joystick));
-      last_thrust = -1.0;
-    }
-    else {
-      try {
-        cmdtlm.control(handleKeyboard(last_thrust));
-      } catch (string e) {
-
-      }
+      last_thrust = handleJoystick(joystick, cmdtlm);
+    } else {
+      last_thrust = handleKeyboard(cmdtlm, last_thrust);
     }
 
     //unsigned char *pixels;
