@@ -23,11 +23,11 @@ public:
     Blob() {}
   };
   virtual void blob(uint16_t x, uint16_t y) {}
-  virtual void blobs(vector<Blob> blobs) {}
+  virtual void pid(float p, float i, float d) {}
   // Switch to tracking mode
   virtual void track() {}
   // Set PID values for tracker
-  virtual void pid(float p, float i, float d) {}
+  virtual void blobs(vector<Blob> blobs) {}
 };
 
 #endif
