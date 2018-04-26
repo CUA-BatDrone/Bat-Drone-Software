@@ -217,8 +217,15 @@ void UI::mainLoop() {
   SDL_Renderer *renderer;
   SDL_Joystick *joystick = NULL;
   int last_num_joysticks = 0;
+  enum { P, I, D } active_pid_field = P;
+  class PIDValues {
+  public:
+    float p, i, d;
+    PIDValues() : p(0), i(0), d(0) {}
+  } pid_values;
+  
 
-
+  // Initialize
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
     return;
@@ -240,6 +247,8 @@ void UI::mainLoop() {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture: %s", SDL_GetError());
     return;
   }
+
+  // Main Loop
   float last_thrust = -1;
   while (run) {
     this_thread::sleep_for(chrono::milliseconds(1000/60));
@@ -255,9 +264,96 @@ void UI::mainLoop() {
     // check for events
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
-      if (e.type == SDL_QUIT) {
-        run = false;
-        continue;
+      switch (e.type) {
+        case SDL_QUIT: {
+          run = false;
+          continue;
+        }
+        case SDL_KEYDOWN: {
+          switch (e.key.keysym.scancode) {
+            case SDL_SCANCODE_B:
+            {
+              active_pid_field = P;
+              break;
+            }
+            case SDL_SCANCODE_N:
+            {
+              active_pid_field = I;
+              break;
+            }
+            case SDL_SCANCODE_M:
+            {
+              active_pid_field = D;
+              break;
+            }
+            case SDL_SCANCODE_PERIOD:
+            {
+              // Increment PID
+              switch (active_pid_field) {
+                case P:
+                {
+                  pid_values.p++;
+                  break;
+                }
+                case I:
+                {
+                  pid_values.i++;
+                  break;
+                }
+                case D:
+                {
+                  pid_values.d++;
+                  break;
+                }
+              }
+              break;
+            }
+            case SDL_SCANCODE_COMMA:
+            {
+              // Decrement PID
+              switch (active_pid_field) {
+                case P:
+                {
+                  pid_values.p--;
+                  break;
+                }
+                case I:
+                {
+                  pid_values.i--;
+                  break;
+                }
+                case D:
+                {
+                  pid_values.d--;
+                  break;
+                }
+              }
+              break;
+            }
+            case SDL_SCANCODE_SLASH:
+            {
+              // Reset PID
+              switch (active_pid_field) {
+                case P:
+                {
+                  pid_values.p = 0;
+                  break;
+                }
+                case I:
+                {
+                  pid_values.i = 0;
+                  break;
+                }
+                case D:
+                {
+                  pid_values.d = 0;
+                  break;
+                }
+              }
+              break;
+            }
+          }
+        }
       }
     }
     ControlPacketElement c;
