@@ -271,81 +271,66 @@ void UI::mainLoop() {
         }
         case SDL_KEYDOWN: {
           switch (e.key.keysym.scancode) {
-            case SDL_SCANCODE_B:
-            {
+            case SDL_SCANCODE_B: {
               active_pid_field = P;
               break;
             }
-            case SDL_SCANCODE_N:
-            {
+            case SDL_SCANCODE_N: {
               active_pid_field = I;
               break;
             }
-            case SDL_SCANCODE_M:
-            {
+            case SDL_SCANCODE_M: {
               active_pid_field = D;
               break;
             }
-            case SDL_SCANCODE_PERIOD:
-            {
+            case SDL_SCANCODE_PERIOD: {
               // Increment PID
               switch (active_pid_field) {
-                case P:
-                {
+                case P: {
                   pid_values.p++;
                   break;
                 }
-                case I:
-                {
+                case I: {
                   pid_values.i++;
                   break;
                 }
-                case D:
-                {
+                case D: {
                   pid_values.d++;
                   break;
                 }
               }
               break;
             }
-            case SDL_SCANCODE_COMMA:
-            {
+            case SDL_SCANCODE_COMMA: {
               // Decrement PID
               switch (active_pid_field) {
-                case P:
-                {
+                case P: {
                   pid_values.p--;
                   break;
                 }
-                case I:
-                {
+                case I: {
                   pid_values.i--;
                   break;
                 }
-                case D:
-                {
+                case D: {
                   pid_values.d--;
                   break;
                 }
               }
               break;
             }
-            case SDL_SCANCODE_SLASH:
-            {
+            case SDL_SCANCODE_SLASH: {
               // Reset PID
               switch (active_pid_field) {
-                case P:
-                {
+                case P: {
                   pid_values.p = 0;
                   break;
                 }
-                case I:
-                {
+                case I: {
                   pid_values.i = 0;
                   break;
                 }
-                case D:
-                {
+                case D: {
                   pid_values.d = 0;
                   break;
                 }
