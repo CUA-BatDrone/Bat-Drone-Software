@@ -243,7 +243,7 @@ void UI::mainLoop() {
   float last_thrust = -1;
   while (run) {
     this_thread::sleep_for(chrono::milliseconds(1000/60));
-  ul.unlock();
+    ul.unlock();
 
     // Setup game controllers
     int num_joysticks = SDL_NumJoysticks();
