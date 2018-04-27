@@ -7,16 +7,7 @@
 
 class Receiver {
 protected:
-  class Listener : public Commands {
-  protected:
-    ControlArbiter & controlArbiter;
-    // Control the drone
-    virtual void control(float roll, float pitch, float thrust, float yaw);
-    // Switch to tracking mode
-    virtual void track();
-  public:
-    Listener(ControlArbiter & controlArbiter);
-  } listener;
+  ControlArbiter & controlArbiter;
   CmdTlm & cmdtlm;
 public:
   Receiver(CmdTlm & cmdtlm, ControlArbiter & controlArbiter);
