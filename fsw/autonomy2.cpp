@@ -180,10 +180,10 @@ void Autonomy2::mainLoop(bool & run) {
       vector<Commands::Blob> commandBlobs(blobs.size());
       blobListToCmdBlobVect(commandBlobs, blobs);
       send.sendAutonomyBlobs(commandBlobs);
+      send.sendAutonomyBlob(targetBlob.x, targetBlob.y);
 
       // Calculate Controls
       Control control = calculateFlightControlsPID(targetBlob);
-      send.sendAutonomyBlob(aPID.errorAvg, targetBlob.y);
       send.sendAutonomyControl(control);
       arbiter.autonomousControl(control);
     }
