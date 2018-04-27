@@ -245,6 +245,7 @@ void UI::mainLoop() {
 
   // Main Loop
   float last_thrust = -1;
+  bool fullscreen = false;
   while (run) {
     // Get window size
     int w, h;
@@ -267,6 +268,10 @@ void UI::mainLoop() {
         }
         case SDL_KEYDOWN: {
           switch (e.key.keysym.scancode) {
+            case SDL_SCANCODE_F11: {
+              SDL_SetWindowFullscreen(window, fullscreen ? SDL_WINDOW_SHOWN : SDL_WINDOW_FULLSCREEN_DESKTOP);
+              fullscreen ^= true;
+            }
             case SDL_SCANCODE_B: {
               active_pid_field = P;
               break;
