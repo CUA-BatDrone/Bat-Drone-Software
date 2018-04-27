@@ -125,9 +125,9 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
   float sizeNullZonePercent = 0.2f;
   int sizeNullZone = targetSize * sizeNullZonePercent;
   if (blob.x < 40 - xNullZone) {
-    con.aileron = moveRate;
-  } else if (blob.x > 40 + xNullZone) {
     con.aileron = -moveRate;
+  } else if (blob.x > 40 + xNullZone) {
+    con.aileron = moveRate;
   } else {
     con.aileron = 0;
   }
