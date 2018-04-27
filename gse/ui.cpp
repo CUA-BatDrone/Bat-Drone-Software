@@ -121,8 +121,8 @@ float UI::handleKeyboard(CmdTlm &cmdtlm, float &last_thrust) {
     } else {
       thrust = last_thrust;
     }
-    cmdtlm.control(roll, pitch, thrust, yaw);
   }
+  cmdtlm.control(roll, pitch, thrust, yaw);
   return thrust;
 }
 
