@@ -94,7 +94,7 @@ void Autonomy2::givePID(float p1, float i1, float d1, float p2, float i2, float 
   tPID.d = d3;
 }
 
-void Autonomy2::giveThreshold(uint16_t threshold) {
+void Autonomy2::giveThreshold(int16_t threshold) {
   thresholdOffset = threshold;
   cout << threshold << endl;
 }

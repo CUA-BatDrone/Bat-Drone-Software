@@ -34,7 +34,7 @@ protected:
   // The target blob the user selects to track
   TripleBuffer <Blob> receivedTargetBuffer;
   float targetSize;
-  uint16_t thresholdOffset;
+  int16_t thresholdOffset;
   uint16_t thresholdLow;
   uint16_t thresholdHigh;
   PIDController<float> aPID, ePID, tPID;
@@ -47,7 +47,7 @@ public:
   void giveControl(Control control);
   void giveTarget(int x, int y);
   void givePID(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3);
-  void giveThreshold(uint16_t threshold);
+  void giveThreshold(int16_t threshold);
 	TripleBuffer < uint16_t [ROWS][COLS] > buffer;
   void mainLoop(bool & run);
 };

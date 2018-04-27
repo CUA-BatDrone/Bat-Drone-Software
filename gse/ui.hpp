@@ -18,7 +18,7 @@ protected:
   mutex blob_array_mutex;
   SDL_Texture *texture;
   SDL_Joystick *getJoystick();
-  uint16_t threshold_offset;
+  int16_t threshold_offset;
   void handleKeyboard(CmdTlm &cmdtlm, float &last_thrust);
   void handleJoystick(SDL_Joystick *joystick, CmdTlm &cmdtlm, float &last_thrust);
 public:
