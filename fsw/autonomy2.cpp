@@ -96,6 +96,7 @@ void Autonomy2::givePID(float p1, float i1, float d1, float p2, float i2, float 
 
 void Autonomy2::giveThreshold(uint16_t threshold) {
   thresholdOffset = threshold;
+  cout << threshold << endl;
 }
 
 void Autonomy2::blobListToCmdBlobVect(std::vector<Commands::Blob> &commandBlobs, std::list<Autonomy2::Blob> &blobs) {
