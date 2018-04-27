@@ -280,11 +280,13 @@ void UI::mainLoop() {
               threshold_offset -= 100;
               cout << "Threshold: " << threshold_offset << endl;
               cmdtlm.threshold(threshold_offset);
+              break;
             }
             case SDL_SCANCODE_RIGHTBRACKET: {
               threshold_offset += 100;
               cout << "Threshold: " << threshold_offset << endl;
               cmdtlm.threshold(threshold_offset);
+              break;
             }
             case SDL_SCANCODE_F11: {
               SDL_SetWindowFullscreen(window, SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN_DESKTOP ? SDL_WINDOW_SHOWN : SDL_WINDOW_FULLSCREEN_DESKTOP);
