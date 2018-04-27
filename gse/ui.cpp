@@ -378,10 +378,6 @@ void UI::mainLoop() {
     rect.y = bloby * h / 60 - 16;
     SDL_RenderDrawRect(renderer, &rect);
 
-    fsw_aileron = 0;
-    fsw_elevator = 0;
-    fsw_thrust = 0;
-    fsw_rudder = 0;
     // Draw controls
     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
     rect.x = w * 3 / 4;

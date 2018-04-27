@@ -65,8 +65,8 @@ list<Autonomy2::Blob> Autonomy2::findBlobs(bool tFrame[ROWS][COLS]) {
 
 
 void Autonomy2::giveFrame(uint16_t frame[ROWS][COLS]) {
-	memcpy(&buffer.getFront(), frame, sizeof(uint16_t [ROWS][COLS]));
-	buffer.swapFront();
+  memcpy(&buffer.getFront(), frame, sizeof(uint16_t[ROWS][COLS]));
+  buffer.swapFront();
 }
 
 void Autonomy2::giveControl(Control control) {
@@ -106,7 +106,8 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
   Control con = receivedControlBuffer.getBack();
   //Roll, Yaw, Pitch, Thrust
   float moveRate = 0.2;
-  float xNullZone = 10;
+  float thrustRate = 0.2;
+  float xNullZone = 20, yNullZone = 20;
   float sizeNullZone = 10;
   if (blob.x < 40 - xNullZone) {
     con.aileron = moveRate;
@@ -121,6 +122,13 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
     con.elevator = -moveRate;
   } else {
     con.elevator = 0;
+  }
+  if (blob.y < 30 - yNullZone) {
+    con.thrust += thrustRate;
+    if (con.thrust > 1.0f) con.thrust = 1.0f;
+  } else if (blob.y > 30 + yNullZone) {
+    con.thrust -= thrustRate;
+    if (con.thrust < -1.0f) con.thrust = -1.0f;
   }
   // ToDo calculate thrust;
   return con;
@@ -150,7 +158,6 @@ void Autonomy2::mainLoop(bool & run) {
 
       // Calculate Controls
       Control control = calculateFlightControls(targetBlob);
-      
       send.sendAutonomyControl(control);
     }
   }
