@@ -12,6 +12,11 @@ void Sender::sendAutonomyBlob(int x, int y) {
   cmdtlm.blob(x, y);
 }
 
+void Sender::sendAutonomyBlobs(vector<Commands::Blob> &blobs) {
+  unique_lock<mutex> ul(m);
+  cmdtlm.blobs(blobs);
+}
+
 void Sender::sendAutonomyControl(Control control) {
   unique_lock<mutex> ul(m);
   cmdtlm.control(control.aileron, control.elevator, control.thrust, control.rudder);

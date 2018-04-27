@@ -377,7 +377,7 @@ void UI::mainLoop() {
     fsw_thrust = 0;
     fsw_rudder = 0;
     // Draw controls
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
     rect.x = w * 3 / 4;
     rect.y = h * 3 / 4;
     rect.w = w / 4;

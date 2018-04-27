@@ -75,14 +75,23 @@ void Autonomy2::mainLoop(bool & run) {
     bool tFrame[ROWS][COLS];
 	  threshold(tFrame, buffer.getBack());
     list<Blob> blobs = findBlobs(tFrame);
-    // cout << blobs.size() << endl;
     if (blobs.size()) {
       list<Blob>::const_iterator largest = blobs.cbegin();
       for (list<Blob>::const_iterator i = ++blobs.cbegin(); i != blobs.cend(); i++) {
         if (i->size > largest->size) largest = i;
       }
       send.sendAutonomyBlob(largest->x, largest->y);
-      cout << blobs.size() << " " << largest->x << " " << largest->y << " " << largest->size << endl;
+      vector<Commands::Blob> commandBlobs(blobs.size());
+      vector<Commands::Blob>::iterator commandBlobsIt = commandBlobs.begin();
+      list<Blob>::const_iterator blobsIt = blobs.cbegin();
+      while (blobsIt != blobs.cend() && commandBlobsIt != commandBlobs.end()) {
+        commandBlobsIt->x = blobsIt->x;
+        commandBlobsIt->y = blobsIt->y;
+        commandBlobsIt->size = blobsIt->size;
+        blobsIt++;
+        commandBlobsIt++;
+      }
+      send.sendAutonomyBlobs(commandBlobs);
     }
   }
 }
