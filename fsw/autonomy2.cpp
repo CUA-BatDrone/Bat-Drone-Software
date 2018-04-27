@@ -119,8 +119,8 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
   receivedControlBuffer.swapBackIfReady();
   Control con = receivedControlBuffer.getBack();
   //Roll, Yaw, Pitch, Thrust
-  float moveRate = 0.2;
-  float thrustRate = 0.2;
+  float moveRate = 0.1;
+  float thrustRate = 0.1;
   int xNullZone = 20, yNullZone = 20;
   float sizeNullZonePercent = 0.2f;
   int sizeNullZone = targetSize * sizeNullZonePercent;
@@ -138,12 +138,14 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
   } else {
     con.elevator = 0;
   }
-  if (blob.y < 30 - yNullZone) {
-    con.thrust += thrustRate;
-    if (con.thrust > 1.0f) con.thrust = 1.0f;
-  } else if (blob.y > 30 + yNullZone) {
-    con.thrust -= thrustRate;
-    if (con.thrust < -1.0f) con.thrust = -1.0f;
+  if (con.thrust > -1.0f) {
+    if (blob.y < 30 - yNullZone) {
+      con.thrust += thrustRate;
+      if (con.thrust > 1.0f) con.thrust = 1.0f;
+    } else if (blob.y > 30 + yNullZone) {
+      con.thrust -= thrustRate;
+      if (con.thrust < -1.0f) con.thrust = -1.0f;
+    }
   }
   return con;
 }
