@@ -39,7 +39,7 @@ void CmdTlm::telemetry(Commands &callback) {
       callback.pid(p, i, d);
       break;
     }
-    case 4:{
+    case 4: {
       uint16_t size;
       *packetReader >> size;
       vector<Blob> blobs(size);
@@ -61,6 +61,10 @@ void CmdTlm::telemetry(Commands &callback) {
       uint8_t x, y;
       *packetReader >> x >> y;
       callback.track(x, y);
+      break;
+    }
+    default: {
+      break;
     }
   }
 }

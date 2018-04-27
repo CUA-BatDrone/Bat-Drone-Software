@@ -116,6 +116,7 @@ float UI::handleKeyboard(CmdTlm &cmdtlm, float &last_thrust) {
     } else {
       thrust = last_thrust;
     }
+    cmdtlm.control(roll, pitch, thrust, yaw);
   }
   return thrust;
 }
@@ -245,6 +246,9 @@ void UI::mainLoop() {
   // Main Loop
   float last_thrust = -1;
   while (run) {
+    // Get window size
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
 
     // Setup game controllers
     int num_joysticks = SDL_NumJoysticks();
@@ -336,13 +340,17 @@ void UI::mainLoop() {
         }
       }
     }
-    ControlPacketElement c;
     // Direction inputted with WASDQE or arrowkeys and page up/down.
     if (joystick) {
       last_thrust = handleJoystick(joystick, cmdtlm);
     } else {
       last_thrust = handleKeyboard(cmdtlm, last_thrust);
     }
+    int mousex, mousey;
+    if (SDL_BUTTON_LEFT == SDL_BUTTON(SDL_GetMouseState(&mousex, &mousey))) {
+      cmdtlm.track(mousex / w, mousey / h);
+    }
+
 
     // Clear screen
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -358,8 +366,6 @@ void UI::mainLoop() {
     SDL_Rect rect;
     rect.w = 32;
     rect.h = 32;
-    int w, h;
-    SDL_GetWindowSize(window, &w, &h);
     blob_array_mutex.lock();
     for (Commands::Blob &blob : blob_array) {
       rect.x = blob.x * w / 80 - 16;

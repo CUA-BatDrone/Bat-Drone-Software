@@ -69,6 +69,17 @@ void Autonomy2::giveFrame(uint16_t frame[ROWS][COLS]) {
 	buffer.swapFront();
 }
 
+void Autonomy2::giveControl(Control control) {
+  receivedControlBuffer.getFront() = control;
+  receivedControlBuffer.swapFront();
+}
+
+void Autonomy2::giveTarget(int x, int y) {
+  receivedTargetBuffer.getFront().x = x;
+  receivedTargetBuffer.getFront().y = y;
+  receivedTargetBuffer.swapFront();
+}
+
 void Autonomy2::blobListToCmdBlobVect(std::vector<Commands::Blob> &commandBlobs, std::list<Autonomy2::Blob> &blobs) {
   vector<Commands::Blob>::iterator commandBlobsIt = commandBlobs.begin();
   list<Blob>::const_iterator blobsIt = blobs.cbegin();
@@ -81,21 +92,81 @@ void Autonomy2::blobListToCmdBlobVect(std::vector<Commands::Blob> &commandBlobs,
   }
 }
 
+Autonomy2::Blob Autonomy2::findLargestBlob(std::list<Autonomy2::Blob> &blobs) {
+  list<Blob>::const_iterator largestBlobIt = blobs.cbegin();
+  for (list<Blob>::const_iterator i = ++blobs.cbegin(); i != blobs.cend(); i++) {
+    if (i->size > largestBlobIt->size) largestBlobIt = i;
+  }
+  return *largestBlobIt;
+}
+
+// Inputs are centerX and centerY
+Control Autonomy2::calculateFlightControls(Blob blob) {
+  receivedControlBuffer.swapBackIfReady();
+  Control con = receivedControlBuffer.getBack();
+  //Roll, Yaw, Pitch, Thrust
+  float moveRate = 0.2;
+  float xNullZone = 10;
+  float sizeNullZone = 10;
+  if (blob.x < 40 - xNullZone) {
+    con.aileron = moveRate;
+  } else if (blob.x > 40 + xNullZone) {
+    con.aileron = -moveRate;
+  } else {
+    con.aileron = 0;
+  }
+  if (blob.size < targetSize - sizeNullZone) {
+    con.elevator = moveRate;
+  } else if (blob.size > targetSize + sizeNullZone) {
+    con.elevator = -moveRate;
+  } else {
+    con.elevator = 0;
+  }
+  // ToDo calculate thrust;
+  return con;
+}
+
 void Autonomy2::mainLoop(bool & run) {
   while (run) {
 	  buffer.swapBack();
     bool tFrame[ROWS][COLS];
 	  threshold(tFrame, buffer.getBack());
     list<Blob> blobs = findBlobs(tFrame);
+
+    // If there exists blobs
     if (blobs.size()) {
-      list<Blob>::const_iterator largest = blobs.cbegin();
-      for (list<Blob>::const_iterator i = ++blobs.cbegin(); i != blobs.cend(); i++) {
-        if (i->size > largest->size) largest = i;
+      // Calculate target blob
+      Blob targetBlob = findLargestBlob(blobs);
+      if (receivedTargetBuffer.swapBackIfReady()) {
+        // Received target command
+        targetSize = targetBlob.size;
       }
-      send.sendAutonomyBlob(largest->x, largest->y);
+      send.sendAutonomyBlob(targetBlob.x, targetBlob.y);
+
+      // Send all blobs
       vector<Commands::Blob> commandBlobs(blobs.size());
       blobListToCmdBlobVect(commandBlobs, blobs);
       send.sendAutonomyBlobs(commandBlobs);
+
+      // Calculate Controls
+      Control control = calculateFlightControls(targetBlob);
+      
+      send.sendAutonomyControl(control);
     }
+  }
+}
+
+inline Autonomy2::Blob::Blob() : x(0), y(0), size(0) {}
+
+inline void Autonomy2::Blob::addPixel(int x, int y) {
+  Blob::x += x;
+  Blob::y += y;
+  size++;
+}
+
+void Autonomy2::Blob::calculateCentroid() {
+  if (size) {
+    x /= size;
+    y /= size;
   }
 }

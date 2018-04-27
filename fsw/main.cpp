@@ -48,9 +48,9 @@ int main(int argc, char* argv[]) {
         // Set up classes
         DroneController droneController;
         ControlArbiter controlArbiter(droneController);
-        Receiver receiver(cmdtlm, controlArbiter);
         Sender sender(cmdtlm);
         Autonomy autonomy(controlArbiter, sender);
+        Receiver receiver(cmdtlm, controlArbiter, autonomy);
         FrameGrabber frameGrabber(autonomy, sender);
         bool run = true;
         thread droneControllerThread(&DroneController::mainLoop, &droneController, ref(run));
