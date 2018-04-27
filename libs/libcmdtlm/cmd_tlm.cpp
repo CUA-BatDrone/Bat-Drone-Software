@@ -127,6 +127,6 @@ void CmdTlm::track(uint8_t x, uint8_t y) {
 
 
 void CmdTlm::threshold(int16_t offset) {
-  *packetWriter << (uint8_t) 7 << offset;
+  *packetWriter << (uint8_t) 8 << offset;
   packetWriter->write_packet();
 }
