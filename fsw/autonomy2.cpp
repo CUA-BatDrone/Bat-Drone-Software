@@ -69,6 +69,18 @@ void Autonomy2::giveFrame(uint16_t frame[ROWS][COLS]) {
 	buffer.swapFront();
 }
 
+void Autonomy2::blobListToCmdBlobVect(std::vector<Commands::Blob> &commandBlobs, std::list<Autonomy2::Blob> &blobs) {
+  vector<Commands::Blob>::iterator commandBlobsIt = commandBlobs.begin();
+  list<Blob>::const_iterator blobsIt = blobs.cbegin();
+  while (blobsIt != blobs.cend() && commandBlobsIt != commandBlobs.end()) {
+    commandBlobsIt->x = blobsIt->x;
+    commandBlobsIt->y = blobsIt->y;
+    commandBlobsIt->size = blobsIt->size;
+    blobsIt++;
+    commandBlobsIt++;
+  }
+}
+
 void Autonomy2::mainLoop(bool & run) {
   while (run) {
 	  buffer.swapBack();
@@ -82,15 +94,7 @@ void Autonomy2::mainLoop(bool & run) {
       }
       send.sendAutonomyBlob(largest->x, largest->y);
       vector<Commands::Blob> commandBlobs(blobs.size());
-      vector<Commands::Blob>::iterator commandBlobsIt = commandBlobs.begin();
-      list<Blob>::const_iterator blobsIt = blobs.cbegin();
-      while (blobsIt != blobs.cend() && commandBlobsIt != commandBlobs.end()) {
-        commandBlobsIt->x = blobsIt->x;
-        commandBlobsIt->y = blobsIt->y;
-        commandBlobsIt->size = blobsIt->size;
-        blobsIt++;
-        commandBlobsIt++;
-      }
+      blobListToCmdBlobVect(commandBlobs, blobs);
       send.sendAutonomyBlobs(commandBlobs);
     }
   }

@@ -40,7 +40,8 @@ public:
 	Sender &send;
 	void giveFrame(uint16_t frame[ROWS][COLS]);
 	TripleBuffer < uint16_t [ROWS][COLS] > buffer;
-	void mainLoop(bool & run);
+  void blobListToCmdBlobVect(std::vector<Commands::Blob> &commandBlobs, std::list<Autonomy2::Blob> &blobs);
+  void mainLoop(bool & run);
 };
 
 typedef Autonomy2 Autonomy;
