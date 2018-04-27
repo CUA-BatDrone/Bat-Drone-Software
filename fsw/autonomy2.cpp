@@ -155,8 +155,8 @@ Control Autonomy2::calculateFlightControlsPID(Blob blob) {
   Control con = receivedControlBuffer.getBack();
   unique_lock<mutex> ul(pidMutex);
   con.aileron = aPID.process(40 - blob.x);
-  con.elevator = ePID.process(targetSize - blob.size);
-  con.thrust = tPID.process(30 - blob.y);;
+  //con.elevator = ePID.process(targetSize - blob.size);
+  //con.thrust = tPID.process(30 - blob.y);;
   return con;
 }
 
@@ -183,7 +183,7 @@ void Autonomy2::mainLoop(bool & run) {
       send.sendAutonomyBlobs(commandBlobs);
 
       // Calculate Controls
-      Control control = calculateFlightControls(targetBlob);
+      Control control = calculateFlightControlsPID(targetBlob);
       send.sendAutonomyControl(control);
       arbiter.autonomousControl(control);
     }
