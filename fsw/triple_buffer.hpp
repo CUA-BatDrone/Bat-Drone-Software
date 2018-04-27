@@ -54,6 +54,17 @@ public:
     count = 0;
     return r;
   }
+  /**
+   * Swaps the back buffer with the middle buffer if swapFront() has been called at least once.
+   * @return The number of times swapFront() was called.
+   */
+  int swapBackIfReady() {
+    unique_lock<mutex> ul(m);
+    if (count > 0) swap(back, middle);
+    int r = count;
+    count = 0;
+    return r;
+  }
 };
 
 #endif
