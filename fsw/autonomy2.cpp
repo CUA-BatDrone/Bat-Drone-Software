@@ -182,6 +182,7 @@ void Autonomy2::mainLoop(bool & run) {
       // Calculate Controls
       Control control = calculateFlightControls(targetBlob);
       send.sendAutonomyControl(control);
+      arbiter.autonomousControl(control);
     }
   }
 }
