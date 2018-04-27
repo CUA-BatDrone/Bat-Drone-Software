@@ -155,6 +155,8 @@ Control Autonomy2::calculateFlightControlsPID(Blob blob) {
   Control con = receivedControlBuffer.getBack();
   unique_lock<mutex> ul(pidMutex);
   con.aileron = aPID.process(40 - blob.x);
+  if (con.aileron > 1.0f) con.aileron = 1.0f;
+  else if (con.aileron < -1.0f) con.aileron = -1.0;
   //con.elevator = ePID.process(targetSize - blob.size);
   //con.thrust = tPID.process(30 - blob.y);;
   return con;
