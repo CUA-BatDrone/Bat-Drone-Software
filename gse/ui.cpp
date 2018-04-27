@@ -155,8 +155,8 @@ void UI::lwirFrame(const uint16_t lwirFrame[60][80]) {
   unique_lock<mutex> ul(texture_mutex);
   if (texture && run) {
     // 2800 to 3200 is human
-    const uint16_t low = 2000, high = 4000;
-    const uint16_t tlow = 2800, thigh = 3600;
+    const uint16_t low = 2000 + threshold_offset, high = 4000 + threshold_offset;
+    const uint16_t tlow = 2800 + threshold_offset, thigh = 3600 + threshold_offset;
     uint16_t offset = -low;
     const float scale = 255.0f / (high - low);
     unsigned char (*rgbFrame)[80][3];
@@ -277,13 +277,13 @@ void UI::mainLoop() {
           }
           switch (e.key.keysym.scancode) {
             case SDL_SCANCODE_LEFTBRACKET: {
-              threshold_offset -= 100;
+              threshold_offset -= 10;
               cout << "Threshold: " << threshold_offset << endl;
               cmdtlm.threshold(threshold_offset);
               break;
             }
             case SDL_SCANCODE_RIGHTBRACKET: {
-              threshold_offset += 100;
+              threshold_offset += 10;
               cout << "Threshold: " << threshold_offset << endl;
               cmdtlm.threshold(threshold_offset);
               break;

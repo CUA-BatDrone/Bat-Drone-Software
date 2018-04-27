@@ -33,7 +33,7 @@ void Receiver::mainLoop(bool & run) {
     virtual void pid(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3) {
       autonomy.givePID(p1, i1, d1, p2, i2, d2, p3, i3, d3);
     }
-    virtual void threshold(uint16_t threshold) {
+    virtual void threshold(int16_t threshold) {
       autonomy.giveThreshold(threshold);
     }
     Listener(ControlArbiter & controlArbiter, Autonomy & autonomy) : controlArbiter(controlArbiter), autonomy(autonomy) {}
