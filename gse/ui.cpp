@@ -271,9 +271,9 @@ void UI::mainLoop() {
         case SDL_KEYDOWN: {
           float pid_step;
           if (e.key.keysym.mod & KMOD_CAPS) {
-            pid_step = 0.10f;
+            pid_step = 0.010f;
           } else {
-            pid_step = 0.01f;
+            pid_step = 0.001f;
           }
           switch (e.key.keysym.scancode) {
             case SDL_SCANCODE_F11: {
