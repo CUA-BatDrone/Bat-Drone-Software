@@ -14,7 +14,12 @@ UI::UI(CmdTlm &cmdtlm) : cmdtlm(cmdtlm) {
 
 float UI::handleKeyboard(CmdTlm &cmdtlm, float &last_thrust) {
   float pitch, yaw, roll, thrust;
-  const float rate = 0.25;
+  float rate;
+  if (SDL_GetModState() & KMOD_CAPS) {
+    rate = 0.50f;
+  } else {
+    rate = 0.25f;
+  }
   const Uint8 *keyboard = SDL_GetKeyboardState(NULL);
   if (keyboard[SDL_SCANCODE_RCTRL]) {
     cmdtlm.manual();
@@ -266,6 +271,12 @@ void UI::mainLoop() {
           continue;
         }
         case SDL_KEYDOWN: {
+          float pid_step;
+          if (e.key.keysym.mod & KMOD_CAPS) {
+            pid_step = 0.10f;
+          } else {
+            pid_step = 0.01f;
+          }
           switch (e.key.keysym.scancode) {
             case SDL_SCANCODE_F11: {
               SDL_SetWindowFullscreen(window, SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN_DESKTOP ? SDL_WINDOW_SHOWN : SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -286,38 +297,40 @@ void UI::mainLoop() {
               // Increment PID
               switch (active_pid_field) {
                 case P: {
-                  pid_values.p++;
+                  pid_values.p += pid_step;
                   break;
                 }
                 case I: {
-                  pid_values.i++;
+                  pid_values.i += pid_step;
                   break;
                 }
                 case D: {
-                  pid_values.d++;
+                  pid_values.d += pid_step;
                   break;
                 }
               }
               cmdtlm.pid(pid_values.p, pid_values.i, pid_values.d);
+              cout << "PID: " << pid_values.p << " " << pid_values.i << " " << pid_values.d << endl;
               break;
             }
             case SDL_SCANCODE_COMMA: {
               // Decrement PID
               switch (active_pid_field) {
                 case P: {
-                  pid_values.p--;
+                  pid_values.p -= pid_step;
                   break;
                 }
                 case I: {
-                  pid_values.i--;
+                  pid_values.i -= pid_step;
                   break;
                 }
                 case D: {
-                  pid_values.d--;
+                  pid_values.d -= pid_step;
                   break;
                 }
               }
               cmdtlm.pid(pid_values.p, pid_values.i, pid_values.d);
+              cout << "PID: " << pid_values.p << " " << pid_values.i << " " << pid_values.d << endl;
               break;
             }
             case SDL_SCANCODE_SLASH: {
@@ -337,6 +350,7 @@ void UI::mainLoop() {
                 }
               }
               cmdtlm.pid(pid_values.p, pid_values.i, pid_values.d);
+              cout << "PID: " << pid_values.p << " " << pid_values.i << " " << pid_values.d << endl;
               break;
             }
           }

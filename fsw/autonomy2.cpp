@@ -6,6 +6,7 @@
 #include "autonomy2.hpp"
 #include "control.hpp"
 #include "control_arbiter.hpp"
+#include "pid_controller.hpp"
 
 using namespace std;
 
