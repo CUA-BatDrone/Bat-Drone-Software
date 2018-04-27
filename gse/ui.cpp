@@ -163,17 +163,15 @@ void UI::lwirFrame(const uint16_t lwirFrame[60][80]) {
       for (int x = 0; x < 80; x++) {
         if (lwirFrame[y][x] > high) {
           rgbFrame[y][x][0] = 255;
-          rgbFrame[y][x][1] = 255;
-          rgbFrame[y][x][2] = 0;
+          rgbFrame[y][x][1] = 128;
+          rgbFrame[y][x][2] = 128;
         } else if (lwirFrame[y][x] < low) {
           rgbFrame[y][x][0] = 0;
-          rgbFrame[y][x][1] = 255;
-          rgbFrame[y][x][2] = 255;
+          rgbFrame[y][x][1] = 0;
+          rgbFrame[y][x][2] = 128;
         } else {
           uint16_t value = lwirFrame[y][x] * scale;
-          if (lwirFrame[y][x] > thigh) {
-            rgbFrame[y][x][0] = rgbFrame[y][x][1] = rgbFrame[y][x][2] = value;
-          } else if (lwirFrame[y][x] < tlow) {
+          if (lwirFrame[y][x] > thigh || lwirFrame[y][x] < tlow) {
             rgbFrame[y][x][0] = rgbFrame[y][x][1] = rgbFrame[y][x][2] = value;
           } else {
             rgbFrame[y][x][0] = 0;
@@ -242,12 +240,11 @@ void UI::mainLoop() {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture: %s", SDL_GetError());
     return;
   }
+  ul.unlock();
 
   // Main Loop
   float last_thrust = -1;
   while (run) {
-    this_thread::sleep_for(chrono::milliseconds(1000/60));
-    ul.unlock();
 
     // Setup game controllers
     int num_joysticks = SDL_NumJoysticks();
@@ -347,20 +344,20 @@ void UI::mainLoop() {
       last_thrust = handleKeyboard(cmdtlm, last_thrust);
     }
 
-    //unsigned char *pixels;
-    //int pixel_pitch;
-    //SDL_LockTexture(texture, NULL, (void **)&pixels, &pixel_pitch);
-    //for (int i = 0; i < pixel_pitch * 60; i += 3) {
-    //  pixels[i] = pixels[i + 1] = pixels[i + 2] = rand();
-    //}
-    //SDL_UnlockTexture(texture);
+    // Clear screen
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
+    
+    // Draw frame
+    ul.lock();
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    ul.unlock();
 
+    // Draw blobs
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     SDL_Rect rect;
-      rect.w = 32;
-      rect.h = 32;
+    rect.w = 32;
+    rect.h = 32;
     int w, h;
     SDL_GetWindowSize(window, &w, &h);
     blob_array_mutex.lock();
@@ -375,13 +372,31 @@ void UI::mainLoop() {
     rect.y = bloby * h / 60 - 16;
     SDL_RenderDrawRect(renderer, &rect);
 
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 64);
-    SDL_RenderDrawLine(renderer, fsw_aileron * w, 0, fsw_aileron * w, h);
-    SDL_RenderDrawLine(renderer, 0, fsw_elevator, w, fsw_elevator * h);
+    fsw_aileron = 0;
+    fsw_elevator = 0;
+    fsw_thrust = 0;
+    fsw_rudder = 0;
+    // Draw controls
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    rect.x = w * 3 / 4;
+    rect.y = h * 3 / 4;
+    rect.w = w / 4;
+    rect.h = h / 4;
+    SDL_RenderDrawRect(renderer, &rect);
+    SDL_RenderDrawLine(renderer, w * 7 / 8 + fsw_aileron * w / 8, h * 3 / 4, w * 7 / 8 + fsw_aileron * w / 8, h);
+    SDL_RenderDrawLine(renderer, w * 3 / 4, h * 7 / 8 - fsw_elevator * h / 8, w, h * 7 / 8 - fsw_elevator * h / 8);
 
+    rect.x = 0;
+    SDL_RenderDrawRect(renderer, &rect);
+    SDL_RenderDrawLine(renderer, w / 8 + fsw_rudder * w / 8, h * 3 / 4, w / 8 + fsw_rudder * w / 8, h);
+    SDL_RenderDrawLine(renderer, 0, h * 7 / 8 - fsw_thrust * h / 8, w / 4, h * 7 / 8 - fsw_thrust * h / 8);
+
+    // Present to screen
     ul.lock();
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
+    ul.unlock();
+
+    this_thread::sleep_for(chrono::milliseconds(1000 / 60));
   }
 
   if (joystick) {
