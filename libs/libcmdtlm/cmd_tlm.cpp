@@ -25,18 +25,19 @@ void CmdTlm::telemetry(Commands &callback) {
       uint16_t frame[60][80];
       *packetReader >> frame;
       callback.lwirFrame(frame);
-    break;
+      break;
     }
     case 2: {
       uint16_t x, y;
       *packetReader >> x >> y;
       callback.blob(x, y);
-    break;
+      break;
     }
     case 3: {
       float p, i, d;
       *packetReader >> p >> i >> d;
       callback.pid(p, i, d);
+      break;
     }
     case 4:{
       uint16_t size;
@@ -46,12 +47,15 @@ void CmdTlm::telemetry(Commands &callback) {
         *packetReader >> blob.x >> blob.y >> blob.size;
       }
       callback.blobs(blobs);
+      break;
     }
     case 5: {
       callback.manual();
+      break;
     }
     case 6: {
       callback.autonomous();
+      break;
     }
   }
 }
