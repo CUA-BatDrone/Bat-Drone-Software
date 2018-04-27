@@ -175,6 +175,7 @@ void Autonomy2::mainLoop(bool & run) {
         // Received target command
         targetSize = targetBlob.size;
       }
+      send.sendAutonomyBlob(targetBlob.x, targetBlob.y);
 
       // Send all blobs
       vector<Commands::Blob> commandBlobs(blobs.size());
@@ -183,7 +184,6 @@ void Autonomy2::mainLoop(bool & run) {
 
       // Calculate Controls
       Control control = calculateFlightControlsPID(targetBlob);
-      send.sendAutonomyBlob(aPID.errorAvg, targetBlob.y);
       send.sendAutonomyControl(control);
       arbiter.autonomousControl(control);
     }
