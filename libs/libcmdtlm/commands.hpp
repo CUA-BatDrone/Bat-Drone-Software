@@ -25,7 +25,7 @@ public:
   virtual void blob(uint16_t x, uint16_t y) {}
   virtual void pid(float p, float i, float d) {}
   // Set PID values for tracker
-  virtual void blobs(vector<Blob> blobs) {}
+  virtual void blobs(vector<Blob> & blobs) {}
   virtual void manual() {}
   virtual void autonomous() {}
 };

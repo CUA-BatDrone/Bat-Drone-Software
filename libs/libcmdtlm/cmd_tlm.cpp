@@ -83,7 +83,7 @@ void CmdTlm::pid(float p, float i, float d) {
   packetWriter->write_packet();
 }
 
-void  CmdTlm::blobs(vector<Blob> blobs) {
+void  CmdTlm::blobs(vector<Blob> & blobs) {
   *packetWriter << (uint8_t) 4 << (uint16_t) blobs.size();
   for (Blob &blob : blobs) {
     *packetWriter << blob.x << blob.y << blob.size;

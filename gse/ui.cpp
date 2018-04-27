@@ -163,11 +163,11 @@ void UI::lwirFrame(const uint16_t lwirFrame[60][80]) {
       for (int x = 0; x < 80; x++) {
         if (lwirFrame[y][x] > high) {
           rgbFrame[y][x][0] = 255;
-          rgbFrame[y][x][1] = 0;
+          rgbFrame[y][x][1] = 255;
           rgbFrame[y][x][2] = 0;
         } else if (lwirFrame[y][x] < low) {
           rgbFrame[y][x][0] = 0;
-          rgbFrame[y][x][1] = 0;
+          rgbFrame[y][x][1] = 255;
           rgbFrame[y][x][2] = 255;
         } else {
           uint16_t value = lwirFrame[y][x] * scale;
@@ -190,13 +190,20 @@ void UI::lwirFrame(const uint16_t lwirFrame[60][80]) {
 }
 
 void UI::blob(uint16_t x, uint16_t y) {
-  cout << "Blob at (" << x << "," << y << ")" << endl;
   blobx = x;
   bloby = y;
 }
 
 void UI::control(float aileron, float elevator, float thrust, float rudder) {
-  cout << "Calculated direction (" << aileron << ", " << elevator << ", " << thrust << ", " << rudder << ")" << endl;
+  fsw_aileron = aileron;
+  fsw_elevator = elevator;
+  fsw_thrust = thrust;
+  fsw_rudder = rudder;
+}
+
+void UI::blobs(vector<Commands::Blob> & blobs) {
+  unique_lock<mutex> ul(blob_array_mutex);
+  blob_array = blobs;
 }
 
 void UI::mainLoop() {
@@ -350,22 +357,32 @@ void UI::mainLoop() {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 
-    ul.lock();
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     SDL_Rect rect;
+      rect.w = 32;
+      rect.h = 32;
     int w, h;
     SDL_GetWindowSize(window, &w, &h);
+    blob_array_mutex.lock();
+    for (Commands::Blob &blob : blob_array) {
+      rect.x = blob.x * w / 80 - 16;
+      rect.y = blob.y * h / 60 - 16;
+      SDL_RenderDrawRect(renderer, &rect);
+    }
+    blob_array_mutex.unlock();
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     rect.x = blobx * w / 80 - 16;
     rect.y = bloby * h / 60 - 16;
-    rect.w = 32;
-    rect.h = 32;
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     SDL_RenderDrawRect(renderer, &rect);
-    SDL_RenderPresent(renderer);
-    //SDL_Delay(400);
-  }
 
-  // SDL_Delay(3000);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 64);
+    SDL_RenderDrawLine(renderer, fsw_aileron * w, 0, fsw_aileron * w, h);
+    SDL_RenderDrawLine(renderer, 0, fsw_elevator, w, fsw_elevator * h);
+
+    ul.lock();
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderPresent(renderer);
+  }
 
   if (joystick) {
     SDL_JoystickClose(joystick);
