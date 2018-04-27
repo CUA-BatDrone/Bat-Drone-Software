@@ -64,6 +64,11 @@ void CmdTlm::telemetry(Commands &callback) {
       callback.track(x, y);
       break;
     }
+    case 8: {
+      uint16_t threshold;
+      *packetReader >> threshold;
+      callback.threshold(threshold);
+    }
     default: {
       break;
     }
@@ -117,5 +122,11 @@ void CmdTlm::autonomous() {
 
 void CmdTlm::track(uint8_t x, uint8_t y) {
   *packetWriter << (uint8_t) 7 << x << y;
+  packetWriter->write_packet();
+}
+
+
+void CmdTlm::threshold(uint16_t offset) {
+  *packetWriter << (uint8_t) 7 << offset;
   packetWriter->write_packet();
 }

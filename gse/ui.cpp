@@ -7,7 +7,7 @@
 
 using namespace std;
 
-UI::UI(CmdTlm &cmdtlm) : cmdtlm(cmdtlm) {
+UI::UI(CmdTlm &cmdtlm) : cmdtlm(cmdtlm), threshold_offset(0) {
   run = true;
   texture = NULL;
 }
@@ -276,6 +276,16 @@ void UI::mainLoop() {
             pid_step = 0.001f;
           }
           switch (e.key.keysym.scancode) {
+            case SDL_SCANCODE_LEFTBRACKET: {
+              threshold_offset -= 100;
+              cout << "Threshold: " << threshold_offset << endl;
+              cmdtlm.threshold(threshold_offset);
+            }
+            case SDL_SCANCODE_RIGHTBRACKET: {
+              threshold_offset += 100;
+              cout << "Threshold: " << threshold_offset << endl;
+              cmdtlm.threshold(threshold_offset);
+            }
             case SDL_SCANCODE_F11: {
               SDL_SetWindowFullscreen(window, SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN_DESKTOP ? SDL_WINDOW_SHOWN : SDL_WINDOW_FULLSCREEN_DESKTOP);
             }

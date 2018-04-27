@@ -9,10 +9,10 @@
 
 using namespace std;
 
-void Autonomy2::threshold(bool out[ROWS][COLS], const uint16_t in[ROWS][COLS], uint16_t low, uint16_t high) {
+void Autonomy2::threshold(bool out[ROWS][COLS], const uint16_t in[ROWS][COLS]) {
   for (int y = 0; y < ROWS; y++) {
     for (int x = 0; x < COLS; x++) {
-      out[y][x] = in[y][x] < high && in[y][x] > low;
+      out[y][x] = in[y][x] < thresholdHigh + thresholdOffset && in[y][x] > thresholdLow + thresholdOffset;
     }
   }
 }
@@ -92,6 +92,10 @@ void Autonomy2::givePID(float p1, float i1, float d1, float p2, float i2, float 
   tPID.p = p3;
   tPID.i = i3;
   tPID.d = d3;
+}
+
+void Autonomy2::giveThreshold(uint16_t threshold) {
+  thresholdOffset = threshold;
 }
 
 void Autonomy2::blobListToCmdBlobVect(std::vector<Commands::Blob> &commandBlobs, std::list<Autonomy2::Blob> &blobs) {
