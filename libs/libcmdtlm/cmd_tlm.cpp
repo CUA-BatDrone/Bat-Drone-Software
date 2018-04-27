@@ -57,6 +57,11 @@ void CmdTlm::telemetry(Commands &callback) {
       callback.autonomous();
       break;
     }
+    case 7: {
+      uint8_t x, y;
+      *packetReader >> x >> y;
+      callback.track(x, y);
+    }
   }
 }
 
@@ -102,5 +107,10 @@ void CmdTlm::manual() {
 
 void CmdTlm::autonomous() {
   *packetWriter << (uint8_t) 6;
+  packetWriter->write_packet();
+}
+
+void CmdTlm::track(uint8_t x, uint8_t y) {
+  *packetWriter << (uint8_t) 7 << x << y;
   packetWriter->write_packet();
 }

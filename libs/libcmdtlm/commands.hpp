@@ -28,6 +28,7 @@ public:
   virtual void blobs(vector<Blob> & blobs) {}
   virtual void manual() {}
   virtual void autonomous() {}
+  virtual void track(uint8_t x, uint8_t y) {};
 };
 
 #endif
