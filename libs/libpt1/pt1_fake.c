@@ -30,7 +30,7 @@ int pt1_stop() {
 }
 
 int pt1_get_frame(struct pt1_frame *frame) {
-  printf("pt1_get_frame()\n");
+  //printf("pt1_get_frame()\n");
   for (int i = 0; i < PT1_HEIGHT; i++) {
     for (int j = 0; j < PT1_WIDTH; j++) {
       buffer[i][j] = rand();
