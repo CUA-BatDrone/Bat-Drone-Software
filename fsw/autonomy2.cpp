@@ -119,7 +119,7 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
   receivedControlBuffer.swapBackIfReady();
   Control con = receivedControlBuffer.getBack();
   //Roll, Yaw, Pitch, Thrust
-  float moveRate = 0.1;
+  float moveRate = 0.2;
   float thrustRate = 0.1;
   int xNullZone = 20, yNullZone = 20;
   float sizeNullZonePercent = 0.2f;
