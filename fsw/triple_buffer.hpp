@@ -22,7 +22,7 @@ protected:
     b = temp;
   }
 public:
-  TripleBuffer() {
+  TripleBuffer() : count(0) {
     front = buffer;
     middle = buffer + 1;
     back = buffer + 2;
