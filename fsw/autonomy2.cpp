@@ -130,7 +130,6 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
     con.thrust -= thrustRate;
     if (con.thrust < -1.0f) con.thrust = -1.0f;
   }
-  // ToDo calculate thrust;
   return con;
 }
 
