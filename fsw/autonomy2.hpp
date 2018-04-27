@@ -39,6 +39,7 @@ public:
 	void giveFrame(uint16_t frame[ROWS][COLS]);
   void giveControl(Control control);
   void giveTarget(int x, int y);
+  void givePID(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3);
 	TripleBuffer < uint16_t [ROWS][COLS] > buffer;
   void mainLoop(bool & run);
 };

@@ -81,6 +81,10 @@ void Autonomy2::giveTarget(int x, int y) {
   receivedTargetBuffer.swapFront();
 }
 
+void Autonomy2::givePID(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3) {
+  cout << "PID: " << p1 << " " << i1 << " " << d1 << " " << p2 << " " << i2 << " " << d2 << " " << p3 << " " << i3 << " " << d3 << endl;
+}
+
 void Autonomy2::blobListToCmdBlobVect(std::vector<Commands::Blob> &commandBlobs, std::list<Autonomy2::Blob> &blobs) {
   vector<Commands::Blob>::iterator commandBlobsIt = commandBlobs.begin();
   list<Blob>::const_iterator blobsIt = blobs.cbegin();
@@ -135,6 +139,7 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
 }
 
 void Autonomy2::mainLoop(bool & run) {
+  PIDController<float> aPID, ePID, tPID;
   while (run) {
 	  buffer.swapBack();
     bool tFrame[ROWS][COLS];
