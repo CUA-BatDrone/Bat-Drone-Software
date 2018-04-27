@@ -121,8 +121,9 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
   //Roll, Yaw, Pitch, Thrust
   float moveRate = 0.2;
   float thrustRate = 0.2;
-  float xNullZone = 20, yNullZone = 20;
-  float sizeNullZone = 10;
+  int xNullZone = 20, yNullZone = 20;
+  float sizeNullZonePercent = 0.2f;
+  int sizeNullZone = targetSize * sizeNullZonePercent;
   if (blob.x < 40 - xNullZone) {
     con.aileron = moveRate;
   } else if (blob.x > 40 + xNullZone) {
