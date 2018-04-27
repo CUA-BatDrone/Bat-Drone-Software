@@ -17,7 +17,8 @@ class Autonomy2 {
 public:
   class Blob {
   public:
-    int x, y, size;
+    float x, y;
+    int size;
     Blob();
     void addPixel(int x, int y);
     void calculateCentroid();

@@ -190,7 +190,7 @@ void Autonomy2::mainLoop(bool & run) {
   }
 }
 
-inline Autonomy2::Blob::Blob() : x(0), y(0), size(0) {}
+Autonomy2::Blob::Blob() : x(0), y(0), size(0) {}
 
 inline void Autonomy2::Blob::addPixel(int x, int y) {
   Blob::x += x;
