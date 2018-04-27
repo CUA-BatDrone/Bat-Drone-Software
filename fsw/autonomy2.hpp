@@ -10,7 +10,7 @@
 #include "sender.hpp"
 #include "triple_buffer.hpp"
 #include <list>
-
+#include "pid_controller.hpp"
 
 
 class Autonomy2 {
@@ -28,10 +28,13 @@ protected:
   void blobListToCmdBlobVect(std::vector<Commands::Blob> &commandBlobs, std::list<Autonomy2::Blob> &blobs);
   Blob findLargestBlob(std::list<Autonomy2::Blob> &blobs);
   Control calculateFlightControls(Blob blob);
+  Control calculateFlightControlsPID(Blob blob);
   TripleBuffer<Control> receivedControlBuffer;
   // The target blob the user selects to track
   TripleBuffer <Blob> receivedTargetBuffer;
   float targetSize;
+  PIDController<float> aPID, ePID, tPID;
+  mutex pidMutex;
 public:
 	Autonomy2(ControlArbiter &a, Sender &send) : arbiter(a), send(send) {}
 	ControlArbiter &arbiter;

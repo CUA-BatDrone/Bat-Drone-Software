@@ -6,7 +6,6 @@
 #include "autonomy2.hpp"
 #include "control.hpp"
 #include "control_arbiter.hpp"
-#include "pid_controller.hpp"
 
 using namespace std;
 
@@ -83,6 +82,16 @@ void Autonomy2::giveTarget(int x, int y) {
 
 void Autonomy2::givePID(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3) {
   cout << "PID: " << p1 << " " << i1 << " " << d1 << " " << p2 << " " << i2 << " " << d2 << " " << p3 << " " << i3 << " " << d3 << endl;
+  unique_lock<mutex> ul(pidMutex);
+  aPID.p = p1;
+  aPID.i = i1;
+  aPID.d = d1;
+  ePID.p = p2;
+  ePID.i = i2;
+  ePID.d = d2;
+  tPID.p = p3;
+  tPID.i = i3;
+  tPID.d = d3;
 }
 
 void Autonomy2::blobListToCmdBlobVect(std::vector<Commands::Blob> &commandBlobs, std::list<Autonomy2::Blob> &blobs) {
@@ -137,9 +146,18 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
   }
   return con;
 }
+// Inputs are centerX and centerY
+Control Autonomy2::calculateFlightControlsPID(Blob blob) {
+  receivedControlBuffer.swapBackIfReady();
+  Control con = receivedControlBuffer.getBack();
+  unique_lock<mutex> ul(pidMutex);
+  con.aileron = aPID.process(40 - blob.x);
+  con.elevator = ePID.process(targetSize - blob.size);
+  con.thrust = tPID.process(30 - blob.y);;
+  return con;
+}
 
 void Autonomy2::mainLoop(bool & run) {
-  PIDController<float> aPID, ePID, tPID;
   while (run) {
 	  buffer.swapBack();
     bool tFrame[ROWS][COLS];
