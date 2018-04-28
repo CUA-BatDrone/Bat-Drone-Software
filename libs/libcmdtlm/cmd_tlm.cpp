@@ -34,10 +34,10 @@ void CmdTlm::telemetry(Commands &callback) {
       break;
     }
     case 3: {
-      float p1, i1, d1, p2, i2, d2, p3, i3, d3;
+      float p1, i1, d1, p2, i2, d2, p3, i3, d3, p4, i4, d4;
       uint8_t channel;
-      *packetReader >> p1 >> i1 >> d1 >> p2 >> i2 >> d2 >> p3 >> i3 >> d3;
-      callback.pid(p1, i1, d1, p2, i2, d2, p3, i3, d3);
+      *packetReader >> p1 >> i1 >> d1 >> p2 >> i2 >> d2 >> p3 >> i3 >> d3 >> p4 >> i4 >> d4;
+      callback.pid(p1, i1, d1, p2, i2, d2, p3, i3, d3, p4, i4, d4);
       break;
     }
     case 4: {
@@ -97,8 +97,8 @@ void CmdTlm::blob(uint16_t x, uint16_t y) {
   packetWriter->write_packet();
 }
 
-void CmdTlm::pid(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3) {
-  *packetWriter << (uint8_t) 3 << p1 << i1 << d1 << p2 << i2 << d2 << p3 << i3 << d3;
+void CmdTlm::pid(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3, float p4, float i4, float d4) {
+  *packetWriter << (uint8_t) 3 << p1 << i1 << d1 << p2 << i2 << d2 << p3 << i3 << d3 << p4 << i4 << d4;
   packetWriter->write_packet();
 }
 

@@ -218,7 +218,7 @@ void UI::mainLoop() {
   public:
     float p, i, d;
     PIDValues() : p(0), i(0), d(0) {}
-  } pid_values[3] = { PIDValues(), PIDValues(), PIDValues() };
+  } pid_values[4] = { PIDValues(), PIDValues(), PIDValues(), PIDValues() };
   int pid_index = 0;
   
 
@@ -315,6 +315,10 @@ void UI::mainLoop() {
               pid_index = 2;
               break;
             }
+            case SDL_SCANCODE_V: {
+              pid_index = 3;
+              break;
+            }
             case SDL_SCANCODE_PERIOD: {
               // Increment PID
               switch (active_pid_field) {
@@ -331,10 +335,11 @@ void UI::mainLoop() {
                   break;
                 }
               }
-              cmdtlm.pid(pid_values[0].p, pid_values[0].i, pid_values[0].d, pid_values[1].p, pid_values[1].i, pid_values[1].d, pid_values[2].p, pid_values[2].i, pid_values[2].d);
+              cmdtlm.pid(pid_values[0].p, pid_values[0].i, pid_values[0].d, pid_values[1].p, pid_values[1].i, pid_values[1].d, pid_values[2].p, pid_values[2].i, pid_values[2].d, pid_values[3].p, pid_values[3].i, pid_values[3].d);
               cout << "PID1: " << pid_values[0].p << " " << pid_values[0].i << " " << pid_values[0].d << endl;
               cout << "PID2: " << pid_values[1].p << " " << pid_values[1].i << " " << pid_values[1].d << endl;
               cout << "PID3: " << pid_values[2].p << " " << pid_values[2].i << " " << pid_values[2].d << endl;
+              cout << "PID4: " << pid_values[3].p << " " << pid_values[3].i << " " << pid_values[3].d << endl;
               break;
             }
             case SDL_SCANCODE_COMMA: {
@@ -353,10 +358,11 @@ void UI::mainLoop() {
                   break;
                 }
               }
-              cmdtlm.pid(pid_values[0].p, pid_values[0].i, pid_values[0].d, pid_values[1].p, pid_values[1].i, pid_values[1].d, pid_values[2].p, pid_values[2].i, pid_values[2].d);
+              cmdtlm.pid(pid_values[0].p, pid_values[0].i, pid_values[0].d, pid_values[1].p, pid_values[1].i, pid_values[1].d, pid_values[2].p, pid_values[2].i, pid_values[2].d, pid_values[3].p, pid_values[3].i, pid_values[3].d);
               cout << "PID1: " << pid_values[0].p << " " << pid_values[0].i << " " << pid_values[0].d << endl;
               cout << "PID2: " << pid_values[1].p << " " << pid_values[1].i << " " << pid_values[1].d << endl;
               cout << "PID3: " << pid_values[2].p << " " << pid_values[2].i << " " << pid_values[2].d << endl;
+              cout << "PID4: " << pid_values[3].p << " " << pid_values[3].i << " " << pid_values[3].d << endl;
               break;
             }
             case SDL_SCANCODE_SLASH: {
@@ -375,10 +381,11 @@ void UI::mainLoop() {
                   break;
                 }
               }
-              cmdtlm.pid(pid_values[0].p, pid_values[0].i, pid_values[0].d, pid_values[1].p, pid_values[1].i, pid_values[1].d, pid_values[2].p, pid_values[2].i, pid_values[2].d);
+              cmdtlm.pid(pid_values[0].p, pid_values[0].i, pid_values[0].d, pid_values[1].p, pid_values[1].i, pid_values[1].d, pid_values[2].p, pid_values[2].i, pid_values[2].d, pid_values[3].p, pid_values[3].i, pid_values[3].d);
               cout << "PID1: " << pid_values[0].p << " " << pid_values[0].i << " " << pid_values[0].d << endl;
               cout << "PID2: " << pid_values[1].p << " " << pid_values[1].i << " " << pid_values[1].d << endl;
               cout << "PID3: " << pid_values[2].p << " " << pid_values[2].i << " " << pid_values[2].d << endl;
+              cout << "PID4: " << pid_values[3].p << " " << pid_values[3].i << " " << pid_values[3].d << endl;
               break;
             }
           }

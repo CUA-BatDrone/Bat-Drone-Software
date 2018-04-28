@@ -30,8 +30,8 @@ void Receiver::mainLoop(bool & run) {
     virtual void track(uint8_t x, uint8_t y) {
       autonomy.giveTarget(x, y);
     }
-    virtual void pid(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3) {
-      autonomy.givePID(p1, i1, d1, p2, i2, d2, p3, i3, d3);
+    virtual void pid(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3, float p4, float i4, float d4) {
+      autonomy.givePID(p1, i1, d1, p2, i2, d2, p3, i3, d3, p4, i4, d4);
     }
     virtual void threshold(int16_t threshold) {
       autonomy.giveThreshold(threshold);

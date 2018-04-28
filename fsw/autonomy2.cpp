@@ -2,6 +2,7 @@
 #include <cstring>
 #include <stack>
 #include <string>
+#include <cmath>
 #include <iostream>
 #include "autonomy2.hpp"
 #include "control.hpp"
@@ -80,8 +81,8 @@ void Autonomy2::giveTarget(int x, int y) {
   receivedTargetBuffer.swapFront();
 }
 
-void Autonomy2::givePID(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3) {
-  cout << "PID: " << p1 << " " << i1 << " " << d1 << " " << p2 << " " << i2 << " " << d2 << " " << p3 << " " << i3 << " " << d3 << endl;
+void Autonomy2::givePID(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3, float p4, float i4, float d4) {
+  cout << "PIDs" << endl << p1 << " " << i1 << " " << d1 << endl << p2 << " " << i2 << " " << d2 << endl  << p3 << " " << i3 << " " << d3 << endl << p4 << " " << i4 << " " << d4 << endl;
   unique_lock<mutex> ul(pidMutex);
   aPID.p = p1;
   aPID.i = i1;
@@ -92,6 +93,9 @@ void Autonomy2::givePID(float p1, float i1, float d1, float p2, float i2, float 
   tPID.p = p3;
   tPID.i = i3;
   tPID.d = d3;
+  rPID.p = p4;
+  rPID.i = i4;
+  rPID.d = d4;
 }
 
 void Autonomy2::giveThreshold(int16_t threshold) {
@@ -127,8 +131,8 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
   float moveRate = 0.2;
   float thrustRate = 0.1;
   int xNullZone = 20, yNullZone = 20;
-  float sizeNullZonePercent = 0.2f;
-  int sizeNullZone = targetSize * sizeNullZonePercent;
+  float distanceNullZonePercent = 0.2f;
+  int sizeNullZone = targetDist * distanceNullZonePercent;
   if (blob.x < 40 - xNullZone) {
     con.aileron = -moveRate;
   } else if (blob.x > 40 + xNullZone) {
@@ -136,9 +140,9 @@ Control Autonomy2::calculateFlightControls(Blob blob) {
   } else {
     con.aileron = 0;
   }
-  if (blob.size < targetSize - sizeNullZone) {
+  if (blob.size < targetDist - sizeNullZone) {
     con.elevator = moveRate;
-  } else if (blob.size > targetSize + sizeNullZone) {
+  } else if (blob.size > targetDist + sizeNullZone) {
     con.elevator = -moveRate;
   } else {
     con.elevator = 0;
@@ -159,9 +163,10 @@ Control Autonomy2::calculateFlightControlsPID(Blob blob) {
   receivedControlBuffer.swapBackIfReady();
   Control con = receivedControlBuffer.getBack();
   unique_lock<mutex> ul(pidMutex);
-  con.aileron = aPID.process(40 - blob.x);
-  //con.elevator = ePID.process(targetSize - blob.size);
-  //con.thrust = tPID.process(30 - blob.y);;
+  if (aPID.p != 0 || aPID.i != 0 || aPID.d != 0) con.aileron = aPID.process(40 - blob.x);
+  if (ePID.p != 0 || ePID.i != 0 || ePID.d != 0) con.elevator = ePID.process(targetDist - blob.size);
+  if (tPID.p != 0 || tPID.i != 0 || tPID.d != 0) con.thrust += tPID.process(30 - blob.y);
+  if (tPID.p != 0 || tPID.i != 0 || tPID.d != 0) con.rudder += rPID.process(30 - blob.y);
   return con;
 }
 
@@ -178,7 +183,7 @@ void Autonomy2::mainLoop(bool & run) {
       Blob targetBlob = findLargestBlob(blobs);
       if (receivedTargetBuffer.swapBackIfReady()) {
         // Received target command
-        targetSize = targetBlob.size;
+        targetDist = sqrt(targetBlob.size);
       }
 
       // Send all blobs

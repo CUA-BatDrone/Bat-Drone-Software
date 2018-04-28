@@ -37,7 +37,7 @@ public:
   virtual void control(float ailerons, float elevator, float thrust, float rudder);
   virtual void lwirFrame(const uint16_t frame[60][80]);
   virtual void blob(uint16_t x, uint16_t y);
-  virtual void pid(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3);
+  virtual void pid(float p1, float i1, float d1, float p2, float i2, float d2, float p3, float i3, float d3, float p4, float i4, float d4);
   virtual void blobs(vector<Blob> & blobs);
   virtual void manual();
   virtual void autonomous();
