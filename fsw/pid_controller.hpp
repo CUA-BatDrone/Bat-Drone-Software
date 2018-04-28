@@ -2,7 +2,8 @@
 template <typename T = float, int SMOOTHLEN = 4>
 class PIDController {
 public:
-  T p, i, d, processMax, sum, sumMax, lastDeriv[SMOOTHLEN], lastDerivIndex, lastError;
+  T p, i, d, processMax, sum, sumMax, lastDeriv[SMOOTHLEN], lastError;
+  int lastDerivIndex;
   PIDController(T p = 0, T i = 0, T d = 0, T processMax = 0.5, T lastError = 0, T sum = 0, T sumMax = 1) : p(p), i(i), d(d), processMax(processMax), sum(sum), sumMax(sumMax), lastError(lastError), lastDerivIndex(0) {
     for (int i = 0; i < SMOOTHLEN; i++) lastDeriv[i] = 0;
   }
@@ -29,6 +30,7 @@ public:
     sum = i != 0 ? sum + i * error * time : 0;
     if (sum > sumMax) sum = sumMax;
     else if (sum < -sumMax) sum = -sumMax;
+    return sum;
   }
 
   T process(T error, T time = 1) {
