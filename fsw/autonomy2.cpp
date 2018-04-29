@@ -166,7 +166,7 @@ Control Autonomy2::calculateFlightControlsPID(Blob blob) {
   if (aPID.p != 0 || aPID.i != 0 || aPID.d != 0) con.aileron = aPID.process(40 - blob.x);
   if (ePID.p != 0 || ePID.i != 0 || ePID.d != 0) con.elevator = ePID.process(targetDist - sqrt(blob.size));
   if (tPID.p != 0 || tPID.i != 0 || tPID.d != 0) con.thrust += tPID.process(30 - blob.y);
-  if (tPID.p != 0 || tPID.i != 0 || tPID.d != 0) con.rudder += rPID.process(40 - blob.x);
+  if (rPID.p != 0 || rPID.i != 0 || rPID.d != 0) con.rudder = rPID.process(40 - blob.x);
   return con;
 }
 
