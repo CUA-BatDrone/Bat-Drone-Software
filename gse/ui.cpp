@@ -278,18 +278,18 @@ void UI::mainLoop() {
           switch (e.key.keysym.scancode) {
             case SDL_SCANCODE_MINUS: {
               if (!(e.key.keysym.mod & KMOD_SHIFT)) {
-                if (threshold_high > threshold_low - 10) threshold_low -= 10;
+                threshold_low -= 10;
               }
-              threshold_high -= 10;
+              if (threshold_high - 10 > threshold_low) threshold_high -= 10;
               cout << "Threshold: " << threshold_low << " " << threshold_high << endl;
               cmdtlm.threshold(threshold_low, threshold_high);
               break;
             }
             case SDL_SCANCODE_EQUALS: {
+              threshold_high += 10;
               if (!(e.key.keysym.mod & KMOD_SHIFT)) {
                 threshold_low += 10;
               }
-              threshold_high += 10;
               cout << "Threshold: " << threshold_low << " " << threshold_high << endl;
               cmdtlm.threshold(threshold_low, threshold_high);
               break;
