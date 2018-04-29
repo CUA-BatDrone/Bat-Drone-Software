@@ -7,7 +7,7 @@
 
 using namespace std;
 
-UI::UI(CmdTlm &cmdtlm) : cmdtlm(cmdtlm), threshold_offset(0) {
+UI::UI(CmdTlm &cmdtlm) : cmdtlm(cmdtlm), threshold_low(2800), threshold_high(3600) {
   run = true;
   texture = NULL;
 }
@@ -155,8 +155,8 @@ void UI::lwirFrame(const uint16_t lwirFrame[60][80]) {
   unique_lock<mutex> ul(texture_mutex);
   if (texture && run) {
     // 2800 to 3200 is human
-    const uint16_t low = 2000 + threshold_offset, high = 4000 + threshold_offset;
-    const uint16_t tlow = 2800 + threshold_offset, thigh = 3600 + threshold_offset;
+    uint16_t low = threshold_low - 800, high = threshold_high + 400;
+    uint16_t tlow = threshold_low, thigh = threshold_high;
     uint16_t offset = -low;
     const float scale = 255.0f / (high - low);
     unsigned char (*rgbFrame)[80][3];
@@ -276,16 +276,22 @@ void UI::mainLoop() {
             pid_step = 0.001f;
           }
           switch (e.key.keysym.scancode) {
-            case SDL_SCANCODE_LEFTBRACKET: {
-              threshold_offset -= 10;
-              cout << "Threshold: " << threshold_offset << endl;
-              cmdtlm.threshold(threshold_offset);
+            case SDL_SCANCODE_MINUS: {
+              if (!(e.key.keysym.mod & KMOD_SHIFT)) {
+                if (threshold_high > threshold_low - 10) threshold_low -= 10;
+              }
+              threshold_high -= 10;
+              cout << "Threshold: " << threshold_low << " " << threshold_high << endl;
+              cmdtlm.threshold(threshold_low, threshold_high);
               break;
             }
-            case SDL_SCANCODE_RIGHTBRACKET: {
-              threshold_offset += 10;
-              cout << "Threshold: " << threshold_offset << endl;
-              cmdtlm.threshold(threshold_offset);
+            case SDL_SCANCODE_EQUALS: {
+              if (!(e.key.keysym.mod & KMOD_SHIFT)) {
+                threshold_low += 10;
+              }
+              threshold_high += 10;
+              cout << "Threshold: " << threshold_low << " " << threshold_high << endl;
+              cmdtlm.threshold(threshold_low, threshold_high);
               break;
             }
             case SDL_SCANCODE_F11: {

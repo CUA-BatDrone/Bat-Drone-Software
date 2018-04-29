@@ -19,6 +19,7 @@ protected:
   SDL_Texture *texture;
   SDL_Joystick *getJoystick();
   int16_t threshold_offset;
+  uint16_t threshold_low, threshold_high;
   void handleKeyboard(CmdTlm &cmdtlm, float &last_thrust);
   void handleJoystick(SDL_Joystick *joystick, CmdTlm &cmdtlm, float &last_thrust);
 public:

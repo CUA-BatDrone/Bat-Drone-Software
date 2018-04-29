@@ -65,9 +65,9 @@ void CmdTlm::telemetry(Commands &callback) {
       break;
     }
     case 8: {
-      uint16_t threshold;
-      *packetReader >> threshold;
-      callback.threshold(threshold);
+      uint16_t low, high;
+      *packetReader >> low >> high;
+      callback.threshold(low, high);
     }
     default: {
       break;
@@ -126,7 +126,7 @@ void CmdTlm::track(uint8_t x, uint8_t y) {
 }
 
 
-void CmdTlm::threshold(int16_t offset) {
-  *packetWriter << (uint8_t) 8 << offset;
+void CmdTlm::threshold(uint16_t low, uint16_t high) {
+  *packetWriter << (uint8_t) 8 << low << high;
   packetWriter->write_packet();
 }

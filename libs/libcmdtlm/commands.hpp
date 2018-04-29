@@ -29,7 +29,7 @@ public:
   virtual void manual() {}
   virtual void autonomous() {}
   virtual void track(uint8_t x, uint8_t y) {};
-  virtual void threshold(int16_t offset) {};
+  virtual void threshold(uint16_t low, uint16_t high) {};
 };
 
 #endif
