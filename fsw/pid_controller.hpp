@@ -25,9 +25,9 @@ public:
     }
     return r;
   }
-  
+
   T integral(T error, T time = 1) {
-    sum = i != 0 ? sum + i * error * time : 0;
+    sum = i != 0 ? sum + error * time : 0;
     if (sum > sumMax) sum = sumMax;
     else if (sum < -sumMax) sum = -sumMax;
     return sum;
