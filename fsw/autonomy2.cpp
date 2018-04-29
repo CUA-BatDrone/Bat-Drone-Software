@@ -163,10 +163,10 @@ Control Autonomy2::calculateFlightControlsPID(Blob blob) {
   receivedControlBuffer.swapBackIfReady();
   Control con = receivedControlBuffer.getBack();
   unique_lock<mutex> ul(pidMutex);
-  if (aPID.p != 0 || aPID.i != 0 || aPID.d != 0) con.aileron = aPID.process(40 - blob.x);
+  if (aPID.p != 0 || aPID.i != 0 || aPID.d != 0) con.aileron = aPID.process(blob.x - 40);
   if (ePID.p != 0 || ePID.i != 0 || ePID.d != 0) con.elevator = ePID.process(targetDist - sqrt(blob.size));
-  if (tPID.p != 0 || tPID.i != 0 || tPID.d != 0) con.thrust += tPID.process(30 - blob.y);
-  if (rPID.p != 0 || rPID.i != 0 || rPID.d != 0) con.rudder = rPID.process(40 - blob.x);
+  if (tPID.p != 0 || tPID.i != 0 || tPID.d != 0) con.thrust += tPID.process(blob.y - 30);
+  if (rPID.p != 0 || rPID.i != 0 || rPID.d != 0) con.rudder = rPID.process(blob.x - 40);
   return con;
 }
 
